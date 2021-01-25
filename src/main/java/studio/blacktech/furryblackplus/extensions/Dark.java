@@ -54,10 +54,15 @@ public class Dark extends EventHandlerExecutor {
         File FILE_COOK_METHOD = initConfFile("cook_method.txt");
         File FILE_INGREDIENTS = initConfFile("cook_ingredients.txt");
 
+        int i = 0;
+
         for (String line : readFile(FILE_COOK_METHOD)) {
-            logger.seek("添加方法 - " + line);
+            i++;
+            // logger.seek("添加方法 - " + line);
             COOK_METHOD.add(line);
         }
+
+        int j = 0;
 
         for (String line : readFile(FILE_INGREDIENTS)) {
 
@@ -77,16 +82,20 @@ public class Dark extends EventHandlerExecutor {
                 for (String temp : temp1[1].split(",")) {
                     String trim = temp.trim();
                     INGREDIENTS.add(trim);
-                    logger.seek("添加材料 - " + trim);
+                    // logger.seek("添加材料 - " + trim);
+                    j++;
                 }
             } else {
                 INGREDIENTS.add(temp1[1]);
-                logger.seek("添加材料 - " + temp1[1]);
+                // logger.seek("添加材料 - " + temp1[1]);
+                j++;
             }
         }
 
         sizeCookMethod = COOK_METHOD.size();
         sizeIngredient = INGREDIENTS.size();
+
+        logger.seek("共添加了 " + i + "种方式, " + j + "种材料");
 
     }
 

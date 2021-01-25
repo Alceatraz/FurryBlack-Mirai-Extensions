@@ -51,9 +51,10 @@ public class Food extends EventHandlerExecutor {
 
         FOOD = new FoodStorage();
 
-
         File FILE_TAKEOUT = initConfFile("takeout.txt");
 
+
+        int i = 0;
 
         for (String line : readFile(FILE_TAKEOUT)) {
 
@@ -74,15 +75,19 @@ public class Food extends EventHandlerExecutor {
                 for (String temp3 : temp2) {
                     String trim = temp3.trim();
                     FOOD.add(temp1[0], trim);
-                    logger.seek("添加选项 " + temp1[0] + "-> " + trim);
+                    i++;
+                    // logger.seek("添加选项 " + temp1[0] + "-> " + trim);
                 }
             } else {
                 FOOD.add(temp1[0], temp1[1]);
-                logger.seek("添加选项 " + temp1[0] + "-> " + temp1[1]);
+                i++;
+                //logger.seek("添加选项 " + temp1[0] + "-> " + temp1[1]);
             }
         }
 
         FOOD.update();
+
+        logger.seek("添加了 " + i + "种 共" + FOOD.getSize() + "个");
 
     }
 
@@ -139,25 +144,25 @@ public class Food extends EventHandlerExecutor {
 
         private int size;
         private String list;
-        private final List<String> TYPE;
-        private final Map<Integer, Integer> SIZE;
-        private final Map<Integer, List<String>> NAME;
+        private final List<String> TYPE; // 存储所有分类
+        private final Map<Integer, Integer> SIZE; // 存储分类的尺寸
+        private final Map<Integer, List<String>> ITEM; // 存储实际内容
 
         public FoodStorage() {
             TYPE = new LinkedList<>();
             SIZE = new LinkedHashMap<>();
-            NAME = new LinkedHashMap<>();
+            ITEM = new LinkedHashMap<>();
         }
 
         public void add(String type, String name) {
             List<String> temp;
             if (TYPE.contains(type)) {
                 int index = TYPE.indexOf(type);
-                temp = NAME.get(index);
+                temp = ITEM.get(index);
             } else {
                 int size = TYPE.size();
                 TYPE.add(type);
-                NAME.put(size, temp = new LinkedList<>());
+                ITEM.put(size, temp = new LinkedList<>());
             }
             temp.add(name);
         }
@@ -165,7 +170,7 @@ public class Food extends EventHandlerExecutor {
         public void update() {
             size = TYPE.size();
             for (int i = 0; i < size; i++) {
-                List<String> list = NAME.get(i);
+                List<String> list = ITEM.get(i);
                 SIZE.put(i, list.size());
             }
             int i = 0;
@@ -194,12 +199,17 @@ public class Food extends EventHandlerExecutor {
             if (!SIZE.containsKey(type)) throw new IllegalArgumentException();
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int length = SIZE.get(type);
-            List<String> list = NAME.get(type);
+            List<String> list = ITEM.get(type);
             return list.get(random.nextInt(length));
         }
 
         public String getList() {
             return list;
         }
+
+        public int getSize() {
+            return size;
+        }
+
     }
 }

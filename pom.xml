@@ -9,7 +9,7 @@
 
     <name>FurryBlack-Mirai-Extensions</name>
 
-    <version>0.4.0</version>
+    <version>0.4.1</version>
 
     <packaging>jar</packaging>
 
@@ -52,6 +52,25 @@
                 <version>3.2.0</version>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/library</outputDirectory>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
         </plugins>
     </build>
