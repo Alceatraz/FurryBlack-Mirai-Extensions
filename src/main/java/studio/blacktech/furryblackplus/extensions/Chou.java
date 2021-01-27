@@ -118,7 +118,7 @@ public class Chou extends EventHandlerExecutor {
                                             .append(new At(sender.getId()))
                                             .append("可用成员人数不足，无法使用此功能。")
                                             .build();
-            group.sendMessage(messages);
+            Driver.sendAtMessage(event, messages);
             return;
 
         }

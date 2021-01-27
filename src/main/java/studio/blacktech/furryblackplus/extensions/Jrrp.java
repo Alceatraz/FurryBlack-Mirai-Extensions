@@ -8,6 +8,10 @@ import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 import studio.blacktech.furryblackplus.core.utilties.DateTool;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -21,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
         description = "查看今天的运气值 - 大失败酱",
         privacy = {
                 "获取命令发送人",
-                "缓存用户与运气对应表 - 每日UTC+8 00:00 清空"
+                "存储用户与运气对应表 - 每日UTC+8 00:00 清空"
         },
         command = "jrrp",
         usage = {
@@ -36,15 +40,39 @@ public class Jrrp extends EventHandlerExecutor {
     }
 
 
+    private Timer timer;
     private Map<Long, Integer> JRRP;
 
-    private Timer timer;
+    private File JRRP_FILE;
 
 
     @Override
     public void init() {
+
+        initRootFolder();
+        initDataFolder();
+
+        JRRP_FILE = initDataFile("jrrp.txt");
+
+        Calendar lastModified = Calendar.getInstance();
+        lastModified.setTimeInMillis(JRRP_FILE.lastModified());
+
         JRRP = new HashMap<>();
+
+        if (Calendar.getInstance().get(Calendar.DATE) == lastModified.get(Calendar.DATE)) {
+            for (String line : readFile(JRRP_FILE)) {
+                String[] temp = line.split(":");
+                Long user = Long.parseLong(temp[0].trim());
+                Integer jrrp = Integer.parseInt(temp[1].trim());
+                JRRP.put(user, jrrp);
+            }
+            logger.seek("从持久化文件中读取了 " + JRRP.size() + "条数据");
+        } else {
+            logger.seek("持久化文件已过期");
+        }
+
     }
+
 
     @Override
     public void boot() {
@@ -54,6 +82,15 @@ public class Jrrp extends EventHandlerExecutor {
                     @Override
                     public void run() {
                         JRRP.clear();
+                        try {
+                            FileWriter fileWriter = new FileWriter(JRRP_FILE, false);
+                            fileWriter.write("");
+                            fileWriter.flush();
+                            fileWriter.close();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                            logger.warning("清空数据失败", exception);
+                        }
                     }
                 },
                 DateTool.getNextDate(),
@@ -61,9 +98,26 @@ public class Jrrp extends EventHandlerExecutor {
         );
     }
 
+
     @Override
     public void shut() {
         timer.cancel();
+        try {
+            FileWriter fileWriter = new FileWriter(JRRP_FILE, false);
+            for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {
+                var k = entry.getKey();
+                var v = entry.getValue();
+                fileWriter.write(String.valueOf(k));
+                fileWriter.write(":");
+                fileWriter.write(String.valueOf(v));
+                fileWriter.write("\n");
+            }
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            logger.warning("保存数据失败", exception);
+        }
     }
 
 
