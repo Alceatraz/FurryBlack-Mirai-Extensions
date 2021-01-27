@@ -95,7 +95,7 @@ public class Dark extends EventHandlerExecutor {
         sizeCookMethod = COOK_METHOD.size();
         sizeIngredient = INGREDIENTS.size();
 
-        logger.seek("共添加了 " + i + "种方式, " + j + "种材料");
+        logger.seek("共添加了" + i + "种方式" + j + "种材料");
 
     }
 

@@ -87,7 +87,7 @@ public class Food extends EventHandlerExecutor {
 
         FOOD.update();
 
-        logger.seek("添加了 " + i + "种 共" + FOOD.getSize() + "个");
+        logger.seek("共计添加了" + i + "种" + FOOD.getSize() + "个类别");
 
     }
 
