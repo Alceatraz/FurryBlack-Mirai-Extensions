@@ -13,41 +13,41 @@ import java.util.Map;
 
 
 @Executor(
-        artificial = "Executor_ACON",
-        name = "空调",
-        description = "本群空调",
-        privacy = {
-                "按群存储耗电量",
-                "按群存储耗工作模式",
-                "按群存储上次更改模式的时间戳"
-        },
-        users = false,
-        command = "acon",
-        usage = {
-                "/acon cost - 耗电量",
-                "/acon off - 关机",
-                "/acon wet - 加湿",
-                "/acon dry - 除湿",
-                "/acon cold - 制冰模式",
-                "/acon cool - 制冷模式",
-                "/acon warm - 制热模式",
-                "/acon bake - 烘烤模式",
-                "/acon burn - 烧烤模式",
-                "/acon fire - 焚化模式",
-                "/acon c2h2 - 乙炔炬模式",
-                "/acon argon - 氩气引弧模式",
-                "/acon plasma - 等离子模式",
-                "/acon nova - 点亮一颗新星",
-                "/acon cfnuke - 点燃一颗冷核武器",
-                "/acon trnuke - 点燃一颗热核武器",
-                "/acon tpnuke - 点燃一颗三相热核弹",
-                "/acon ianova - Ia级超新星吸积引燃",
-                "/acon ibnova - Ib级超新星吸积引燃",
-                "/acon icnova - Ic级超新星吸积引燃",
-                "/acon iinova - II级超新星吸积引燃",
-                "/acon ~!C??? - Fy:????",
-                "/acon ~!R[?? - FT//s??"
-        }
+    artificial = "Executor_ACON",
+    name = "空调",
+    description = "本群空调",
+    privacy = {
+        "按群存储耗电量",
+        "按群存储耗工作模式",
+        "按群存储上次更改模式的时间戳"
+    },
+    users = false,
+    command = "acon",
+    usage = {
+        "/acon cost - 耗电量",
+        "/acon off - 关机",
+        "/acon wet - 加湿",
+        "/acon dry - 除湿",
+        "/acon cold - 制冰模式",
+        "/acon cool - 制冷模式",
+        "/acon warm - 制热模式",
+        "/acon bake - 烘烤模式",
+        "/acon burn - 烧烤模式",
+        "/acon fire - 焚化模式",
+        "/acon c2h2 - 乙炔炬模式",
+        "/acon argon - 氩气引弧模式",
+        "/acon plasma - 等离子模式",
+        "/acon nova - 点亮一颗新星",
+        "/acon cfnuke - 点燃一颗冷核武器",
+        "/acon trnuke - 点燃一颗热核武器",
+        "/acon tpnuke - 点燃一颗三相热核弹",
+        "/acon ianova - Ia级超新星吸积引燃",
+        "/acon ibnova - Ib级超新星吸积引燃",
+        "/acon icnova - Ic级超新星吸积引燃",
+        "/acon iinova - II级超新星吸积引燃",
+        "/acon ~!C??? - Fy:????",
+        "/acon ~!R[?? - FT//s??"
+    }
 )
 public class Acon extends EventHandlerExecutor {
 
@@ -70,42 +70,26 @@ public class Acon extends EventHandlerExecutor {
         AIR_CONDITIONS = new HashMap<>();
     }
 
+    @Override
+    public void boot() { }
 
     @Override
-    public void boot() {
-
-    }
-
-
-    @Override
-    public void shut() {
-
-    }
-
+    public void shut() { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-
     }
-
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-
         long group = event.getGroup().getId();
-
         AirCondition airCondition;
-
         if (AIR_CONDITIONS.containsKey(group)) {
             airCondition = AIR_CONDITIONS.get(group);
         } else {
             AIR_CONDITIONS.put(group, airCondition = new AirCondition());
         }
-
-
         if (command.hasCommandBody()) {
-
-
             switch (command.getParameterSegment(0)) {
 
                 case "off":
@@ -223,23 +207,17 @@ public class Acon extends EventHandlerExecutor {
                     Driver.sendMessage(event, airCondition.cost());
 
             }
-
             return;
-
         }
-
-        Driver.sendMessage(event, airCondition.cost());
-
+        Driver.sendAtMessage(event, airCondition.cost());
     }
 
 
     public static class AirCondition {
 
-
         private long mode = 0;
         private long time = 0;
         private BigInteger cost = BigInteger.ZERO;
-
 
         /**
          * 将之前的运行模式计算为价格
@@ -255,7 +233,6 @@ public class Acon extends EventHandlerExecutor {
             this.time = current;
         }
 
-
         /**
          * 更改模式
          *
@@ -266,7 +243,6 @@ public class Acon extends EventHandlerExecutor {
             this.mode = mode;
         }
 
-
         /**
          * 查询价格 即使没有更新模式也要将之前的价格累加
          *
@@ -276,7 +252,7 @@ public class Acon extends EventHandlerExecutor {
             this.updateCost();
             return "累计共耗电：" + cost.divide($1000) + "kW(" + cost.divide($HOUR) + ")度\r\n群主须支付: " + cost.divide($FACT) + "元";
         }
-    }
 
+    }
 
 }

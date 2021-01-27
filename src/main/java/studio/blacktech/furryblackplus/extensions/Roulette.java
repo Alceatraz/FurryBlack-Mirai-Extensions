@@ -23,18 +23,17 @@ import java.util.stream.Collectors;
 
 
 @Executor(
-        artificial = "Executor_Roulette",
-        name = "俄罗斯轮盘赌",
-        description = "你看这子弹又尖又长，这名单又大又宽",
-        privacy = {
-                "获取命令发送人",
-                "缓存群-成员-回合 结束后丢弃"
-        },
-        users = false,
-        command = "roulette",
-        usage = {
-                "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率"
-        }
+    artificial = "Executor_Roulette",
+    name = "俄罗斯轮盘赌",
+    description = "你看这子弹又尖又长，这名单又大又宽",
+    privacy = {
+        "获取命令发送人",
+        "缓存群-成员-回合 结束后丢弃"
+    },
+    command = "roulette",
+    usage = {
+        "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率"
+    }
 )
 public class Roulette extends EventHandlerExecutor {
 
@@ -45,7 +44,7 @@ public class Roulette extends EventHandlerExecutor {
 
 
     private final static String[] ICON = {
-            "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"
+        "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"
     };
 
 
@@ -58,22 +57,25 @@ public class Roulette extends EventHandlerExecutor {
     }
 
     @Override
-    public void boot() {
-    }
+    public void boot() { }
 
     @Override
-    public void shut() {
-    }
-
+    public void shut() { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-
+        Driver.sendMessage(event, "好的，没有问题，成全你");
+        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
     }
 
 
     @Override
-    public void handleGroupMessage(GroupMessageEvent event, Command command) {
+    public synchronized void handleGroupMessage(GroupMessageEvent event, Command command) {
 
         Group group = event.getGroup();
 
@@ -82,13 +84,17 @@ public class Roulette extends EventHandlerExecutor {
             return;
         }
 
+        //
+
         RouletteRound round;
+
+        //
 
         long current = System.currentTimeMillis();
 
         if (rounds.containsKey(group.getId())) {
             round = rounds.get(group.getId());
-            if (round.getTime().getTime() - current < 0) {
+            if (round.getExpireTime().getTime() - current < 0) {
                 rounds.remove(group.getId());
                 rounds.put(group.getId(), round = new RouletteRound());
             }
@@ -96,66 +102,55 @@ public class Roulette extends EventHandlerExecutor {
             rounds.put(group.getId(), round = new RouletteRound());
         }
 
+        //
+
         if (round.join(event, command)) {
 
             if (round.isSinglePlayer()) {
-
-                RouletteRound.PlayerJetton loser = round.getGamblers().get(0);
-
-                Driver.sendAtMessage(event, "好的，没有问题，成全你");
-                Driver.sendMessage(event, new Face(169).plus("\uD83D\uDCA5\r\n"));
-                Driver.sendMessage(event, new Face(169).plus("\uD83D\uDCA5\r\n"));
-                Driver.sendMessage(event, new Face(169).plus("\uD83D\uDCA5\r\n"));
-                Driver.sendMessage(event, new Face(169).plus("\uD83D\uDCA5\r\n"));
-                Driver.sendMessage(event, new Face(169).plus("\uD83D\uDCA5\r\n"));
-                Driver.sendMessage(event, new Face(169).plus("\uD83D\uDCA5\r\n"));
-                long loserID = loser.getMember().getId();
-                Driver.sendMessage(event, "目标已被击毙: " + loser.getMember().getNameCard() + "(" + loserID + ") 掉落了以下物品: " + round.getAllJetton(loserID));
-
+                RouletteRound.PlayerJetton loser = round.gamblers.get(0);
+                long loserID = loser.member.getId();
+                Driver.sendAtMessage(event,
+                    new PlainText("好的，没有问题，成全你\r\n")
+                        .plus(new At(loserID))
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + Driver.getFormattedNickName(loserID) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
+                );
 
             } else {
 
-                int bullet = ThreadLocalRandom.current().nextInt(6);
+                int bullet = round.roll();
+                RouletteRound.PlayerJetton loser = round.gamblers.get(bullet);
+                long loserID = loser.member.getId();
 
-                Message messages = new PlainText("名单已凑齐 装填子弹中\r\n");
-
-                RouletteRound.PlayerJetton loser = round.getGamblers().get(bullet);
-
-                At at = new At(loser.getMember().getId());
+                Message message = new PlainText("名单已凑齐 装填子弹中\r\n");
 
                 for (int i = 0; i < 6; i++) {
-
-                    RouletteRound.PlayerJetton temp = round.getGamblers().get(i);
-
-                    messages = messages.plus(ICON[i]).plus(" " + temp.getMember().getNameCard() + " ").plus(new Face(169));
-
-                    if (i == bullet) {
-                        messages = messages.plus("\uD83D\uDCA5\r\n"); // 💥 "\uD83D\uDCA5"
+                    RouletteRound.PlayerJetton temp = round.gamblers.get(i);
+                    message = message.plus(ICON[i] + " " + Driver.getFormattedNickName(temp.member.getId()) + " ");
+                    message = message.plus(new Face(Face.手枪));
+                    if (i == round.getLoser()) {
+                        message = message.plus("\uD83D\uDCA5\r\n"); // 💥
                     } else {
-                        messages = messages.plus("\r\n");
+                        message = message.plus("\r\n");
                     }
-
                 }
-
-                messages = messages.plus("\r\n");
-                messages = messages.plus(at);
-
-                Driver.sendMessage(event, messages);
-                Driver.sendAtMessage(event, "目标已被击毙: " + loser.getMember().getNameCard() + "(" + loser.getMember().getId() + ") 掉落了以下物品: " + round.getAllJetton(loser.getMember().getId()));
-
+                message = message.plus("\r\n目标已被击毙: ");
+                message = message.plus(new At(loserID));
+                message = message.plus("\r\n掉落了以下物品: " + round.getAllJetton(loserID));
+                Driver.sendMessage(event, message);
             }
-
 
             rounds.remove(group.getId());
 
-
         } else {
-
 
             StringBuilder builder = new StringBuilder();
 
-
-            builder.append("俄罗斯轮盘 - 当前人数 (");
+            builder.append(" 俄罗斯轮盘 - 当前人数 (");
             builder.append(round.getGamblers().size());
             builder.append("/6)\r\n");
 
@@ -184,9 +179,9 @@ public class Roulette extends EventHandlerExecutor {
             }
 
             builder.append("剩余时间 - ");
-            builder.append(LoggerX.formatTime("mm:ss", round.getTime().getTime() - current));
+            builder.append(LoggerX.formatTime("mm:ss", round.getExpireTime().getTime() - current));
 
-            Driver.sendMessage(event, new Face(169).plus(builder.toString()));
+            Driver.sendMessage(event, new Face(Face.手枪).plus(builder.toString()));
 
         }
 
@@ -195,42 +190,34 @@ public class Roulette extends EventHandlerExecutor {
 
     private static class RouletteRound {
 
-
-        private boolean hint = true;
-
-
-        private final Date time = new Date(System.currentTimeMillis() + 600000);
-
-
+        private final Date expireTime = new Date(System.currentTimeMillis() + 600000);
         private final List<PlayerJetton> gamblers = new ArrayList<>(6);
 
+        private boolean hint = true;
+        private int loser = 6;
+
+        //
 
         public boolean join(GroupMessageEvent event, Command command) {
-
-            if (gamblers.size() >= 6) {
-                Driver.sendMessage(event, "❌ 对局已满");
-                return false;
-            }
-
+            if (gamblers.size() > 6) return false;
             if (hint && gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
-                Driver.sendMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
+                Driver.sendAtMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
                 hint = false;
             }
-
             gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));
             return gamblers.size() == 6;
         }
 
 
-        public Date getTime() {
-            return time;
+        public int roll() {
+            this.loser = ThreadLocalRandom.current().nextInt(6);
+            return loser;
         }
 
 
-        public List<PlayerJetton> getGamblers() {
-            return gamblers;
+        public int getLoser() {
+            return loser;
         }
-
 
         public boolean isSinglePlayer() {
             long id = gamblers.get(0).getMember().getId();
@@ -243,7 +230,9 @@ public class Roulette extends EventHandlerExecutor {
 
 
         public String getAllJetton(long id) {
-            List<PlayerJetton> jettons = gamblers.stream().filter(item -> item.getMember().getId() == id).collect(Collectors.toList());
+            List<PlayerJetton> jettons = gamblers.stream()
+                                             .filter(item -> item.getMember().getId() == id)
+                                             .collect(Collectors.toList());
             StringBuilder builder = new StringBuilder();
             for (RouletteRound.PlayerJetton jetton : jettons) {
                 builder.append("\r\n");
@@ -253,11 +242,19 @@ public class Roulette extends EventHandlerExecutor {
         }
 
 
+        public Date getExpireTime() {
+            return expireTime;
+        }
+
+        public List<PlayerJetton> getGamblers() {
+            return gamblers;
+        }
+
+
         private static class PlayerJetton {
 
             private final Member member;
             private final String jetton;
-
 
             public PlayerJetton(Member member, String jetton) {
                 this.member = member;
@@ -271,12 +268,7 @@ public class Roulette extends EventHandlerExecutor {
             public String getJetton() {
                 return jetton;
             }
-
         }
-
-
     }
-
-
 }
 

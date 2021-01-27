@@ -11,18 +11,18 @@ import java.security.SecureRandom;
 
 
 @Executor(
-        artificial = "Executor_Roll",
-        name = "随机数",
-        description = "生成随机数并窥探本质",
-        privacy = {
-                "获取命令发送人"
-        },
-        command = "roll",
-        usage = {
-                "/roll - 抽取真假",
-                "/roll 数字 - 从零到给定数字任选一个数字[0,x)",
-                "/roll 数字 数字 - 从给定两个数字中间抽取一个[x,y)"
-        }
+    artificial = "Executor_Roll",
+    name = "随机数",
+    description = "生成随机数并窥探本质",
+    privacy = {
+        "获取命令发送人"
+    },
+    command = "roll",
+    usage = {
+        "/roll - 抽取真假",
+        "/roll 数字 - 从零到给定数字任选一个数字[0,x)",
+        "/roll 数字 数字 - 从给定两个数字中间抽取一个[x,y)"
+    }
 )
 public class Roll extends EventHandlerExecutor {
 
@@ -33,29 +33,23 @@ public class Roll extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {
-    }
+    public void init() { }
 
     @Override
-    public void boot() {
-    }
+    public void boot() { }
 
     @Override
-    public void shut() {
-    }
-
+    public void shut() { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
         Driver.sendMessage(event, roll(command));
     }
 
-
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
         Driver.sendMessage(event, roll(command));
     }
-
 
     private String roll(Command command) {
 
@@ -101,10 +95,8 @@ public class Roll extends EventHandlerExecutor {
                 res = command.getCommandBody(200) + " 是 " + (random.nextBoolean() ? " 1️⃣" : " 0️⃣");
         }
 
-
         return res;
 
     }
-
 
 }

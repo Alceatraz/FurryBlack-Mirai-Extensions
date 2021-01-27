@@ -2,7 +2,6 @@ package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import net.mamoe.mirai.message.data.At;
 import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
@@ -17,16 +16,16 @@ import java.util.TimeZone;
 
 
 @Executor(
-        artificial = "Executor_Time",
-        name = "环球时间",
-        description = "现在都几点了，为什么那个孩子还在水群",
-        privacy = {
-                "无"
-        },
-        command = "time",
-        usage = {
-                "/time - 查看世界时间"
-        }
+    artificial = "Executor_Time",
+    name = "环球时间",
+    description = "现在都几点了，为什么那个孩子还在水群",
+    privacy = {
+        "无"
+    },
+    command = "time",
+    usage = {
+        "/time - 查看世界时间"
+    }
 )
 public class Time extends EventHandlerExecutor {
 
@@ -54,80 +53,55 @@ public class Time extends EventHandlerExecutor {
         initConfFolder();
 
         TIME_ZONE = new LinkedHashMap<>();
-
         File FILE_TIMEZONE = initConfFile("timezone.txt");
-
         for (String line : readFile(FILE_TIMEZONE)) {
-
             if (!line.contains(":")) {
                 logger.warning("配置无效 " + line);
                 continue;
             }
-
             String[] temp = line.split(":");
-
             if (temp.length != 2) {
                 logger.warning("配置无效 " + line);
                 continue;
             }
-
             TimeZone timeZone = TimeZone.getTimeZone(temp[1]);
-
             if (!temp[1].equals("GMT") && timeZone.getID().equals("GMT")) logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
-
             TIME_ZONE.put(temp[0], timeZone);
-
             logger.seek("添加时区 " + temp[0] + " -> " + timeZone.getDisplayName());
         }
-
-    }
-
-
-    @Override
-    public void boot() {
     }
 
     @Override
-    public void shut() {
-    }
+    public void boot() { }
 
+    @Override
+    public void shut() { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
         Driver.sendMessage(event, getTime());
     }
 
-
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        event.getGroup().sendMessage(new At(event.getSender().getId()).plus("\r\n" + getTime()));
+        Driver.sendAtMessage(event, getTime());
     }
 
-
     private String getTime() {
-
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-
         if (hour == null || hour != currentHour) {
             hour = currentHour;
             current = System.currentTimeMillis();
-
             StringBuilder builder = new StringBuilder();
-
             builder.append("世界协调时(UTC) ").append(LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
-
             for (Map.Entry<String, TimeZone> entry : TIME_ZONE.entrySet()) {
                 TimeZone value = entry.getValue();
                 builder.append(entry.getKey()).append(" ").append(LoggerX.formatTime("HH:mm", value)).append(format(value)).append("\r\n");
             }
-
             builder.append("亚洲中国(UTC+8) ").append(LoggerX.formatTime("HH:mm", zone_CN));
-
             cache = builder.toString();
         }
-
         return cache;
-
     }
 
 
@@ -136,14 +110,11 @@ public class Time extends EventHandlerExecutor {
      */
     private String format(TimeZone timezone) {
 
-
         boolean isEnableDST = false;
         boolean isDisableDST = false;
 
-
         StringBuilder builder = new StringBuilder();
 
-        Calendar today = Calendar.getInstance(timezone);
         Calendar begin = Calendar.getInstance(timezone);
 
         begin.set(Calendar.MONTH, Calendar.FEBRUARY);

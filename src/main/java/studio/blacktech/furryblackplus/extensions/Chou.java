@@ -6,9 +6,6 @@ import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
 import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.exception.BotException;
@@ -26,19 +23,19 @@ import java.util.stream.Stream;
 
 
 @Executor(
-        artificial = "Executor_Chou",
-        name = "随机抽人",
-        description = "从当前的群随机抽一个人",
-        privacy = {
-                "获取命令发送人",
-                "获取群成员列表"
-        },
-        users = false,
-        command = "chou",
-        usage = {
-                "/chou - 抽一个人",
-                "/chou XXX - 以某事抽一个人"
-        }
+    artificial = "Executor_Chou",
+    name = "随机抽人",
+    description = "从当前的群随机抽一个人",
+    privacy = {
+        "获取命令发送人",
+        "获取群成员列表"
+    },
+    users = false,
+    command = "chou",
+    usage = {
+        "/chou - 抽一个人",
+        "/chou XXX - 以某事抽一个人"
+    }
 )
 public class Chou extends EventHandlerExecutor {
 
@@ -88,80 +85,47 @@ public class Chou extends EventHandlerExecutor {
     }
 
     @Override
-    public void boot() throws BotException {
-
-    }
+    public void boot() throws BotException { }
 
     @Override
-    public void shut() throws BotException {
-
-    }
-
+    public void shut() throws BotException { }
 
     @Override
-    public void handleUsersMessage(UserMessageEvent event, Command command) {
-
-    }
-
+    public void handleUsersMessage(UserMessageEvent event, Command command) { }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-
-
         Group group = event.getGroup();
         Member sender = event.getSender();
         ContactList<NormalMember> members = group.getMembers();
-
         if (members.size() < 4) {
-
-            MessageChain messages = new MessageChainBuilder()
-                                            .append(new At(sender.getId()))
-                                            .append("可用成员人数不足，无法使用此功能。")
-                                            .build();
-            Driver.sendAtMessage(event, messages);
-            return;
-
+            Driver.sendAtMessage(event, "可用成员人数不足，无法使用此功能");
+        } else {
+            long botID = Driver.getBotID();
+            long userID = sender.getId();
+            long groupID = group.getId();
+            Stream<Long> range = members.stream().map(Member::getId).filter(item -> item != botID && item != userID);
+            if (EXCLUDE.containsKey(groupID)) {
+                List<Long> list = EXCLUDE.get(groupID);
+                if (!list.isEmpty()) range = range.filter(item -> !list.contains(item));
+            }
+            List<Long> list = range.collect(Collectors.toUnmodifiableList());
+            int size = list.size();
+            if (size < 2) {
+                Driver.sendAtMessage(event, "可用成员人数不足，无法使用此功能。");
+            } else {
+                Long memberID = list.get(ThreadLocalRandom.current().nextInt(size));
+                Member member = Driver.getMemberOrFail(groupID, memberID);
+                StringBuilder builder = new StringBuilder();
+                if (command.getParameterLength() > 0) {
+                    builder.append("因为: ");
+                    builder.append(command.getCommandBody(200));
+                    builder.append("\r\n");
+                }
+                builder.append("抽中了: ");
+                builder.append(Driver.getFormattedNickName(member));
+                Driver.sendAtMessage(event, builder.toString());
+            }
         }
-
-        long botID = Driver.getBotID();
-        long userID = sender.getId();
-        long groupID = group.getId();
-
-        Stream<Long> range = members.stream().map(Member::getId)
-                                     .filter(item -> item != botID)
-                                     .filter(item -> item != userID);
-
-        if (EXCLUDE.containsKey(groupID)) {
-            List<Long> list = EXCLUDE.get(groupID);
-            if (!list.isEmpty()) range = range.filter(item -> !list.contains(item));
-        }
-
-        List<Long> list = range.collect(Collectors.toUnmodifiableList());
-
-        int size = list.size();
-
-        if (size < 2) {
-            Driver.sendMessage(event, "可用成员人数不足，无法使用此功能。");
-            return;
-        }
-
-        Long memberID = list.get(ThreadLocalRandom.current().nextInt(size));
-
-        Member member = Driver.getMemberOrFail(groupID, memberID);
-
-        StringBuilder builder = new StringBuilder();
-
-        if (command.getParameterLength() > 0) {
-            builder.append("因为: ");
-            builder.append(command.getCommandBody(200));
-            builder.append("\r\n");
-        }
-
-        builder.append("抽中了: ");
-        builder.append(Driver.getFormattedNickName(member));
-
-        Driver.sendMessage(event, builder.toString());
     }
-
-
 }

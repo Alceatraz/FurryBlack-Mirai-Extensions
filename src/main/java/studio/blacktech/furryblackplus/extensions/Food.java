@@ -19,18 +19,18 @@ import java.util.concurrent.ThreadLocalRandom;
  * 这功能是三木提的
  */
 @Executor(
-        artificial = "Executor_Food",
-        name = "外卖吃什么",
-        description = "随机选择外卖吃什么 解决选择困难",
-        privacy = {
-                "获取命令发送人"
-        },
-        command = "food",
-        usage = {
-                "/food - 全范围抽取",
-                "/food XXX - 某类别抽取",
-                "/food list - 列出所有分类",
-        }
+    artificial = "Executor_Food",
+    name = "外卖吃什么",
+    description = "随机选择外卖吃什么 解决选择困难",
+    privacy = {
+        "获取命令发送人"
+    },
+    command = "food",
+    usage = {
+        "/food - 全范围抽取",
+        "/food XXX - 某类别抽取",
+        "/food list - 列出所有分类",
+    }
 )
 public class Food extends EventHandlerExecutor {
 
@@ -93,27 +93,20 @@ public class Food extends EventHandlerExecutor {
 
 
     @Override
-    public void boot() {
-
-    }
+    public void boot() { }
 
     @Override
-    public void shut() {
-
-    }
-
+    public void shut() { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
         Driver.sendMessage(event, generate(command));
     }
 
-
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
         Driver.sendMessage(event, generate(command));
     }
-
 
     public String generate(Command command) {
         if (command.hasCommandBody()) {
@@ -138,7 +131,6 @@ public class Food extends EventHandlerExecutor {
             return FOOD.random();
         }
     }
-
 
     public static class FoodStorage {
 

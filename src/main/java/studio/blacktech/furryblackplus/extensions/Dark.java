@@ -15,17 +15,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 @Executor(
-        artificial = "Executor_Dark",
-        name = "挑hei选an美liao食li",
-        description = "白熊精选美食 1.0版",
-        privacy = {
-                "获取命令发送人"
-        },
-        command = "dark",
-        usage = {
-                "/dark - 使用随机种食材随机生成一些吃完了会死的东西",
-                "/dark 数字 - 使用指定种食材随机生成一些没准吃完了不会死的东西",
-        }
+    artificial = "Executor_Dark",
+    name = "挑hei选an美liao食li",
+    description = "白熊精选美食 1.0版",
+    privacy = {
+        "获取命令发送人"
+    },
+    command = "dark",
+    usage = {
+        "/dark - 使用随机种食材随机生成一些吃完了会死的东西",
+        "/dark 数字 - 使用指定种食材随机生成一些没准吃完了不会死的东西",
+    }
 )
 public class Dark extends EventHandlerExecutor {
 
@@ -99,36 +99,25 @@ public class Dark extends EventHandlerExecutor {
 
     }
 
+    @Override
+    public void boot() throws BotException { }
 
     @Override
-    public void boot() throws BotException {
-
-    }
-
-    @Override
-    public void shut() throws BotException {
-
-    }
-
+    public void shut() throws BotException { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
         Driver.sendMessage(event, generate(command));
     }
 
-
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(command));
+        Driver.sendAtMessage(event, generate(command));
     }
 
-
     private String generate(Command command) {
-
         StringBuilder builder = new StringBuilder();
-
         int size;
-
         if (command.hasCommandBody()) {
             try {
                 size = Integer.parseInt(command.getParameterSegment(0));
@@ -142,21 +131,14 @@ public class Dark extends EventHandlerExecutor {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             size = random.nextInt(4) + 2;
         }
-
         builder.append(generate(size));
-
         return builder.toString();
-
     }
 
-
     private String generate(int size) {
-
         ThreadLocalRandom random = ThreadLocalRandom.current();
-
         List<String> USED_COOK_METHOD = new ArrayList<>(size);
         List<String> USED_INGREDIENTS = new ArrayList<>(size);
-
         for (int i = 1; i < size; i++) {
             String temp;
             do {
@@ -164,7 +146,6 @@ public class Dark extends EventHandlerExecutor {
             } while (USED_COOK_METHOD.contains(temp));
             USED_COOK_METHOD.add(temp);
         }
-
         for (int i = 0; i < size; i++) {
             String temp;
             do {
@@ -172,19 +153,13 @@ public class Dark extends EventHandlerExecutor {
             } while (USED_INGREDIENTS.contains(temp));
             USED_INGREDIENTS.add(temp);
         }
-
         size = size - 1;
-
         StringBuilder builder = new StringBuilder();
-
         for (int i = 0; i < size; i++) {
             builder.append(USED_INGREDIENTS.remove(0));
             builder.append(USED_COOK_METHOD.remove(0));
         }
-
         builder.append(USED_INGREDIENTS.remove(0));
-
         return builder.toString();
-
     }
 }

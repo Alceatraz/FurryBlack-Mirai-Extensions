@@ -11,16 +11,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 @Executor(
-        artificial = "Executor_Dice",
-        name = "骰子",
-        description = "七面骰子",
-        privacy = {
-                "获取命令发送人"
-        },
-        command = "dice",
-        usage = {
-                "/dice - 投掷一枚骰子"
-        }
+    artificial = "Executor_Dice",
+    name = "骰子",
+    description = "七面骰子",
+    privacy = {
+        "获取命令发送人"
+    },
+    command = "dice",
+    usage = {
+        "/dice - 投掷一枚骰子"
+    }
 )
 public class Dice extends EventHandlerExecutor {
 
@@ -30,35 +30,27 @@ public class Dice extends EventHandlerExecutor {
     }
 
 
-    @Override
-    public void init() {
-    }
+    private final static String[] DICE = {"0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
+
 
     @Override
-    public void boot() {
-    }
+    public void init() { }
 
     @Override
-    public void shut() {
-    }
+    public void boot() { }
 
+    @Override
+    public void shut() { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
         Driver.sendMessage(event, dice());
     }
 
-
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendMessage(event, dice());
+        Driver.sendAtMessage(event, dice());
     }
-
-
-    private final static String[] DICE = {
-            "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"
-    };
-
 
     private String dice() {
         int i = ThreadLocalRandom.current().nextInt(61);
@@ -69,10 +61,8 @@ public class Dice extends EventHandlerExecutor {
         }
     }
 
-
     private String diceNormal() {
         return DICE[ThreadLocalRandom.current().nextInt(5) + 1];
     }
-
 
 }

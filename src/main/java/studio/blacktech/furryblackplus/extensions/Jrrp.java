@@ -20,17 +20,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 @Executor(
-        artificial = "Executor_Jrrp",
-        name = "今日运气",
-        description = "查看今天的运气值 - 大失败酱",
-        privacy = {
-                "获取命令发送人",
-                "存储用户与运气对应表 - 每日UTC+8 00:00 清空"
-        },
-        command = "jrrp",
-        usage = {
-                "/jrrp - 查看今日运气"
-        }
+    artificial = "Executor_Jrrp",
+    name = "今日运气",
+    description = "查看今天的运气值 - 大失败酱",
+    privacy = {
+        "获取命令发送人",
+        "存储用户与运气对应表 - 每日UTC+8 00:00 清空"
+    },
+    command = "jrrp",
+    usage = {
+        "/jrrp - 查看今日运气"
+    }
 )
 public class Jrrp extends EventHandlerExecutor {
 
@@ -78,23 +78,23 @@ public class Jrrp extends EventHandlerExecutor {
     public void boot() {
         timer = new Timer();
         timer.scheduleAtFixedRate(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        JRRP.clear();
-                        try {
-                            FileWriter fileWriter = new FileWriter(JRRP_FILE, false);
-                            fileWriter.write("");
-                            fileWriter.flush();
-                            fileWriter.close();
-                        } catch (IOException exception) {
-                            exception.printStackTrace();
-                            logger.warning("清空数据失败", exception);
-                        }
+            new TimerTask() {
+                @Override
+                public void run() {
+                    JRRP.clear();
+                    try {
+                        FileWriter fileWriter = new FileWriter(JRRP_FILE, false);
+                        fileWriter.write("");
+                        fileWriter.flush();
+                        fileWriter.close();
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                        logger.warning("清空数据失败", exception);
                     }
-                },
-                DateTool.getNextDate(),
-                DateTool.durationDay()
+                }
+            },
+            DateTool.getNextDate(),
+            DateTool.durationDay()
         );
     }
 
@@ -126,12 +126,10 @@ public class Jrrp extends EventHandlerExecutor {
         Driver.sendMessage(event, generate(event.getSender().getId()));
     }
 
-
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
         Driver.sendMessage(event, generate(event.getSender().getId()));
     }
-
 
     private String generate(long userid) {
         int luck;
@@ -142,6 +140,5 @@ public class Jrrp extends EventHandlerExecutor {
         }
         return "今天的运气是" + luck + "% !!!";
     }
-
 
 }
