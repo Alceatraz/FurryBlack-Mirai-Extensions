@@ -48,7 +48,7 @@ public class Roll extends EventHandlerExecutor {
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendMessage(event, roll(command));
+        Driver.sendAtMessage(event, roll(command));
     }
 
     private String roll(Command command) {

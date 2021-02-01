@@ -128,7 +128,7 @@ public class Jrrp extends EventHandlerExecutor {
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(event.getSender().getId()));
+        Driver.sendAtMessage(event, generate(event.getSender().getId()));
     }
 
     private String generate(long userid) {

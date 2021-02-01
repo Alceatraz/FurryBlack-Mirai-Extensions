@@ -45,7 +45,7 @@ public class Echo extends EventHandlerExecutor {
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendMessage(event, command.getParameterLength() == 0 ? "Pang!" : command.getCommandBody());
+        Driver.sendAtMessage(event, command.getParameterLength() == 0 ? "Pang!" : command.getCommandBody());
     }
 
 

@@ -105,7 +105,7 @@ public class Food extends EventHandlerExecutor {
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(command));
+        Driver.sendAtMessage(event, generate(command));
     }
 
     public String generate(Command command) {
