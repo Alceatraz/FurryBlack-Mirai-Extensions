@@ -60,9 +60,4 @@ public class Dice extends EventHandlerExecutor {
             return DICE[i / 10 + 1];
         }
     }
-
-    private String diceNormal() {
-        return DICE[ThreadLocalRandom.current().nextInt(5) + 1];
-    }
-
 }
