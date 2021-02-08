@@ -136,9 +136,15 @@ public class Jrrp extends EventHandlerExecutor {
         if (JRRP.containsKey(userid)) {
             luck = JRRP.get(userid);
         } else {
-            JRRP.put(userid, luck = ThreadLocalRandom.current().nextInt(100));
+            JRRP.put(userid, luck = ThreadLocalRandom.current().nextInt(101));
         }
-        return "今天的运气是" + luck + "% !!!";
+        if (luck == 0) {
+            return "今天没有运气!!!";
+        } else if (luck == 100) {
+            return "今天运气爆表!!!";
+        } else {
+            return "今天的运气是" + luck + "% !!!";
+        }
     }
 
 }
