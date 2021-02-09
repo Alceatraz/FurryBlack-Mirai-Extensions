@@ -51,8 +51,8 @@ public class Dark extends EventHandlerExecutor {
         COOK_METHOD = new ArrayList<>();
         INGREDIENTS = new ArrayList<>();
 
-        File FILE_COOK_METHOD = initConfFile("cook_method.txt");
-        File FILE_INGREDIENTS = initConfFile("cook_ingredients.txt");
+        File FILE_COOK_METHOD = initConfFile("dark-verb.txt");
+        File FILE_INGREDIENTS = initConfFile("dark-item.txt");
 
         int i = 0;
 

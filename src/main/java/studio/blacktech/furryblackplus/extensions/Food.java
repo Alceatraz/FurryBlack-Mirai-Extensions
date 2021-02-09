@@ -51,7 +51,7 @@ public class Food extends EventHandlerExecutor {
 
         FOOD = new FoodStorage();
 
-        File FILE_TAKEOUT = initConfFile("takeout.txt");
+        File FILE_TAKEOUT = initConfFile("food-storage.txt");
 
 
         int i = 0;
