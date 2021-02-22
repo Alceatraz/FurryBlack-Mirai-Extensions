@@ -81,12 +81,14 @@ public class Jrrp extends EventHandlerExecutor {
             new TimerTask() {
                 @Override
                 public void run() {
-                    JRRP.clear();
                     try {
+                        JRRP.forEach((key, value) -> logger.debug("删除JRRP " + key + " ->" + value));
+                        JRRP.clear();
                         FileWriter fileWriter = new FileWriter(JRRP_FILE, false);
                         fileWriter.write("");
                         fileWriter.flush();
                         fileWriter.close();
+                        logger.info("清空JRRP数据");
                     } catch (IOException exception) {
                         exception.printStackTrace();
                         logger.warning("清空数据失败", exception);
