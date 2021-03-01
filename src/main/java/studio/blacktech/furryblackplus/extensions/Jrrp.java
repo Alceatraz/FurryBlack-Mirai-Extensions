@@ -77,32 +77,26 @@ public class Jrrp extends EventHandlerExecutor {
     @Override
     public void boot() {
         timer = new Timer();
-        timer.scheduleAtFixedRate(
-            new TimerTask() {
-                @Override
-                public void run() {
-                    logger.info("清空JRRP数据");
-                    JRRP.clear();
-                    try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
-                        fileWriter.write("");
-                        fileWriter.flush();
-                        fileWriter.close();
-                    } catch (Exception exception) {
-                        logger.warning("清空数据失败", exception);
-                    }
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                logger.info("清空JRRP数据");
+                JRRP.clear();
+                try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
+                    fileWriter.write("");
+                    fileWriter.flush();
+                } catch (Exception exception) {
+                    logger.warning("清空数据失败", exception);
                 }
-            },
-            DateTool.getNextDate(),
-            86400000L
-        );
+            }
+        }, DateTool.getNextDate(), 86400000L);
     }
 
 
     @Override
     public void shut() {
         timer.cancel();
-        try {
-            FileWriter fileWriter = new FileWriter(JRRP_FILE, false);
+        try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
             for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {
                 var k = entry.getKey();
                 var v = entry.getValue();
@@ -112,9 +106,7 @@ public class Jrrp extends EventHandlerExecutor {
                 fileWriter.write("\n");
             }
             fileWriter.flush();
-            fileWriter.close();
         } catch (IOException exception) {
-            exception.printStackTrace();
             logger.warning("保存数据失败", exception);
         }
     }

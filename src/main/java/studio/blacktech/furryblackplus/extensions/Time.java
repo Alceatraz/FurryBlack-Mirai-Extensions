@@ -6,6 +6,7 @@ import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.utilties.DateTool;
 import studio.blacktech.furryblackplus.core.utilties.LoggerX;
 
 import java.io.File;
@@ -93,12 +94,12 @@ public class Time extends EventHandlerExecutor {
             hour = currentHour;
             current = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
-            builder.append("世界协调时(UTC) ").append(LoggerX.formatTime("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
+            builder.append("世界协调时(UTC) ").append(DateTool.formatTime("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
             for (Map.Entry<String, TimeZone> entry : TIME_ZONE.entrySet()) {
                 TimeZone value = entry.getValue();
-                builder.append(entry.getKey()).append(" ").append(LoggerX.formatTime("HH:mm", value)).append(format(value)).append("\r\n");
+                builder.append(entry.getKey()).append(" ").append(DateTool.formatTime("HH:mm", value)).append(format(value)).append("\r\n");
             }
-            builder.append("亚洲中国(UTC+8) ").append(LoggerX.formatTime("HH:mm", zone_CN));
+            builder.append("亚洲中国(UTC+8) ").append(DateTool.formatTime("HH:mm", zone_CN));
             cache = builder.toString();
         }
         return cache;
@@ -139,8 +140,8 @@ public class Time extends EventHandlerExecutor {
 
         if (isEnableDST ^ isDisableDST) builder.append(" 夏令时");
 
-        int TZ_DATE = Integer.parseInt(LoggerX.formatTime("dd", timezone));
-        int E8_DATE = Integer.parseInt(LoggerX.formatTime("dd", zone_CN));
+        int TZ_DATE = Integer.parseInt(DateTool.formatTime("dd", timezone));
+        int E8_DATE = Integer.parseInt(DateTool.formatTime("dd", zone_CN));
 
         if (E8_DATE - TZ_DATE > 0) {
             builder.append(" 昨天,").append(TZ_DATE).append("日");

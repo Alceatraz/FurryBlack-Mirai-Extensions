@@ -12,7 +12,7 @@ import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
-import studio.blacktech.furryblackplus.core.utilties.LoggerX;
+import studio.blacktech.furryblackplus.core.utilties.DateTool;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -179,7 +179,7 @@ public class Roulette extends EventHandlerExecutor {
             }
 
             builder.append("剩余时间 - ");
-            builder.append(LoggerX.formatTime("mm:ss", round.getExpireTime().getTime() - current));
+            builder.append(DateTool.formatTime("mm:ss", round.getExpireTime().getTime() - current));
 
             Driver.sendMessage(event, new Face(Face.手枪).plus(builder.toString()));
 
