@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -40,7 +38,8 @@ public class Jrrp extends EventHandlerExecutor {
     }
 
 
-    private Timer timer;
+    private Thread thread;
+
     private Map<Long, Integer> JRRP;
 
     private File JRRP_FILE;
@@ -71,31 +70,50 @@ public class Jrrp extends EventHandlerExecutor {
             logger.seek("持久化文件已过期");
         }
 
+        thread = new Thread(this::schedule);
+
     }
 
 
     @Override
     public void boot() {
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                logger.info("清空JRRP数据");
-                JRRP.clear();
-                try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
-                    fileWriter.write("");
-                    fileWriter.flush();
-                } catch (Exception exception) {
-                    logger.warning("清空数据失败", exception);
-                }
+        thread.start();
+    }
+
+    private void schedule() {
+        while (true) {
+            long a = System.nanoTime();
+            long delay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
+            long b = System.nanoTime();
+            long delta = (b - a) / 100000;
+            try {
+                //noinspection BusyWait
+                Thread.sleep(delay - delta);
+            } catch (InterruptedException exception) {
+                break;
             }
-        }, DateTool.getNextDate(), 86400000L);
+            logger.info("开始清空JRRP数据");
+            JRRP.clear();
+            try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
+                fileWriter.write("");
+                fileWriter.flush();
+            } catch (Exception exception) {
+                logger.warning("清空数据失败", exception);
+            }
+            logger.info("结束清空JRRP数据");
+        }
+        logger.info("结束JRRP定时任务");
     }
 
 
     @Override
     public void shut() {
-        timer.cancel();
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException exception) {
+            logger.error("等待JRRP定时器结束失败", exception);
+        }
         try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
             for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {
                 var k = entry.getKey();
