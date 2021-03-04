@@ -8,8 +8,8 @@ import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Executor(
@@ -67,7 +67,7 @@ public class Acon extends EventHandlerExecutor {
 
     @Override
     public void init() {
-        AIR_CONDITIONS = new HashMap<>();
+        AIR_CONDITIONS = new ConcurrentHashMap<>();
     }
 
     @Override

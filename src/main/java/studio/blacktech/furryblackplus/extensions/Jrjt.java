@@ -2,6 +2,8 @@ package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
@@ -13,36 +15,36 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 
 @Executor(
-    artificial = "Executor_Jrrp",
-    name = "今日运气",
-    description = "查看今天的运气值 - 大失败酱",
-    privacy = {
-        "获取命令发送人",
-        "存储用户与运气对应表 - 每日UTC+8 00:00 清空"
-    },
-    command = "jrrp",
+    artificial = "Executor_jrjt",
+    name = "沙雕软件-今日鸡汤",
+    description = "https://shadiao.app的快捷方式",
+    command = "jrjt",
     usage = {
-        "/jrrp - 查看今日运气"
+        "/jrjt - 每天送你一碗热气腾腾的翔"
     }
 )
-public class Jrrp extends EventHandlerExecutor {
+public class Jrjt extends EventHandlerExecutor {
 
 
-    public Jrrp(ExecutorInfo INFO) {
+    public Jrjt(ExecutorInfo INFO) {
         super(INFO);
     }
 
 
     private Thread thread;
 
-    private Map<Long, Integer> JRRP;
+    private Map<Long, String> JRJT;
 
-    private File JRRP_FILE;
+    private Request request;
+    private OkHttpClient httpClient;
+
+    private File JRJT_FILE;
 
 
     @Override
@@ -51,24 +53,32 @@ public class Jrrp extends EventHandlerExecutor {
         initRootFolder();
         initDataFolder();
 
-        JRRP_FILE = initDataFile("jrrp.txt");
+        JRJT_FILE = initDataFile("jrjt.txt");
 
         Calendar lastModified = Calendar.getInstance();
-        lastModified.setTimeInMillis(JRRP_FILE.lastModified());
+        lastModified.setTimeInMillis(JRJT_FILE.lastModified());
 
-        JRRP = new ConcurrentHashMap<>();
+        JRJT = new ConcurrentHashMap<>();
 
         if (Calendar.getInstance().get(Calendar.DATE) == lastModified.get(Calendar.DATE)) {
-            for (String line : readFile(JRRP_FILE)) {
+            for (String line : readFile(JRJT_FILE)) {
                 String[] temp = line.split(":");
                 Long user = Long.parseLong(temp[0].trim());
-                Integer jrrp = Integer.parseInt(temp[1].trim());
-                JRRP.put(user, jrrp);
+                JRJT.put(user, temp[1].trim());
             }
-            logger.seek("从持久化文件中读取了 " + JRRP.size() + "条数据");
+            logger.seek("从持久化文件中读取了 " + JRJT.size() + "条数据");
         } else {
             logger.seek("持久化文件已过期");
         }
+
+        JRJT = new ConcurrentHashMap<>();
+        httpClient = new OkHttpClient.Builder()
+                         .callTimeout(2, TimeUnit.SECONDS)
+                         .readTimeout(2, TimeUnit.SECONDS)
+                         .writeTimeout(2, TimeUnit.SECONDS)
+                         .connectTimeout(2, TimeUnit.SECONDS)
+                         .build();
+        request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
 
         thread = new Thread(this::schedule);
 
@@ -92,17 +102,17 @@ public class Jrrp extends EventHandlerExecutor {
             } catch (InterruptedException exception) {
                 break;
             }
-            logger.info("开始清空JRRP数据");
-            JRRP.clear();
-            try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
+            logger.info("开始清空JRJT数据");
+            JRJT.clear();
+            try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
                 fileWriter.write("");
                 fileWriter.flush();
             } catch (Exception exception) {
                 logger.warning("清空数据失败", exception);
             }
-            logger.info("结束清空JRRP数据");
+            logger.info("结束清空JRJT数据");
         }
-        logger.info("结束JRRP定时任务");
+        logger.info("结束JRJT定时任务");
     }
 
 
@@ -112,15 +122,15 @@ public class Jrrp extends EventHandlerExecutor {
         try {
             thread.join();
         } catch (InterruptedException exception) {
-            logger.error("等待JRRP定时器结束失败", exception);
+            logger.error("等待JRJT定时器结束失败", exception);
         }
-        try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
-            for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {
+        try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
+            for (Map.Entry<Long, String> entry : JRJT.entrySet()) {
                 var k = entry.getKey();
                 var v = entry.getValue();
                 fileWriter.write(String.valueOf(k));
                 fileWriter.write(":");
-                fileWriter.write(String.valueOf(v));
+                fileWriter.write(v);
                 fileWriter.write("\n");
             }
             fileWriter.flush();
@@ -132,28 +142,29 @@ public class Jrrp extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(event.getSender().getId()));
+        try {
+            Driver.sendMessage(event, generate(event.getSender().getId()));
+        } catch (Exception ignore) {
+
+        }
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, generate(event.getSender().getId()));
+        try {
+            Driver.sendAtMessage(event, generate(event.getSender().getId()));
+        } catch (Exception ignore) {
+        }
     }
 
-    private String generate(long userid) {
-        int luck;
-        if (JRRP.containsKey(userid)) {
-            luck = JRRP.get(userid);
+    private String generate(long user) throws IOException {
+        String message;
+        if (JRJT.containsKey(user)) {
+            message = JRJT.get(user);
         } else {
-            JRRP.put(userid, luck = ThreadLocalRandom.current().nextInt(101));
+            JRJT.put(user, message = "今日鸡汤: " + Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
         }
-        if (luck == 0) {
-            return "今天没有运气!!!";
-        } else if (luck == 100) {
-            return "今天运气爆表!!!";
-        } else {
-            return "今天的运气是" + luck + "% !!!";
-        }
+        return message;
     }
 
 }
