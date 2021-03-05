@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Executor(
-    artificial = "Executor_JRJT",
+    artificial = "Executor_Jrjt",
     name = "沙雕软件-今日鸡汤",
     description = "https://shadiao.app的快捷方式",
     command = "jrjt",
@@ -60,6 +60,15 @@ public class Jrjt extends EventHandlerExecutor {
 
         JRJT = new ConcurrentHashMap<>();
 
+        httpClient = new OkHttpClient.Builder()
+                         .callTimeout(2, TimeUnit.SECONDS)
+                         .readTimeout(2, TimeUnit.SECONDS)
+                         .writeTimeout(2, TimeUnit.SECONDS)
+                         .connectTimeout(2, TimeUnit.SECONDS)
+                         .build();
+
+        request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
+
         if (Calendar.getInstance().get(Calendar.DATE) == lastModified.get(Calendar.DATE)) {
             for (String line : readFile(JRJT_FILE)) {
                 String[] temp = line.split(":");
@@ -71,23 +80,14 @@ public class Jrjt extends EventHandlerExecutor {
             logger.seek("持久化文件已过期");
         }
 
-        JRJT = new ConcurrentHashMap<>();
-        httpClient = new OkHttpClient.Builder()
-                         .callTimeout(2, TimeUnit.SECONDS)
-                         .readTimeout(2, TimeUnit.SECONDS)
-                         .writeTimeout(2, TimeUnit.SECONDS)
-                         .connectTimeout(2, TimeUnit.SECONDS)
-                         .build();
-        request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
-
         thread = new Thread(this::schedule);
-
     }
 
 
     @Override
     public void boot() {
-        thread.start();
+        long initialDelay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
+        Driver.scheduleWithFixedDelay(this.thread, initialDelay, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Jrjt extends EventHandlerExecutor {
         try {
             thread.join();
         } catch (InterruptedException exception) {
-            logger.error("等待JRJT定时器结束失败", exception);
+            logger.error("等待计划任务结束失败", exception);
         }
         try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
             for (Map.Entry<Long, String> entry : JRJT.entrySet()) {
@@ -142,26 +142,17 @@ public class Jrjt extends EventHandlerExecutor {
     }
 
     private void schedule() {
-        while (true) {
-            long delay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
-            logger.debug("等待时间 " + delay);
-            try {
-                //noinspection BusyWait
-                Thread.sleep(delay);
-            } catch (InterruptedException exception) {
-                break;
-            }
-            logger.info("数据清空开始");
-            JRJT.clear();
-            try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
-                fileWriter.write("");
-                fileWriter.flush();
-            } catch (IOException exception) {
-                logger.warning("清空数据失败", exception);
-            }
-            logger.info("数据清空结束");
+        logger.verbose("开始执行计划任务");
+        JRJT.clear();
+        logger.verbose("容器清空完成");
+        try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
+            fileWriter.write("");
+            fileWriter.flush();
+        } catch (IOException exception) {
+            logger.warning("清空数据失败", exception);
         }
-        logger.info("结束定时任务");
+        logger.verbose("文件清空完成");
+        logger.verbose("结束执行计划任务");
     }
 
 }
