@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Executor(
-    artificial = "Executor_jrjt",
+    artificial = "Executor_JRJT",
     name = "沙雕软件-今日鸡汤",
     description = "https://shadiao.app的快捷方式",
     command = "jrjt",
@@ -90,32 +90,6 @@ public class Jrjt extends EventHandlerExecutor {
         thread.start();
     }
 
-    private void schedule() {
-        while (true) {
-            long a = System.nanoTime();
-            long delay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
-            long b = System.nanoTime();
-            long delta = (b - a) / 100000;
-            try {
-                //noinspection BusyWait
-                Thread.sleep(delay - delta);
-            } catch (InterruptedException exception) {
-                break;
-            }
-            logger.info("开始清空JRJT数据");
-            JRJT.clear();
-            try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
-                fileWriter.write("");
-                fileWriter.flush();
-            } catch (Exception exception) {
-                logger.warning("清空数据失败", exception);
-            }
-            logger.info("结束清空JRJT数据");
-        }
-        logger.info("结束JRJT定时任务");
-    }
-
-
     @Override
     public void shut() {
         thread.interrupt();
@@ -165,6 +139,29 @@ public class Jrjt extends EventHandlerExecutor {
             JRJT.put(user, message = "今日鸡汤: " + Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
         }
         return message;
+    }
+
+    private void schedule() {
+        while (true) {
+            long delay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
+            logger.debug("等待时间 " + delay);
+            try {
+                //noinspection BusyWait
+                Thread.sleep(delay);
+            } catch (InterruptedException exception) {
+                break;
+            }
+            logger.info("数据清空开始");
+            JRJT.clear();
+            try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
+                fileWriter.write("");
+                fileWriter.flush();
+            } catch (IOException exception) {
+                logger.warning("清空数据失败", exception);
+            }
+            logger.info("数据清空结束");
+        }
+        logger.info("结束定时任务");
     }
 
 }

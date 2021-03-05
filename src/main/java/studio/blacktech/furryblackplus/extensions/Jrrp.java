@@ -11,8 +11,10 @@ import studio.blacktech.furryblackplus.core.utilties.DateTool;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -80,32 +82,6 @@ public class Jrrp extends EventHandlerExecutor {
         thread.start();
     }
 
-    private void schedule() {
-        while (true) {
-            long a = System.nanoTime();
-            long delay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
-            long b = System.nanoTime();
-            long delta = (b - a) / 100000;
-            try {
-                //noinspection BusyWait
-                Thread.sleep(delay - delta);
-            } catch (InterruptedException exception) {
-                break;
-            }
-            logger.info("开始清空JRRP数据");
-            JRRP.clear();
-            try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
-                fileWriter.write("");
-                fileWriter.flush();
-            } catch (Exception exception) {
-                logger.warning("清空数据失败", exception);
-            }
-            logger.info("结束清空JRRP数据");
-        }
-        logger.info("结束JRRP定时任务");
-    }
-
-
     @Override
     public void shut() {
         thread.interrupt();
@@ -154,6 +130,29 @@ public class Jrrp extends EventHandlerExecutor {
         } else {
             return "今天的运气是" + luck + "% !!!";
         }
+    }
+
+    private void schedule() {
+        while (true) {
+            long delay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
+            logger.debug("等待时间 " + delay);
+            try {
+                //noinspection BusyWait
+                Thread.sleep(delay);
+            } catch (InterruptedException exception) {
+                break;
+            }
+            logger.info("数据清空开始");
+            JRRP.clear();
+            try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
+                fileWriter.write("");
+                fileWriter.flush();
+            } catch (IOException exception) {
+                logger.warning("清空数据失败", exception);
+            }
+            logger.info("数据清空结束");
+        }
+        logger.info("结束定时任务");
     }
 
 }
