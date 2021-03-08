@@ -20,6 +20,10 @@
 
 ## CHANGELOG
 
+### 0.4.21-1
+
+- 修复jrjt的一个BUG
+
 ### 0.4.21
 
 - 定时器bug修好了 去掉所有verbose

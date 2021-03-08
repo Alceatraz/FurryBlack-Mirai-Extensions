@@ -130,7 +130,7 @@ public class Jrjt extends EventHandlerExecutor {
             message = JRJT.get(user);
         } else {
             try {
-                JRJT.put(user, message = "今日鸡汤: " + Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
+                JRJT.put(user, message = "今日鸡汤 " + Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
             } catch (IOException exception) {
                 logger.error("沙雕服务器连接失败", exception);
                 message = "沙雕App的服务器炸了";
