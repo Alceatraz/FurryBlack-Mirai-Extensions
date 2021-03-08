@@ -116,43 +116,37 @@ public class Jrjt extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        try {
-            Driver.sendMessage(event, generate(event.getSender().getId()));
-        } catch (Exception ignore) {
-
-        }
+        Driver.sendMessage(event, generate(event.getSender().getId()));
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        try {
-            Driver.sendAtMessage(event, generate(event.getSender().getId()));
-        } catch (Exception ignore) {
-        }
+        Driver.sendAtMessage(event, generate(event.getSender().getId()));
     }
 
-    private String generate(long user) throws IOException {
+    private String generate(long user) {
         String message;
         if (JRJT.containsKey(user)) {
             message = JRJT.get(user);
         } else {
-            JRJT.put(user, message = "今日鸡汤: " + Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
+            try {
+                JRJT.put(user, message = "今日鸡汤: " + Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
+            } catch (IOException exception) {
+                logger.error("沙雕服务器连接失败", exception);
+                message = "沙雕App的服务器炸了";
+            }
         }
         return message;
     }
 
     private void schedule() {
-        logger.verbose("开始执行计划任务");
         JRJT.clear();
-        logger.verbose("容器清空完成");
         try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
             fileWriter.write("");
             fileWriter.flush();
         } catch (IOException exception) {
             logger.warning("清空数据失败", exception);
         }
-        logger.verbose("文件清空完成");
-        logger.verbose("结束执行计划任务");
     }
 
 }

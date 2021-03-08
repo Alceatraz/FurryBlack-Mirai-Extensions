@@ -132,17 +132,13 @@ public class Jrrp extends EventHandlerExecutor {
     }
 
     private void schedule() {
-        logger.verbose("开始执行计划任务");
         JRRP.clear();
-        logger.verbose("容器清空完成");
         try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
             fileWriter.write("");
             fileWriter.flush();
         } catch (IOException exception) {
             logger.warning("清空数据失败", exception);
         }
-        logger.verbose("文件清空完成");
-        logger.verbose("结束执行计划任务");
     }
 
 }
