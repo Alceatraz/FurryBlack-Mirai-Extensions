@@ -20,6 +20,11 @@
 
 ## CHANGELOG
 
+### 0.5.0
+
+- 更新内核
+- 适配getRunner
+
 ### 0.4.21-1
 
 - 修复jrjt的一个BUG
