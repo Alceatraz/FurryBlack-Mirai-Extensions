@@ -13,6 +13,8 @@ import studio.blacktech.furryblackplus.core.utilties.DateTool;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Objects;
@@ -70,10 +72,13 @@ public class Jrjt extends EventHandlerExecutor {
         request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
 
         if (Calendar.getInstance().get(Calendar.DATE) == lastModified.get(Calendar.DATE)) {
+            Base64.Decoder decoder = Base64.getDecoder();
             for (String line : readFile(JRJT_FILE)) {
                 String[] temp = line.split(":");
                 Long user = Long.parseLong(temp[0].trim());
-                JRJT.put(user, temp[1].trim());
+                byte[] decode = decoder.decode(temp[1]);
+                String string = new String(decode, StandardCharsets.UTF_8);
+                JRJT.put(user, string);
             }
             logger.seek("从持久化文件中读取了 " + JRJT.size() + "条数据");
         } else {
@@ -104,7 +109,7 @@ public class Jrjt extends EventHandlerExecutor {
                 var v = entry.getValue();
                 fileWriter.write(String.valueOf(k));
                 fileWriter.write(":");
-                fileWriter.write(v);
+                fileWriter.write(Base64.getEncoder().encodeToString(v.getBytes(StandardCharsets.UTF_8)));
                 fileWriter.write("\n");
             }
             fileWriter.flush();
@@ -130,7 +135,7 @@ public class Jrjt extends EventHandlerExecutor {
             message = JRJT.get(user);
         } else {
             try {
-                JRJT.put(user, message = "今日鸡汤 " + Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
+                JRJT.put(user, message = Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
             } catch (IOException exception) {
                 logger.error("沙雕服务器连接失败", exception);
                 message = "沙雕App的服务器炸了";
