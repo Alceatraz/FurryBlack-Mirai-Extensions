@@ -88,6 +88,7 @@ public class Jrrp extends EventHandlerExecutor {
             thread.join();
         } catch (InterruptedException exception) {
             logger.error("等待计划任务结束失败", exception);
+            if (Driver.isDrop()) Thread.currentThread().interrupt();
         }
         try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
             for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {
@@ -120,7 +121,8 @@ public class Jrrp extends EventHandlerExecutor {
         if (JRRP.containsKey(userid)) {
             luck = JRRP.get(userid);
         } else {
-            JRRP.put(userid, luck = ThreadLocalRandom.current().nextInt(101));
+            luck = ThreadLocalRandom.current().nextInt(101);
+            JRRP.put(userid, luck);
         }
         if (luck == 0) {
             return "今天没有运气!!!";

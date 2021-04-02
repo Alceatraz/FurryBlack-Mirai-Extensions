@@ -96,10 +96,12 @@ public class Roulette extends EventHandlerExecutor {
             round = rounds.get(group.getId());
             if (round.getExpireTime().getTime() - current < 0) {
                 rounds.remove(group.getId());
-                rounds.put(group.getId(), round = new RouletteRound());
+                round = new RouletteRound();
+                rounds.put(group.getId(), round);
             }
         } else {
-            rounds.put(group.getId(), round = new RouletteRound());
+            round = new RouletteRound();
+            rounds.put(group.getId(), round);
         }
 
         //

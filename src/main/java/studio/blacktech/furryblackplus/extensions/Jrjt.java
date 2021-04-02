@@ -102,6 +102,7 @@ public class Jrjt extends EventHandlerExecutor {
             thread.join();
         } catch (InterruptedException exception) {
             logger.error("等待计划任务结束失败", exception);
+            if (Driver.isDrop()) Thread.currentThread().interrupt();
         }
         try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
             for (Map.Entry<Long, String> entry : JRJT.entrySet()) {
@@ -135,7 +136,8 @@ public class Jrjt extends EventHandlerExecutor {
             message = JRJT.get(user);
         } else {
             try {
-                JRJT.put(user, message = Objects.requireNonNull(httpClient.newCall(request).execute().body()).string());
+                message = Objects.requireNonNull(httpClient.newCall(request).execute().body()).string();
+                JRJT.put(user, message);
             } catch (IOException exception) {
                 logger.error("沙雕服务器连接失败", exception);
                 message = "沙雕App的服务器炸了";

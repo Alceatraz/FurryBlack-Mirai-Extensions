@@ -75,7 +75,8 @@ public class Chou extends EventHandlerExecutor {
             if (EXCLUDE.containsKey(group)) {
                 tempList = EXCLUDE.get(group);
             } else {
-                EXCLUDE.put(group, tempList = new ArrayList<>());
+                tempList = new ArrayList<>();
+                EXCLUDE.put(group, tempList);
             }
 
             tempList.add(member);

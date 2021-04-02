@@ -30,7 +30,7 @@ public class Dice extends EventHandlerExecutor {
     }
 
 
-    private final static String[] DICE = {"0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
+    private static final String[] DICES = {"0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
 
 
     @Override
@@ -55,9 +55,9 @@ public class Dice extends EventHandlerExecutor {
     private String dice() {
         int i = ThreadLocalRandom.current().nextInt(61);
         if (i == 0) {
-            return DICE[0];
+            return DICES[0];
         } else {
-            return DICE[i / 10 + 1];
+            return DICES[i / 10 + 1];
         }
     }
 }

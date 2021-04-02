@@ -86,7 +86,8 @@ public class Acon extends EventHandlerExecutor {
         if (AIR_CONDITIONS.containsKey(group)) {
             airCondition = AIR_CONDITIONS.get(group);
         } else {
-            AIR_CONDITIONS.put(group, airCondition = new AirCondition());
+            airCondition = new AirCondition();
+            AIR_CONDITIONS.put(group, airCondition);
         }
         if (command.hasCommandBody()) {
             switch (command.getParameterSegment(0)) {

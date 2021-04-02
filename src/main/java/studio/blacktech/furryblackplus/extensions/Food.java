@@ -76,18 +76,16 @@ public class Food extends EventHandlerExecutor {
                     String trim = temp3.trim();
                     FOOD.add(temp1[0], trim);
                     i++;
-                    // logger.seek("添加选项 " + temp1[0] + "-> " + trim);
                 }
             } else {
                 FOOD.add(temp1[0], temp1[1]);
                 i++;
-                //logger.seek("添加选项 " + temp1[0] + "-> " + temp1[1]);
             }
         }
 
         FOOD.update();
 
-        logger.seek("共计添加了" + i + "种" + FOOD.getSize() + "个类别");
+        logger.seek("共计添加了" + i + "种" + FOOD.getTypeSize() + "个类别");
 
     }
 
@@ -134,7 +132,7 @@ public class Food extends EventHandlerExecutor {
 
     public static class FoodStorage {
 
-        private int size;
+        private int typeSize;
         private String list;
         private final List<String> TYPE; // 存储所有分类
         private final Map<Integer, Integer> SIZE; // 存储分类的尺寸
@@ -154,16 +152,17 @@ public class Food extends EventHandlerExecutor {
             } else {
                 int size = TYPE.size();
                 TYPE.add(type);
-                ITEM.put(size, temp = new LinkedList<>());
+                temp = new LinkedList<>();
+                ITEM.put(size, temp);
             }
             temp.add(name);
         }
 
         public void update() {
-            size = TYPE.size();
-            for (int i = 0; i < size; i++) {
-                List<String> list = ITEM.get(i);
-                SIZE.put(i, list.size());
+            typeSize = TYPE.size();
+            for (int i = 0; i < typeSize; i++) {
+                List<String> temp = ITEM.get(i);
+                SIZE.put(i, temp.size());
             }
             int i = 0;
             StringBuilder builder = new StringBuilder();
@@ -184,23 +183,23 @@ public class Food extends EventHandlerExecutor {
 
         public String random() {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            return random(random.nextInt(size));
+            return random(random.nextInt(typeSize));
         }
 
         public String random(int type) {
             if (!SIZE.containsKey(type)) throw new IllegalArgumentException();
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int length = SIZE.get(type);
-            List<String> list = ITEM.get(type);
-            return list.get(random.nextInt(length));
+            List<String> temp = ITEM.get(type);
+            return temp.get(random.nextInt(length));
         }
 
         public String getList() {
             return list;
         }
 
-        public int getSize() {
-            return size;
+        public int getTypeSize() {
+            return typeSize;
         }
 
     }

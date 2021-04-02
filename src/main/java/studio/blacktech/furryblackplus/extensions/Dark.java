@@ -58,7 +58,6 @@ public class Dark extends EventHandlerExecutor {
 
         for (String line : readFile(FILE_COOK_METHOD)) {
             i++;
-            // logger.seek("添加方法 - " + line);
             COOK_METHOD.add(line);
         }
 
@@ -82,12 +81,10 @@ public class Dark extends EventHandlerExecutor {
                 for (String temp : temp1[1].split(",")) {
                     String trim = temp.trim();
                     INGREDIENTS.add(trim);
-                    // logger.seek("添加材料 - " + trim);
                     j++;
                 }
             } else {
                 INGREDIENTS.add(temp1[1]);
-                // logger.seek("添加材料 - " + temp1[1]);
                 j++;
             }
         }
