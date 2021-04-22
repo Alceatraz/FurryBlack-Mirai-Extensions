@@ -47,7 +47,7 @@ public class Jrrp extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {
+    public void load() {
 
         initRootFolder();
         initDataFolder();
@@ -88,7 +88,7 @@ public class Jrrp extends EventHandlerExecutor {
             thread.join();
         } catch (InterruptedException exception) {
             logger.error("等待计划任务结束失败", exception);
-            if (Driver.isDrop()) Thread.currentThread().interrupt();
+            if (Driver.isShutModeDrop()) Thread.currentThread().interrupt();
         }
         try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
             for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {

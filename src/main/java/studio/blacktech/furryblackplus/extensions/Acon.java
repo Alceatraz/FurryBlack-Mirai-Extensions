@@ -66,7 +66,7 @@ public class Acon extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {
+    public void load() {
         AIR_CONDITIONS = new ConcurrentHashMap<>();
     }
 

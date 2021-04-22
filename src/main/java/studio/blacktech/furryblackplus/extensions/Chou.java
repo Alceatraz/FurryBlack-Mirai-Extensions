@@ -49,7 +49,7 @@ public class Chou extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {
+    public void load() {
 
         initRootFolder();
         initConfFolder();

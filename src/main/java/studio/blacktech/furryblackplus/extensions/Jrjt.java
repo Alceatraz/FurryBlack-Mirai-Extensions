@@ -50,7 +50,7 @@ public class Jrjt extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {
+    public void load() {
 
         initRootFolder();
         initDataFolder();
@@ -102,7 +102,7 @@ public class Jrjt extends EventHandlerExecutor {
             thread.join();
         } catch (InterruptedException exception) {
             logger.error("等待计划任务结束失败", exception);
-            if (Driver.isDrop()) Thread.currentThread().interrupt();
+            if (Driver.isShutModeDrop()) Thread.currentThread().interrupt();
         }
         try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
             for (Map.Entry<Long, String> entry : JRJT.entrySet()) {

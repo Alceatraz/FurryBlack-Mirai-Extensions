@@ -78,7 +78,7 @@ public class Zhan extends EventHandlerExecutor {
     };
 
     @Override
-    public void init() { }
+    public void load() { }
 
     @Override
     public void boot() { }

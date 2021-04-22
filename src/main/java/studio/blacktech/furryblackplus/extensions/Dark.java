@@ -43,7 +43,7 @@ public class Dark extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {
+    public void load() {
 
         initRootFolder();
         initConfFolder();

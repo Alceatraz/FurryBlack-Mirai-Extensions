@@ -33,7 +33,7 @@ public class Roll extends EventHandlerExecutor {
 
 
     @Override
-    public void init() { }
+    public void load() { }
 
     @Override
     public void boot() { }

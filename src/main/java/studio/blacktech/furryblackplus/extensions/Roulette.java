@@ -52,7 +52,7 @@ public class Roulette extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {
+    public void load() {
         rounds = new HashMap<>();
     }
 
