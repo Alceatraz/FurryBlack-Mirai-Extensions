@@ -6,12 +6,11 @@ import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
-import studio.blacktech.furryblackplus.core.utilties.DateTool;
+import studio.blacktech.furryblackplus.core.utilties.TimeTool;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,12 +53,9 @@ public class Jrrp extends EventHandlerExecutor {
 
         JRRP_FILE = initDataFile("jrrp.txt");
 
-        Calendar lastModified = Calendar.getInstance();
-        lastModified.setTimeInMillis(JRRP_FILE.lastModified());
-
         JRRP = new ConcurrentHashMap<>();
 
-        if (Calendar.getInstance().get(Calendar.DATE) == lastModified.get(Calendar.DATE)) {
+        if (TimeTool.isToday(JRRP_FILE.lastModified())) {
             for (String line : readFile(JRRP_FILE)) {
                 String[] temp = line.split(":");
                 Long user = Long.parseLong(temp[0].trim());
@@ -77,8 +73,7 @@ public class Jrrp extends EventHandlerExecutor {
 
     @Override
     public void boot() {
-        long initialDelay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
-        Driver.scheduleWithFixedDelay(this.thread, initialDelay, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
+        Driver.scheduleAtNextDayFixedRate(this.thread, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
     }
 
     @Override

@@ -8,14 +8,13 @@ import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
-import studio.blacktech.furryblackplus.core.utilties.DateTool;
+import studio.blacktech.furryblackplus.core.utilties.TimeTool;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,9 +56,6 @@ public class Jrjt extends EventHandlerExecutor {
 
         JRJT_FILE = initDataFile("jrjt.txt");
 
-        Calendar lastModified = Calendar.getInstance();
-        lastModified.setTimeInMillis(JRJT_FILE.lastModified());
-
         JRJT = new ConcurrentHashMap<>();
 
         httpClient = new OkHttpClient.Builder()
@@ -71,7 +67,7 @@ public class Jrjt extends EventHandlerExecutor {
 
         request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
 
-        if (Calendar.getInstance().get(Calendar.DATE) == lastModified.get(Calendar.DATE)) {
+        if (TimeTool.isToday(JRJT_FILE.lastModified())) {
             Base64.Decoder decoder = Base64.getDecoder();
             for (String line : readFile(JRJT_FILE)) {
                 String[] temp = line.split(":");
@@ -91,8 +87,7 @@ public class Jrjt extends EventHandlerExecutor {
 
     @Override
     public void boot() {
-        long initialDelay = DateTool.getNextDate().getTime() - System.currentTimeMillis();
-        Driver.scheduleWithFixedDelay(this.thread, initialDelay, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
+        Driver.scheduleAtNextDayFixedRate(this.thread, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
     }
 
     @Override

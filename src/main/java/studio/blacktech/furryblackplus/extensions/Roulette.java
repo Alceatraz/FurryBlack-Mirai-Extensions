@@ -12,10 +12,10 @@ import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
-import studio.blacktech.furryblackplus.core.utilties.DateTool;
+import studio.blacktech.furryblackplus.core.utilties.LoggerX;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -94,7 +94,7 @@ public class Roulette extends EventHandlerExecutor {
 
         if (rounds.containsKey(group.getId())) {
             round = rounds.get(group.getId());
-            if (round.getExpireTime().getTime() - current < 0) {
+            if (round.getExpireTime().toEpochMilli() - current < 0) {
                 rounds.remove(group.getId());
                 round = new RouletteRound();
                 rounds.put(group.getId(), round);
@@ -181,7 +181,7 @@ public class Roulette extends EventHandlerExecutor {
             }
 
             builder.append("剩余时间 - ");
-            builder.append(DateTool.formatTime("mm:ss", round.getExpireTime().getTime() - current));
+            builder.append(LoggerX.format("mm:ss", round.getExpireTime().toEpochMilli() - current));
 
             Driver.sendMessage(event, new Face(Face.手枪).plus(builder.toString()));
 
@@ -192,13 +192,12 @@ public class Roulette extends EventHandlerExecutor {
 
     private static class RouletteRound {
 
-        private final Date expireTime = new Date(System.currentTimeMillis() + 600000);
+        private final Instant expireTime = Instant.ofEpochMilli(System.currentTimeMillis() + 600000);
         private final List<PlayerJetton> gamblers = new ArrayList<>(6);
 
         private boolean hint = true;
         private int loser = 6;
 
-        //
 
         public boolean join(GroupMessageEvent event, Command command) {
             if (gamblers.size() > 6) return false;
@@ -244,7 +243,7 @@ public class Roulette extends EventHandlerExecutor {
         }
 
 
-        public Date getExpireTime() {
+        public Instant getExpireTime() {
             return expireTime;
         }
 

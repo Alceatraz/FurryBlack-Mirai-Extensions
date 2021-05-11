@@ -6,13 +6,14 @@ import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
-import studio.blacktech.furryblackplus.core.utilties.DateTool;
+import studio.blacktech.furryblackplus.core.utilties.LoggerX;
 
 import java.io.File;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 
 @Executor(
@@ -35,15 +36,13 @@ public class Time extends EventHandlerExecutor {
     }
 
 
-    private static final TimeZone zone_00 = TimeZone.getTimeZone("UTC");
-    private static final TimeZone zone_CN = TimeZone.getTimeZone("Asia/Shanghai");
-
+    private static final ZoneId zone_00 = ZoneId.of("UTC");
+    private static final ZoneId zone_CN = ZoneId.of("Asia/Shanghai");
 
     private Integer hour;
     private String cache;
-    private long current;
 
-    private Map<String, TimeZone> TIME_ZONE;
+    private Map<String, ZoneId> TIME_ZONE;
 
 
     @Override
@@ -64,10 +63,10 @@ public class Time extends EventHandlerExecutor {
                 logger.warning("配置无效 " + line);
                 continue;
             }
-            TimeZone timeZone = TimeZone.getTimeZone(temp[1]);
-            if (!temp[1].equals("GMT") && timeZone.getID().equals("GMT")) logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
+            ZoneId timeZone = ZoneId.of(temp[1]);
+            if (!temp[1].equals("GMT") && timeZone.getId().equals("GMT")) logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
             TIME_ZONE.put(temp[0], timeZone);
-            logger.seek("添加时区 " + temp[0] + " -> " + timeZone.getDisplayName());
+            logger.seek("添加时区 " + temp[0] + " -> " + timeZone.getId());
         }
     }
 
@@ -88,69 +87,48 @@ public class Time extends EventHandlerExecutor {
     }
 
     private String getTime() {
-        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int currentHour = LocalDateTime.now().getHour();
         if (hour == null || hour != currentHour) {
             hour = currentHour;
-            current = System.currentTimeMillis();
             StringBuilder builder = new StringBuilder();
-            builder.append("世界协调时(UTC) ").append(DateTool.formatTime("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
-            for (Map.Entry<String, TimeZone> entry : TIME_ZONE.entrySet()) {
-                TimeZone value = entry.getValue();
-                builder.append(entry.getKey()).append(" ").append(DateTool.formatTime("HH:mm", value)).append(format(value)).append("\r\n");
+            builder.append("\r\n世界协调时(UTC) ").append(LoggerX.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
+            for (Map.Entry<String, ZoneId> entry : TIME_ZONE.entrySet()) {
+                ZoneId value = entry.getValue();
+                builder.append(entry.getKey());
+                builder.append(" ");
+                builder.append(LoggerX.format("HH:mm", value));
+                builder.append(suffix(value));
+                builder.append("\r\n");
             }
-            builder.append("亚洲中国(UTC+8) ").append(DateTool.formatTime("HH:mm", zone_CN));
+            builder.append("亚洲中国(UTC+8) ").append(LoggerX.format("HH:mm", zone_CN));
             cache = builder.toString();
         }
         return cache;
     }
 
 
-    /**
-     * 这个算法非常牛逼 而且我不打算解释
-     */
-    private String format(TimeZone timezone) {
-
-        boolean isEnableDST = false;
-        boolean isDisableDST = false;
-
+    public static StringBuilder suffix(ZoneId zone) {
+        LocalDateTime local = LocalDateTime.now(zone);
+        LocalDateTime china = LocalDateTime.now(zone_CN);
         StringBuilder builder = new StringBuilder();
-
-        Calendar begin = Calendar.getInstance(timezone);
-
-        begin.set(Calendar.MONTH, Calendar.FEBRUARY);
-        begin.set(Calendar.DATE, 0);
-        begin.set(Calendar.HOUR, 0);
-        begin.set(Calendar.MINUTE, 0);
-        begin.set(Calendar.SECOND, 0);
-
-        Calendar temp = Calendar.getInstance(timezone);
-
-        temp.setTime(begin.getTime());
-
-        for (long i = temp.getTimeInMillis(); i < current; i = temp.getTimeInMillis()) {
-            temp.add(Calendar.DATE, 1);
-            long t = temp.getTimeInMillis();
-            if (t - i < 86400000) {
-                isEnableDST = true;
-            } else if (t - i > 86400000) {
-                isDisableDST = true;
+        if (zone.getRules().isDaylightSavings(local.toInstant(ZoneOffset.of("+8")))) {
+            builder.append(" 夏令时");
+        }
+        int localDay = local.getDayOfYear();
+        int chinaDay = china.getDayOfYear();
+        //noinspection ConstantConditions
+        do {
+            if (chinaDay - localDay > 0) {
+                builder.append(" 昨天,");
+            } else if (chinaDay - localDay < 0) {
+                builder.append(" 明天,");
+            } else {
+                break;
             }
-        }
-
-        if (isEnableDST ^ isDisableDST) builder.append(" 夏令时");
-
-        int TZ_DATE = Integer.parseInt(DateTool.formatTime("dd", timezone));
-        int E8_DATE = Integer.parseInt(DateTool.formatTime("dd", zone_CN));
-
-        if (E8_DATE - TZ_DATE > 0) {
-            builder.append(" 昨天,").append(TZ_DATE).append("日");
-        } else if (E8_DATE - TZ_DATE < 0) {
-            builder.append(" 明天,").append(TZ_DATE).append("日");
-        }
-
-        return builder.toString();
-
+            builder.append(localDay);
+            builder.append("日");
+        } while (false);
+        return builder;
     }
-
 
 }
