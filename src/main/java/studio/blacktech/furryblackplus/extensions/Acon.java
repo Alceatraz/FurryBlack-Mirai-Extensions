@@ -250,7 +250,7 @@ public class Acon extends EventHandlerExecutor {
          */
         public String cost() {
             this.updateCost();
-            return "累计共耗电：" + cost.divide($1000) + "kW(" + cost.divide($HOUR) + ")度\r\n群主须支付: " + cost.divide($FACT) + "元";
+            return "累计共耗电：" + cost.divide($1000) + "kW(" + cost.divide($HOUR) + ")度\r\n群主须支付：" + cost.divide($FACT) + "元";
         }
 
     }
