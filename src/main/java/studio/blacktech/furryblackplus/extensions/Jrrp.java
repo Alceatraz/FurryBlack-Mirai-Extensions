@@ -48,26 +48,26 @@ public class Jrrp extends EventHandlerExecutor {
     @Override
     public void load() {
 
-        initRootFolder();
-        initDataFolder();
+        this.initRootFolder();
+        this.initDataFolder();
 
-        JRRP_FILE = initDataFile("jrrp.txt");
+        this.JRRP_FILE = this.initDataFile("jrrp.txt");
 
-        JRRP = new ConcurrentHashMap<>();
+        this.JRRP = new ConcurrentHashMap<>();
 
-        if (TimeTool.isToday(JRRP_FILE.lastModified())) {
-            for (String line : readFile(JRRP_FILE)) {
+        if (TimeTool.isToday(this.JRRP_FILE.lastModified())) {
+            for (String line : this.readFile(this.JRRP_FILE)) {
                 String[] temp = line.split(":");
                 Long user = Long.parseLong(temp[0].trim());
                 Integer jrrp = Integer.parseInt(temp[1].trim());
-                JRRP.put(user, jrrp);
+                this.JRRP.put(user, jrrp);
             }
-            logger.seek("从持久化文件中读取了 " + JRRP.size() + "条数据");
+            this.logger.seek("从持久化文件中读取了 " + this.JRRP.size() + "条数据");
         } else {
-            logger.seek("持久化文件已过期");
+            this.logger.seek("持久化文件已过期");
         }
 
-        thread = new Thread(this::schedule);
+        this.thread = new Thread(this::schedule);
     }
 
 
@@ -78,15 +78,15 @@ public class Jrrp extends EventHandlerExecutor {
 
     @Override
     public void shut() {
-        thread.interrupt();
+        this.thread.interrupt();
         try {
-            thread.join();
+            this.thread.join();
         } catch (InterruptedException exception) {
-            logger.error("等待计划任务结束失败", exception);
+            this.logger.error("等待计划任务结束失败", exception);
             if (Driver.isShutModeDrop()) Thread.currentThread().interrupt();
         }
-        try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
-            for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {
+        try (FileWriter fileWriter = new FileWriter(this.JRRP_FILE, false)) {
+            for (Map.Entry<Long, Integer> entry : this.JRRP.entrySet()) {
                 var k = entry.getKey();
                 var v = entry.getValue();
                 fileWriter.write(String.valueOf(k));
@@ -96,28 +96,28 @@ public class Jrrp extends EventHandlerExecutor {
             }
             fileWriter.flush();
         } catch (IOException exception) {
-            logger.warning("保存数据失败", exception);
+            this.logger.warning("保存数据失败", exception);
         }
     }
 
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(event.getSender().getId()));
+        Driver.sendMessage(event, this.generate(event.getSender().getId()));
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, generate(event.getSender().getId()));
+        Driver.sendAtMessage(event, this.generate(event.getSender().getId()));
     }
 
     private String generate(long userid) {
         int luck;
-        if (JRRP.containsKey(userid)) {
-            luck = JRRP.get(userid);
+        if (this.JRRP.containsKey(userid)) {
+            luck = this.JRRP.get(userid);
         } else {
             luck = ThreadLocalRandom.current().nextInt(101);
-            JRRP.put(userid, luck);
+            this.JRRP.put(userid, luck);
         }
         if (luck == 0) {
             return "今天没有运气!!!";
@@ -129,12 +129,12 @@ public class Jrrp extends EventHandlerExecutor {
     }
 
     private void schedule() {
-        JRRP.clear();
-        try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
+        this.JRRP.clear();
+        try (FileWriter fileWriter = new FileWriter(this.JRRP_FILE, false)) {
             fileWriter.write("");
             fileWriter.flush();
         } catch (IOException exception) {
-            logger.warning("清空数据失败", exception);
+            this.logger.warning("清空数据失败", exception);
         }
     }
 

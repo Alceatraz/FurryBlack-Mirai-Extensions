@@ -48,25 +48,25 @@ public class Time extends EventHandlerExecutor {
     @Override
     public void load() {
 
-        initRootFolder();
-        initConfFolder();
+        this.initRootFolder();
+        this.initConfFolder();
 
-        TIME_ZONE = new LinkedHashMap<>();
-        File FILE_TIMEZONE = initConfFile("timezone.txt");
-        for (String line : readFile(FILE_TIMEZONE)) {
+        this.TIME_ZONE = new LinkedHashMap<>();
+        File FILE_TIMEZONE = this.initConfFile("timezone.txt");
+        for (String line : this.readFile(FILE_TIMEZONE)) {
             if (!line.contains(":")) {
-                logger.warning("配置无效 " + line);
+                this.logger.warning("配置无效 " + line);
                 continue;
             }
             String[] temp = line.split(":");
             if (temp.length != 2) {
-                logger.warning("配置无效 " + line);
+                this.logger.warning("配置无效 " + line);
                 continue;
             }
             ZoneId timeZone = ZoneId.of(temp[1]);
-            if (!temp[1].equals("GMT") && timeZone.getId().equals("GMT")) logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
-            TIME_ZONE.put(temp[0], timeZone);
-            logger.seek("添加时区 " + temp[0] + " -> " + timeZone.getId());
+            if (!temp[1].equals("GMT") && timeZone.getId().equals("GMT")) this.logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
+            this.TIME_ZONE.put(temp[0], timeZone);
+            this.logger.seek("添加时区 " + temp[0] + " -> " + timeZone.getId());
         }
     }
 
@@ -78,21 +78,21 @@ public class Time extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, getTime());
+        Driver.sendMessage(event, this.getTime());
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, getTime());
+        Driver.sendAtMessage(event, this.getTime());
     }
 
     private String getTime() {
         int currentHour = LocalDateTime.now().getHour();
-        if (hour == null || hour != currentHour) {
-            hour = currentHour;
+        if (this.hour == null || this.hour != currentHour) {
+            this.hour = currentHour;
             StringBuilder builder = new StringBuilder();
             builder.append("\r\n世界协调时(UTC) ").append(LoggerX.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
-            for (Map.Entry<String, ZoneId> entry : TIME_ZONE.entrySet()) {
+            for (Map.Entry<String, ZoneId> entry : this.TIME_ZONE.entrySet()) {
                 ZoneId value = entry.getValue();
                 builder.append(entry.getKey());
                 builder.append(" ");
@@ -101,9 +101,9 @@ public class Time extends EventHandlerExecutor {
                 builder.append("\r\n");
             }
             builder.append("亚洲中国(UTC+8) ").append(LoggerX.format("HH:mm", zone_CN));
-            cache = builder.toString();
+            this.cache = builder.toString();
         }
-        return cache;
+        return this.cache;
     }
 
 

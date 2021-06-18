@@ -57,9 +57,9 @@ public class Acon extends EventHandlerExecutor {
     }
 
 
-    private final static BigInteger $1000 = BigInteger.valueOf(1000);
-    private final static BigInteger $HOUR = BigInteger.valueOf(3600000);
-    private final static BigInteger $FACT = BigInteger.valueOf(1980000);
+    private static final BigInteger $1000 = BigInteger.valueOf(1000);
+    private static final BigInteger $HOUR = BigInteger.valueOf(3600000);
+    private static final BigInteger $FACT = BigInteger.valueOf(1980000);
 
 
     private Map<Long, AirCondition> AIR_CONDITIONS;
@@ -67,7 +67,7 @@ public class Acon extends EventHandlerExecutor {
 
     @Override
     public void load() {
-        AIR_CONDITIONS = new ConcurrentHashMap<>();
+        this.AIR_CONDITIONS = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -83,11 +83,11 @@ public class Acon extends EventHandlerExecutor {
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
         long group = event.getGroup().getId();
         AirCondition airCondition;
-        if (AIR_CONDITIONS.containsKey(group)) {
-            airCondition = AIR_CONDITIONS.get(group);
+        if (this.AIR_CONDITIONS.containsKey(group)) {
+            airCondition = this.AIR_CONDITIONS.get(group);
         } else {
             airCondition = new AirCondition();
-            AIR_CONDITIONS.put(group, airCondition);
+            this.AIR_CONDITIONS.put(group, airCondition);
         }
         if (command.hasCommandBody()) {
             switch (command.getParameterSegment(0)) {
@@ -227,9 +227,9 @@ public class Acon extends EventHandlerExecutor {
             long duration = current - this.time;
             duration = duration / 1000;
             BigInteger a = BigInteger.valueOf(duration);
-            BigInteger b = BigInteger.valueOf(mode);
+            BigInteger b = BigInteger.valueOf(this.mode);
             BigInteger c = a.multiply(b);
-            cost = cost.add(c);
+            this.cost = this.cost.add(c);
             this.time = current;
         }
 
@@ -250,7 +250,7 @@ public class Acon extends EventHandlerExecutor {
          */
         public String cost() {
             this.updateCost();
-            return "累计共耗电：" + cost.divide($1000) + "kW(" + cost.divide($HOUR) + ")度\r\n群主须支付：" + cost.divide($FACT) + "元";
+            return "累计共耗电：" + this.cost.divide($1000) + "kW(" + this.cost.divide($HOUR) + ")度\r\n群主须支付：" + this.cost.divide($FACT) + "元";
         }
 
     }

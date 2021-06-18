@@ -43,7 +43,7 @@ public class Roulette extends EventHandlerExecutor {
     }
 
 
-    private final static String[] ICON = {
+    private static final String[] ICON = {
         "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"
     };
 
@@ -53,7 +53,7 @@ public class Roulette extends EventHandlerExecutor {
 
     @Override
     public void load() {
-        rounds = new HashMap<>();
+        this.rounds = new HashMap<>();
     }
 
     @Override
@@ -92,16 +92,16 @@ public class Roulette extends EventHandlerExecutor {
 
         long current = System.currentTimeMillis();
 
-        if (rounds.containsKey(group.getId())) {
-            round = rounds.get(group.getId());
+        if (this.rounds.containsKey(group.getId())) {
+            round = this.rounds.get(group.getId());
             if (round.getExpireTime().toEpochMilli() - current < 0) {
-                rounds.remove(group.getId());
+                this.rounds.remove(group.getId());
                 round = new RouletteRound();
-                rounds.put(group.getId(), round);
+                this.rounds.put(group.getId(), round);
             }
         } else {
             round = new RouletteRound();
-            rounds.put(group.getId(), round);
+            this.rounds.put(group.getId(), round);
         }
 
         //
@@ -146,7 +146,7 @@ public class Roulette extends EventHandlerExecutor {
                 Driver.sendMessage(event, message);
             }
 
-            rounds.remove(group.getId());
+            this.rounds.remove(group.getId());
 
         } else {
 
@@ -200,30 +200,30 @@ public class Roulette extends EventHandlerExecutor {
 
 
         public boolean join(GroupMessageEvent event, Command command) {
-            if (gamblers.size() > 6) return false;
-            if (hint && gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
+            if (this.gamblers.size() > 6) return false;
+            if (this.hint && this.gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
                 Driver.sendAtMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
-                hint = false;
+                this.hint = false;
             }
-            gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));
-            return gamblers.size() == 6;
+            this.gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));
+            return this.gamblers.size() == 6;
         }
 
 
         public int roll() {
             this.loser = ThreadLocalRandom.current().nextInt(6);
-            return loser;
+            return this.loser;
         }
 
 
         public int getLoser() {
-            return loser;
+            return this.loser;
         }
 
         public boolean isSinglePlayer() {
-            long id = gamblers.get(0).getMember().getId();
+            long id = this.gamblers.get(0).getMember().getId();
             for (int i = 1; i < 6; i++) {
-                long current = gamblers.get(i).getMember().getId();
+                long current = this.gamblers.get(i).getMember().getId();
                 if (id != current) return false;
             }
             return true;
@@ -231,7 +231,7 @@ public class Roulette extends EventHandlerExecutor {
 
 
         public String getAllJetton(long id) {
-            List<PlayerJetton> jettons = gamblers.stream()
+            List<PlayerJetton> jettons = this.gamblers.stream()
                                              .filter(item -> item.getMember().getId() == id)
                                              .collect(Collectors.toList());
             StringBuilder builder = new StringBuilder();
@@ -244,11 +244,11 @@ public class Roulette extends EventHandlerExecutor {
 
 
         public Instant getExpireTime() {
-            return expireTime;
+            return this.expireTime;
         }
 
         public List<PlayerJetton> getGamblers() {
-            return gamblers;
+            return this.gamblers;
         }
 
 
@@ -263,11 +263,11 @@ public class Roulette extends EventHandlerExecutor {
             }
 
             public Member getMember() {
-                return member;
+                return this.member;
             }
 
             public String getJetton() {
-                return jetton;
+                return this.jetton;
             }
         }
     }

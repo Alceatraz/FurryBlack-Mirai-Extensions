@@ -44,12 +44,12 @@ public class Dice extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, dice());
+        Driver.sendMessage(event, this.dice());
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, dice());
+        Driver.sendAtMessage(event, this.dice());
     }
 
     private String dice() {

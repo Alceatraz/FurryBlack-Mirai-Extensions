@@ -46,27 +46,27 @@ public class Food extends EventHandlerExecutor {
     @Override
     public void load() throws BootException {
 
-        initRootFolder();
-        initConfFolder();
+        this.initRootFolder();
+        this.initConfFolder();
 
-        FOOD = new FoodStorage();
+        this.FOOD = new FoodStorage();
 
-        File FILE_TAKEOUT = initConfFile("food-storage.txt");
+        File FILE_TAKEOUT = this.initConfFile("food-storage.txt");
 
 
         int i = 0;
 
-        for (String line : readFile(FILE_TAKEOUT)) {
+        for (String line : this.readFile(FILE_TAKEOUT)) {
 
             if (!line.contains(":")) {
-                logger.warning("配置无效 " + line);
+                this.logger.warning("配置无效 " + line);
                 continue;
             }
 
             String[] temp1 = line.split(":");
 
             if (temp1.length != 2) {
-                logger.warning("配置无效 " + line);
+                this.logger.warning("配置无效 " + line);
                 continue;
             }
 
@@ -74,18 +74,18 @@ public class Food extends EventHandlerExecutor {
                 String[] temp2 = temp1[1].split(",");
                 for (String temp3 : temp2) {
                     String trim = temp3.trim();
-                    FOOD.add(temp1[0], trim);
+                    this.FOOD.add(temp1[0], trim);
                     i++;
                 }
             } else {
-                FOOD.add(temp1[0], temp1[1]);
+                this.FOOD.add(temp1[0], temp1[1]);
                 i++;
             }
         }
 
-        FOOD.update();
+        this.FOOD.update();
 
-        logger.seek("共计添加了" + i + "种" + FOOD.getTypeSize() + "个类别");
+        this.logger.seek("共计添加了" + i + "种" + this.FOOD.getTypeSize() + "个类别");
 
     }
 
@@ -98,12 +98,12 @@ public class Food extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(command));
+        Driver.sendMessage(event, this.generate(command));
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, generate(command));
+        Driver.sendAtMessage(event, this.generate(command));
     }
 
     public String generate(Command command) {
@@ -114,19 +114,19 @@ public class Food extends EventHandlerExecutor {
                     return "请使用/dark以获取极致美食体验";
 
                 case "list":
-                    return FOOD.getList();
+                    return this.FOOD.getList();
 
                 default:
                     try {
                         int type = Integer.parseInt(command.getParameterSegment(0));
-                        return FOOD.random(type - 1);
+                        return this.FOOD.random(type - 1);
                     } catch (Exception exception) {
                         return "有这个类别 你在想Peach";
                     }
             }
 
         } else {
-            return FOOD.random();
+            return this.FOOD.random();
         }
     }
 
@@ -139,67 +139,67 @@ public class Food extends EventHandlerExecutor {
         private final Map<Integer, List<String>> ITEM; // 存储实际内容
 
         public FoodStorage() {
-            TYPE = new LinkedList<>();
-            SIZE = new LinkedHashMap<>();
-            ITEM = new LinkedHashMap<>();
+            this.TYPE = new LinkedList<>();
+            this.SIZE = new LinkedHashMap<>();
+            this.ITEM = new LinkedHashMap<>();
         }
 
         public void add(String type, String name) {
             List<String> temp;
-            if (TYPE.contains(type)) {
-                int index = TYPE.indexOf(type);
-                temp = ITEM.get(index);
+            if (this.TYPE.contains(type)) {
+                int index = this.TYPE.indexOf(type);
+                temp = this.ITEM.get(index);
             } else {
-                int size = TYPE.size();
-                TYPE.add(type);
+                int size = this.TYPE.size();
+                this.TYPE.add(type);
                 temp = new LinkedList<>();
-                ITEM.put(size, temp);
+                this.ITEM.put(size, temp);
             }
             temp.add(name);
         }
 
         public void update() {
-            typeSize = TYPE.size();
-            for (int i = 0; i < typeSize; i++) {
-                List<String> temp = ITEM.get(i);
-                SIZE.put(i, temp.size());
+            this.typeSize = this.TYPE.size();
+            for (int i = 0; i < this.typeSize; i++) {
+                List<String> temp = this.ITEM.get(i);
+                this.SIZE.put(i, temp.size());
             }
             int i = 0;
             StringBuilder builder = new StringBuilder();
             builder.append("可用的类别: \r\n");
-            for (String name : TYPE) {
+            for (String name : this.TYPE) {
                 builder.append(i + 1);
                 builder.append(" - ");
                 builder.append(name);
                 builder.append("(");
-                builder.append(SIZE.get(i));
+                builder.append(this.SIZE.get(i));
                 builder.append(")");
                 builder.append("\r\n");
                 i++;
             }
             builder.setLength(builder.length() - 2);
-            list = builder.toString();
+            this.list = builder.toString();
         }
 
         public String random() {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            return random(random.nextInt(typeSize));
+            return this.random(random.nextInt(this.typeSize));
         }
 
         public String random(int type) {
-            if (!SIZE.containsKey(type)) throw new IllegalArgumentException();
+            if (!this.SIZE.containsKey(type)) throw new IllegalArgumentException();
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            int length = SIZE.get(type);
-            List<String> temp = ITEM.get(type);
+            int length = this.SIZE.get(type);
+            List<String> temp = this.ITEM.get(type);
             return temp.get(random.nextInt(length));
         }
 
         public String getList() {
-            return list;
+            return this.list;
         }
 
         public int getTypeSize() {
-            return typeSize;
+            return this.typeSize;
         }
 
     }

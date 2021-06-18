@@ -45,54 +45,54 @@ public class Dark extends EventHandlerExecutor {
     @Override
     public void load() {
 
-        initRootFolder();
-        initConfFolder();
+        this.initRootFolder();
+        this.initConfFolder();
 
-        COOK_METHOD = new ArrayList<>();
-        INGREDIENTS = new ArrayList<>();
+        this.COOK_METHOD = new ArrayList<>();
+        this.INGREDIENTS = new ArrayList<>();
 
-        File FILE_COOK_METHOD = initConfFile("dark-verb.txt");
-        File FILE_INGREDIENTS = initConfFile("dark-item.txt");
+        File FILE_COOK_METHOD = this.initConfFile("dark-verb.txt");
+        File FILE_INGREDIENTS = this.initConfFile("dark-item.txt");
 
         int i = 0;
 
-        for (String line : readFile(FILE_COOK_METHOD)) {
+        for (String line : this.readFile(FILE_COOK_METHOD)) {
             i++;
-            COOK_METHOD.add(line);
+            this.COOK_METHOD.add(line);
         }
 
         int j = 0;
 
-        for (String line : readFile(FILE_INGREDIENTS)) {
+        for (String line : this.readFile(FILE_INGREDIENTS)) {
 
             if (!line.contains(":")) {
-                logger.warning("配置无效 " + line);
+                this.logger.warning("配置无效 " + line);
                 continue;
             }
 
             String[] temp1 = line.split(":");
 
             if (temp1.length != 2) {
-                logger.warning("配置无效 " + line);
+                this.logger.warning("配置无效 " + line);
                 continue;
             }
 
             if (temp1[1].contains(",")) {
                 for (String temp : temp1[1].split(",")) {
                     String trim = temp.trim();
-                    INGREDIENTS.add(trim);
+                    this.INGREDIENTS.add(trim);
                     j++;
                 }
             } else {
-                INGREDIENTS.add(temp1[1]);
+                this.INGREDIENTS.add(temp1[1]);
                 j++;
             }
         }
 
-        sizeCookMethod = COOK_METHOD.size();
-        sizeIngredient = INGREDIENTS.size();
+        this.sizeCookMethod = this.COOK_METHOD.size();
+        this.sizeIngredient = this.INGREDIENTS.size();
 
-        logger.seek("共添加了" + i + "种方式" + j + "种材料");
+        this.logger.seek("共添加了" + i + "种方式" + j + "种材料");
 
     }
 
@@ -104,12 +104,12 @@ public class Dark extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(command));
+        Driver.sendMessage(event, this.generate(command));
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, generate(command));
+        Driver.sendAtMessage(event, this.generate(command));
     }
 
     private String generate(Command command) {
@@ -120,15 +120,15 @@ public class Dark extends EventHandlerExecutor {
                 size = Integer.parseInt(command.getParameterSegment(0));
             } catch (Exception exception) {
                 builder.append("无效 我觉得你在想peach 成全你\r\n");
-                size = sizeCookMethod;
+                size = this.sizeCookMethod;
             }
-            if (size == 0) size = sizeCookMethod;
-            if (size > sizeCookMethod) size = sizeCookMethod;
+            if (size == 0) size = this.sizeCookMethod;
+            if (size > this.sizeCookMethod) size = this.sizeCookMethod;
         } else {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             size = random.nextInt(4) + 2;
         }
-        builder.append(generate(size));
+        builder.append(this.generate(size));
         return builder.toString();
     }
 
@@ -139,14 +139,14 @@ public class Dark extends EventHandlerExecutor {
         for (int i = 1; i < size; i++) {
             String temp;
             do {
-                temp = COOK_METHOD.get(random.nextInt(sizeCookMethod));
+                temp = this.COOK_METHOD.get(random.nextInt(this.sizeCookMethod));
             } while (USED_COOK_METHOD.contains(temp));
             USED_COOK_METHOD.add(temp);
         }
         for (int i = 0; i < size; i++) {
             String temp;
             do {
-                temp = INGREDIENTS.get(random.nextInt(sizeIngredient));
+                temp = this.INGREDIENTS.get(random.nextInt(this.sizeIngredient));
             } while (USED_INGREDIENTS.contains(temp));
             USED_INGREDIENTS.add(temp);
         }

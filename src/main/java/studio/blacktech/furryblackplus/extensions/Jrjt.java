@@ -51,37 +51,37 @@ public class Jrjt extends EventHandlerExecutor {
     @Override
     public void load() {
 
-        initRootFolder();
-        initDataFolder();
+        this.initRootFolder();
+        this.initDataFolder();
 
-        JRJT_FILE = initDataFile("jrjt.txt");
+        this.JRJT_FILE = this.initDataFile("jrjt.txt");
 
-        JRJT = new ConcurrentHashMap<>();
+        this.JRJT = new ConcurrentHashMap<>();
 
-        httpClient = new OkHttpClient.Builder()
+        this.httpClient = new OkHttpClient.Builder()
                          .callTimeout(2, TimeUnit.SECONDS)
                          .readTimeout(2, TimeUnit.SECONDS)
                          .writeTimeout(2, TimeUnit.SECONDS)
                          .connectTimeout(2, TimeUnit.SECONDS)
                          .build();
 
-        request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
+        this.request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
 
-        if (TimeTool.isToday(JRJT_FILE.lastModified())) {
+        if (TimeTool.isToday(this.JRJT_FILE.lastModified())) {
             Base64.Decoder decoder = Base64.getDecoder();
-            for (String line : readFile(JRJT_FILE)) {
+            for (String line : this.readFile(this.JRJT_FILE)) {
                 String[] temp = line.split(":");
                 Long user = Long.parseLong(temp[0].trim());
                 byte[] decode = decoder.decode(temp[1]);
                 String string = new String(decode, StandardCharsets.UTF_8);
-                JRJT.put(user, string);
+                this.JRJT.put(user, string);
             }
-            logger.seek("从持久化文件中读取了 " + JRJT.size() + "条数据");
+            this.logger.seek("从持久化文件中读取了 " + this.JRJT.size() + "条数据");
         } else {
-            logger.seek("持久化文件已过期");
+            this.logger.seek("持久化文件已过期");
         }
 
-        thread = new Thread(this::schedule);
+        this.thread = new Thread(this::schedule);
     }
 
 
@@ -92,15 +92,15 @@ public class Jrjt extends EventHandlerExecutor {
 
     @Override
     public void shut() {
-        thread.interrupt();
+        this.thread.interrupt();
         try {
-            thread.join();
+            this.thread.join();
         } catch (InterruptedException exception) {
-            logger.error("等待计划任务结束失败", exception);
+            this.logger.error("等待计划任务结束失败", exception);
             if (Driver.isShutModeDrop()) Thread.currentThread().interrupt();
         }
-        try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
-            for (Map.Entry<Long, String> entry : JRJT.entrySet()) {
+        try (FileWriter fileWriter = new FileWriter(this.JRJT_FILE, false)) {
+            for (Map.Entry<Long, String> entry : this.JRJT.entrySet()) {
                 var k = entry.getKey();
                 var v = entry.getValue();
                 fileWriter.write(String.valueOf(k));
@@ -110,31 +110,31 @@ public class Jrjt extends EventHandlerExecutor {
             }
             fileWriter.flush();
         } catch (IOException exception) {
-            logger.warning("保存数据失败", exception);
+            this.logger.warning("保存数据失败", exception);
         }
     }
 
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, generate(event.getSender().getId()));
+        Driver.sendMessage(event, this.generate(event.getSender().getId()));
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, generate(event.getSender().getId()));
+        Driver.sendAtMessage(event, this.generate(event.getSender().getId()));
     }
 
     private String generate(long user) {
         String message;
-        if (JRJT.containsKey(user)) {
-            message = JRJT.get(user);
+        if (this.JRJT.containsKey(user)) {
+            message = this.JRJT.get(user);
         } else {
             try {
-                message = Objects.requireNonNull(httpClient.newCall(request).execute().body()).string();
-                JRJT.put(user, message);
+                message = Objects.requireNonNull(this.httpClient.newCall(this.request).execute().body()).string();
+                this.JRJT.put(user, message);
             } catch (IOException exception) {
-                logger.error("沙雕服务器连接失败", exception);
+                this.logger.error("沙雕服务器连接失败", exception);
                 message = "沙雕App的服务器炸了";
             }
         }
@@ -142,12 +142,12 @@ public class Jrjt extends EventHandlerExecutor {
     }
 
     private void schedule() {
-        JRJT.clear();
-        try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
+        this.JRJT.clear();
+        try (FileWriter fileWriter = new FileWriter(this.JRJT_FILE, false)) {
             fileWriter.write("");
             fileWriter.flush();
         } catch (IOException exception) {
-            logger.warning("清空数据失败", exception);
+            this.logger.warning("清空数据失败", exception);
         }
     }
 

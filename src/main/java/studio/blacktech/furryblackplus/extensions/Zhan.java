@@ -30,7 +30,7 @@ public class Zhan extends EventHandlerExecutor {
     }
 
 
-    private final static String[] CARD = new String[]{
+    private static final String[] CARD = {
         "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清",
         "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣",
         "I. THE MAGICIAN 魔术师正位\r\n手段 灾难 痛苦 损失",
@@ -88,12 +88,12 @@ public class Zhan extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, chooseCard(command));
+        Driver.sendMessage(event, this.chooseCard(command));
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, chooseCard(command));
+        Driver.sendAtMessage(event, this.chooseCard(command));
     }
 
     private String chooseCard(Command command) {

@@ -51,17 +51,17 @@ public class Chou extends EventHandlerExecutor {
     @Override
     public void load() {
 
-        initRootFolder();
-        initConfFolder();
+        this.initRootFolder();
+        this.initConfFolder();
 
-        EXCLUDE = new HashMap<>();
+        this.EXCLUDE = new HashMap<>();
 
-        File FILE_EXCLUDE = initConfFile("exclude.txt");
+        File FILE_EXCLUDE = this.initConfFile("exclude.txt");
 
-        for (String line : readFile(FILE_EXCLUDE)) {
+        for (String line : this.readFile(FILE_EXCLUDE)) {
 
             if (!line.matches("^[0-9]{5,12}:[0-9]{5,12}$")) {
-                logger.warning("配置无效 " + line);
+                this.logger.warning("配置无效 " + line);
                 continue;
             }
 
@@ -72,16 +72,16 @@ public class Chou extends EventHandlerExecutor {
 
             List<Long> tempList;
 
-            if (EXCLUDE.containsKey(group)) {
-                tempList = EXCLUDE.get(group);
+            if (this.EXCLUDE.containsKey(group)) {
+                tempList = this.EXCLUDE.get(group);
             } else {
                 tempList = new ArrayList<>();
-                EXCLUDE.put(group, tempList);
+                this.EXCLUDE.put(group, tempList);
             }
 
             tempList.add(member);
 
-            logger.seek("排除成员 " + group + " - " + member);
+            this.logger.seek("排除成员 " + group + " - " + member);
         }
     }
 
@@ -106,8 +106,8 @@ public class Chou extends EventHandlerExecutor {
             long userID = sender.getId();
             long groupID = group.getId();
             Stream<Long> range = members.stream().map(Member::getId).filter(item -> item != botID && item != userID);
-            if (EXCLUDE.containsKey(groupID)) {
-                List<Long> list = EXCLUDE.get(groupID);
+            if (this.EXCLUDE.containsKey(groupID)) {
+                List<Long> list = this.EXCLUDE.get(groupID);
                 if (!list.isEmpty()) range = range.filter(item -> !list.contains(item));
             }
             List<Long> list = range.collect(Collectors.toUnmodifiableList());
