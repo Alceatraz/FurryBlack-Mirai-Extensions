@@ -4,7 +4,6 @@ import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
-import studio.blacktech.furryblackplus.core.exception.initlization.BootException;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
@@ -44,7 +43,7 @@ public class Food extends EventHandlerExecutor {
 
 
     @Override
-    public void load() throws BootException {
+    public void load() {
 
         this.initRootFolder();
         this.initConfFolder();

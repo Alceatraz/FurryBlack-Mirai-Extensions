@@ -8,7 +8,6 @@ import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
 import studio.blacktech.furryblackplus.core.annotation.Executor;
-import studio.blacktech.furryblackplus.core.exception.BotException;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
@@ -86,10 +85,10 @@ public class Chou extends EventHandlerExecutor {
     }
 
     @Override
-    public void boot() throws BotException { }
+    public void boot() { }
 
     @Override
-    public void shut() throws BotException { }
+    public void shut() { }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) { }
