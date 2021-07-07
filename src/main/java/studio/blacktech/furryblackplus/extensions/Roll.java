@@ -3,14 +3,14 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
 import java.security.SecureRandom;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Roll",
     name = "随机数",
     description = "生成随机数并窥探本质",

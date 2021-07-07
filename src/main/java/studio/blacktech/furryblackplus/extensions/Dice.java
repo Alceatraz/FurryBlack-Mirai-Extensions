@@ -3,14 +3,14 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Dice",
     name = "骰子",
     description = "七面骰子",

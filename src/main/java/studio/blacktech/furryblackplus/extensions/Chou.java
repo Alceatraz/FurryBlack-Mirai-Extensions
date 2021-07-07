@@ -7,7 +7,7 @@ import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Chou",
     name = "随机抽人",
     description = "从当前的群随机抽一个人",

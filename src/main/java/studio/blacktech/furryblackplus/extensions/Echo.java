@@ -3,12 +3,12 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Echo",
     name = "回显",
     description = "查看机器人是否在线",

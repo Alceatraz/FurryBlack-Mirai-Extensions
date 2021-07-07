@@ -3,7 +3,7 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Dark",
     name = "挑hei选an美liao食li",
     description = "白熊精选美食 1.0版",

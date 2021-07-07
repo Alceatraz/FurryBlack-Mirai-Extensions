@@ -3,7 +3,7 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 import studio.blacktech.furryblackplus.core.utilties.LoggerX;
@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Time",
     name = "环球时间",
     description = "现在都几点了，为什么那个孩子还在水群",

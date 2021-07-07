@@ -9,7 +9,7 @@ import net.mamoe.mirai.message.data.Face;
 import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.PlainText;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 import studio.blacktech.furryblackplus.core.utilties.LoggerX;
@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Roulette",
     name = "俄罗斯轮盘赌",
     description = "你看这子弹又尖又长，这名单又大又宽",

@@ -3,7 +3,7 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 
@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * 这功能是三木提的
  */
-@Executor(
+@Component(
     artificial = "Executor_Food",
     name = "外卖吃什么",
     description = "随机选择外卖吃什么 解决选择困难",

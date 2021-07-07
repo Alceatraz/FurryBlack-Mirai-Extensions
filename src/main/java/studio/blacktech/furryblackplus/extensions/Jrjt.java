@@ -5,7 +5,7 @@ import net.mamoe.mirai.event.events.UserMessageEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.annotation.Component;
 import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.Command;
 import studio.blacktech.furryblackplus.core.utilties.TimeTool;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 
-@Executor(
+@Component(
     artificial = "Executor_Jrjt",
     name = "沙雕软件-今日鸡汤",
     description = "https://shadiao.app的快捷方式",
