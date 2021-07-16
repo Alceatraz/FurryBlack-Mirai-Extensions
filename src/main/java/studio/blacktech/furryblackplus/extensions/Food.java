@@ -34,11 +34,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Food extends EventHandlerExecutor {
 
 
-    public Food(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private FoodStorage FOOD;
 
 

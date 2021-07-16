@@ -25,11 +25,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Zhan extends EventHandlerExecutor {
 
 
-    public Zhan(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private static final String[] CARD = {
         "O. THE FOOL 愚者正位\r\n愚蠢 狂躁 挥霍无度 神志不清",
         "O. THE FOOL 愚者逆位\r\n疏忽 缺乏 暮气 无效 虚荣",

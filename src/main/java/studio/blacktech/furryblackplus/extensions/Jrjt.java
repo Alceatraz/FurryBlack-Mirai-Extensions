@@ -33,11 +33,6 @@ import java.util.concurrent.TimeUnit;
 public class Jrjt extends EventHandlerExecutor {
 
 
-    public Jrjt(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private Thread thread;
 
     private Map<Long, String> JRJT;
@@ -59,11 +54,11 @@ public class Jrjt extends EventHandlerExecutor {
         this.JRJT = new ConcurrentHashMap<>();
 
         this.httpClient = new OkHttpClient.Builder()
-                         .callTimeout(2, TimeUnit.SECONDS)
-                         .readTimeout(2, TimeUnit.SECONDS)
-                         .writeTimeout(2, TimeUnit.SECONDS)
-                         .connectTimeout(2, TimeUnit.SECONDS)
-                         .build();
+                              .callTimeout(2, TimeUnit.SECONDS)
+                              .readTimeout(2, TimeUnit.SECONDS)
+                              .writeTimeout(2, TimeUnit.SECONDS)
+                              .connectTimeout(2, TimeUnit.SECONDS)
+                              .build();
 
         this.request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
 

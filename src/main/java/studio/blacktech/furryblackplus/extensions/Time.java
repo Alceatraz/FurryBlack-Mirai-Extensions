@@ -31,11 +31,6 @@ import java.util.Map;
 public class Time extends EventHandlerExecutor {
 
 
-    public Time(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private static final ZoneId zone_00 = ZoneId.of("UTC");
     private static final ZoneId zone_CN = ZoneId.of("Asia/Shanghai");
 

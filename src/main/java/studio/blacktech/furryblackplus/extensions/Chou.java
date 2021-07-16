@@ -39,11 +39,6 @@ import java.util.stream.Stream;
 public class Chou extends EventHandlerExecutor {
 
 
-    public Chou(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private Map<Long, List<Long>> EXCLUDE;
 
 

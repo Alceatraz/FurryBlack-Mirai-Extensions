@@ -29,11 +29,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Dark extends EventHandlerExecutor {
 
 
-    public Dark(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private int sizeCookMethod;
     private int sizeIngredient;
 

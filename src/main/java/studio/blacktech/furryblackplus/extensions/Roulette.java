@@ -38,11 +38,6 @@ import java.util.stream.Collectors;
 public class Roulette extends EventHandlerExecutor {
 
 
-    public Roulette(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private static final String[] ICON = {
         "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"
     };

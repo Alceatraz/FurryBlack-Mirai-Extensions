@@ -33,11 +33,6 @@ import java.util.concurrent.TimeUnit;
 public class Jrrp extends EventHandlerExecutor {
 
 
-    public Jrrp(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private Thread thread;
 
     private Map<Long, Integer> JRRP;

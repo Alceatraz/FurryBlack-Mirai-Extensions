@@ -52,11 +52,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Acon extends EventHandlerExecutor {
 
 
-    public Acon(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     private static final BigInteger $1000 = BigInteger.valueOf(1000);
     private static final BigInteger $HOUR = BigInteger.valueOf(3600000);
     private static final BigInteger $FACT = BigInteger.valueOf(1980000);

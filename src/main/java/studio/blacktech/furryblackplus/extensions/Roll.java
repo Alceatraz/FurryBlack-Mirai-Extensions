@@ -27,11 +27,6 @@ import java.security.SecureRandom;
 public class Roll extends EventHandlerExecutor {
 
 
-    public Roll(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     @Override
     public void load() { }
 

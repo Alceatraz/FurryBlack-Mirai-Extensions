@@ -24,11 +24,6 @@ import studio.blacktech.furryblackplus.core.utilties.Command;
 public class Echo extends EventHandlerExecutor {
 
 
-    public Echo(ExecutorInfo INFO) {
-        super(INFO);
-    }
-
-
     @Override
     public void load() { }
 
