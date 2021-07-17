@@ -29,7 +29,7 @@ public class Dice extends EventHandlerExecutor {
 
 
     @Override
-    public void load() { }
+    public void init() { }
 
     @Override
     public void boot() { }

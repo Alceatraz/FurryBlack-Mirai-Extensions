@@ -38,7 +38,7 @@ public class Food extends EventHandlerExecutor {
 
 
     @Override
-    public void load() {
+    public void init() {
 
         this.initRootFolder();
         this.initConfFolder();
