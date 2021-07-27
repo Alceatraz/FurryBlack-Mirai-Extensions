@@ -74,7 +74,7 @@ public class Chou extends EventHandlerExecutor {
 
             tempList.add(member);
 
-            this.logger.seek("排除成员 " + group + " - " + member);
+            this.logger.seek("排除成员 " + group + "-" + member);
         }
     }
 

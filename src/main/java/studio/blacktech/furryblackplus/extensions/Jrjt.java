@@ -74,7 +74,7 @@ public class Jrjt extends EventHandlerExecutor {
                 String string = new String(decode, StandardCharsets.UTF_8);
                 this.JRJT.put(user, string);
             }
-            this.logger.seek("从持久化文件中读取了 " + this.JRJT.size() + "条数据");
+            this.logger.seek("从持久化文件中读取了" + this.JRJT.size() + "条数据");
         } else {
             this.logger.seek("持久化文件已过期");
         }
