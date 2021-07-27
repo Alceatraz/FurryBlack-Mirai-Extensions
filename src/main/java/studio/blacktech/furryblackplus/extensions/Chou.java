@@ -7,9 +7,9 @@ import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,20 +20,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
-@Component(
-    artificial = "Executor_Chou",
-    name = "随机抽人",
+@Executor(
+    value = "Executor-Chou",
+    outline = "随机抽人",
     description = "从当前的群随机抽一个人",
-    privacy = {
-        "获取命令发送人",
-        "获取群成员列表"
-    },
-    users = false,
     command = "chou",
+    users = false,
     usage = {
         "/chou - 抽一个人",
         "/chou XXX - 以某事抽一个人"
+    },
+    privacy = {
+        "获取命令发送人",
+        "获取群成员列表"
     }
 )
 public class Chou extends EventHandlerExecutor {

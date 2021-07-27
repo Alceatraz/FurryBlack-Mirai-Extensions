@@ -9,9 +9,9 @@ import net.mamoe.mirai.message.data.Face;
 import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.PlainText;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.LoggerX;
 
 import java.time.Instant;
@@ -21,18 +21,15 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-
-@Component(
-    artificial = "Executor_Roulette",
-    name = "俄罗斯轮盘赌",
-    description = "你看这子弹又尖又长，这名单又大又宽",
+@Executor(
+    value = "Executor-Roulette",
+    outline = "随机抽数",
+    description = "生成随机数或者窥探本质",
+    command = "roulette",
+    usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率",
     privacy = {
         "获取命令发送人",
-        "缓存群-成员-回合 结束后丢弃"
-    },
-    command = "roulette",
-    usage = {
-        "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率"
+        "缓存群-成员-回合的数据 并在回合结束后丢弃"
     }
 )
 public class Roulette extends EventHandlerExecutor {

@@ -3,26 +3,20 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.math.BigInteger;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-@Component(
-    artificial = "Executor_ACON",
-    name = "空调",
-    description = "本群空调",
-    privacy = {
-        "按群存储耗电量",
-        "按群存储耗工作模式",
-        "按群存储上次更改模式的时间戳"
-    },
-    users = false,
+@Executor(
+    value = "Executor-Acon",
+    outline = "本群空调",
+    description = "本群空调 拥有多种模式 大功率 可以迅速消杀所有群友",
     command = "acon",
+    users = false,
     usage = {
         "/acon cost - 耗电量",
         "/acon off - 关机",
@@ -47,6 +41,11 @@ import java.util.concurrent.ConcurrentHashMap;
         "/acon iinova - II级超新星吸积引燃",
         "/acon ~!C??? - Fy:????",
         "/acon ~!R[?? - FT//s??"
+    },
+    privacy = {
+        "按群存储耗电量",
+        "按群存储耗工作模式",
+        "按群存储上次更改模式的时间戳"
     }
 )
 public class Acon extends EventHandlerExecutor {
@@ -210,8 +209,8 @@ public class Acon extends EventHandlerExecutor {
 
     public static class AirCondition {
 
-        private long mode = 0;
-        private long time = 0;
+        private long mode;
+        private long time;
         private BigInteger cost = BigInteger.ZERO;
 
         /**

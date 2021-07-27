@@ -3,25 +3,25 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.security.SecureRandom;
 
 
-@Component(
-    artificial = "Executor_Roll",
-    name = "随机数",
-    description = "生成随机数并窥探本质",
-    privacy = {
-        "获取命令发送人"
-    },
+@Executor(
+    value = "Executor-Roll",
+    outline = "随机抽数",
+    description = "生成随机数或者窥探本质",
     command = "roll",
     usage = {
         "/roll - 抽取真假",
         "/roll 数字 - 从零到给定数字任选一个数字[0,x)",
         "/roll 数字 数字 - 从给定两个数字中间抽取一个[x,y)"
+    },
+    privacy = {
+        "获取命令发送人"
     }
 )
 public class Roll extends EventHandlerExecutor {

@@ -3,23 +3,22 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-
-@Component(
-    artificial = "Executor_Zhan",
-    name = "占卜",
+@Executor(
+    value = "Executor-Zhan",
+    outline = "塔罗占卜",
     description = "抽取一张大阿卡那塔罗牌为某事占卜 - 大失败酱",
-    privacy = {
-        "获取命令发送人"
-    },
     command = "zhan",
     usage = {
         "/zhan XXX - 为某事占卜"
+    },
+    privacy = {
+        "获取命令发送人"
     }
 )
 public class Zhan extends EventHandlerExecutor {

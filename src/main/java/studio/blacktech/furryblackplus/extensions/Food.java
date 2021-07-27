@@ -3,9 +3,9 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -14,21 +14,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * 这功能是三木提的
- */
-@Component(
-    artificial = "Executor_Food",
-    name = "外卖吃什么",
-    description = "随机选择外卖吃什么 解决选择困难",
-    privacy = {
-        "获取命令发送人"
-    },
+
+@Executor(
+    value = "Executor-Food",
+    outline = "挑选外卖",
+    description = "从预设文本随机挑选今天中午吃什么 欢迎投稿",
     command = "food",
     usage = {
         "/food - 全范围抽取",
         "/food XXX - 某类别抽取",
         "/food list - 列出所有分类",
+    },
+    privacy = {
+        "获取命令发送人"
     }
 )
 public class Food extends EventHandlerExecutor {

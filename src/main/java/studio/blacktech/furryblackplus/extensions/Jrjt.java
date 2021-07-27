@@ -5,9 +5,9 @@ import net.mamoe.mirai.event.events.UserMessageEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.TimeTool;
 
 import java.io.File;
@@ -20,14 +20,17 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-
-@Component(
-    artificial = "Executor_Jrjt",
-    name = "沙雕软件-今日鸡汤",
-    description = "https://shadiao.app的快捷方式",
+@Executor(
+    value = "Executor-Jrjt",
+    outline = "今日鸡汤",
+    description = "对随机毒鸡汤API的封装 不做任何内容处理 所有语料来自于https://du.shadiao.app",
     command = "jrjt",
     usage = {
         "/jrjt - 每天送你一碗热气腾腾的翔"
+    },
+    privacy = {
+        "获取命令发送人",
+        "按命令发送人缓存每日语料 - 每日UTC+8 00:00 清空"
     }
 )
 public class Jrjt extends EventHandlerExecutor {

@@ -3,9 +3,9 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.TimeTool;
 
 import java.io.File;
@@ -17,17 +17,15 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 
-@Component(
-    artificial = "Executor_Jrrp",
-    name = "今日运气",
+@Executor(
+    value = "Executor-Jrrp",
+    outline = "今日运气",
     description = "查看今天的运气值 - 大失败酱",
+    command = "jrrp",
+    usage = "/jrrp - 查看今日运气",
     privacy = {
         "获取命令发送人",
         "存储用户与运气对应表 - 每日UTC+8 00:00 清空"
-    },
-    command = "jrrp",
-    usage = {
-        "/jrrp - 查看今日运气"
     }
 )
 public class Jrrp extends EventHandlerExecutor {

@@ -3,23 +3,22 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-
-@Component(
-    artificial = "Executor_Dice",
-    name = "骰子",
-    description = "七面骰子",
-    privacy = {
-        "获取命令发送人"
-    },
+@Executor(
+    value = "Executor-Dice",
+    outline = "投掷骰子",
+    description = "投掷一个七面骰子 非常离谱的那个人会扔出0",
     command = "dice",
     usage = {
         "/dice - 投掷一枚骰子"
+    },
+    privacy = {
+        "获取命令发送人"
     }
 )
 public class Dice extends EventHandlerExecutor {

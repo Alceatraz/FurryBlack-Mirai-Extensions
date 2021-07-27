@@ -3,27 +3,26 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Component;
-import studio.blacktech.furryblackplus.core.interfaces.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.Command;
+import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-
-@Component(
-    artificial = "Executor_Dark",
-    name = "挑hei选an美liao食li",
-    description = "白熊精选美食 1.0版",
-    privacy = {
-        "获取命令发送人"
-    },
+@Executor(
+    value = "Executor-Dark",
+    outline = "精选美食",
+    description = "根据语料随机拼接一些也许吃了还有救的东西",
     command = "dark",
     usage = {
         "/dark - 使用随机种食材随机生成一些吃完了会死的东西",
         "/dark 数字 - 使用指定种食材随机生成一些没准吃完了不会死的东西",
+    },
+    privacy = {
+        "获取命令发送人"
     }
 )
 public class Dark extends EventHandlerExecutor {
