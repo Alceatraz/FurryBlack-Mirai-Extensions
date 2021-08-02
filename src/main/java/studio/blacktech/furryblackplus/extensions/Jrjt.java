@@ -5,10 +5,10 @@ import net.mamoe.mirai.event.events.UserMessageEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.annotation.Executor;
+import studio.blacktech.furryblackplus.core.define.annotation.Executor;
 import studio.blacktech.furryblackplus.core.define.Command;
 import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.TimeTool;
+import studio.blacktech.furryblackplus.core.utilties.common.TimeTool;
 
 import java.io.File;
 import java.io.FileWriter;
