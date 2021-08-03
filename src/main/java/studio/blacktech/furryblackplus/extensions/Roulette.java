@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 
 @Executor(
     value = "Executor-Roulette",
-    outline = "随机抽数",
-    description = "生成随机数或者窥探本质",
+    outline = "俄罗斯轮盘赌",
+    description = "提供赌注以参与一局俄罗斯轮盘赌",
     command = "roulette",
     usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率",
     privacy = {
