@@ -92,7 +92,7 @@ public class Time extends EventHandlerExecutor {
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, this.getTime());
+        Driver.sendAtMessage(event, "\r\n" + this.getTime());
     }
 
     private String getTime() {
@@ -100,7 +100,7 @@ public class Time extends EventHandlerExecutor {
         if (this.hour == null || this.hour != currentHour) {
             this.hour = currentHour;
             StringBuilder builder = new StringBuilder();
-            builder.append("\r\n世界协调时(UTC) ").append(LoggerX.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
+            builder.append("世界协调时(UTC) ").append(LoggerX.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
             for (Map.Entry<String, ZoneId> entry : this.TIME_ZONE.entrySet()) {
                 ZoneId value = entry.getValue();
                 builder.append(entry.getKey());
