@@ -38,6 +38,11 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 2.0.3
+
+- 修复jrjt日志没有对齐
+- 调整pom.xml版本依赖为`[0.9.0,0.10.0)`
+
 ### 2.0.2
 
 - 调整pom.xml版本依赖为`[0.8.0,0.9.0)`

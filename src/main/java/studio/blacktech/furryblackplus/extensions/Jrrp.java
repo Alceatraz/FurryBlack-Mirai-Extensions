@@ -70,7 +70,7 @@ public class Jrrp extends EventHandlerExecutor {
                 Integer jrrp = Integer.parseInt(temp[1].trim());
                 this.JRRP.put(user, jrrp);
             }
-            this.logger.seek("从持久化文件中读取了 " + this.JRRP.size() + "条数据");
+            this.logger.seek("从持久化文件中读取了" + this.JRRP.size() + "条数据");
         } else {
             this.logger.seek("持久化文件已过期");
         }
