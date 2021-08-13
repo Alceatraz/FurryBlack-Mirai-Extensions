@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 2.0.3-R
+
+- 撤销 2.0.3
+
 ### 2.0.3
 
 - 修复jrjt日志没有对齐
