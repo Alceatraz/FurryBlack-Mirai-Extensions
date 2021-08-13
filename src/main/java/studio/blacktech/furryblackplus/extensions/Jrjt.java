@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti Commercial & GNU Affero General.
+ * it under the terms of the BTS Anti-Commercial & GNU Affero General.
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * BTS Anti Commercial & GNU Affero General Public License for more details.
+ * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti Commercial & GNU Affero
+ * You should have received a copy of the BTS Anti-Commercial & GNU Affero
  * General Public License along with this program in README or LICENSE.
  */
 
@@ -20,8 +20,8 @@ import net.mamoe.mirai.event.events.UserMessageEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.define.annotation.Executor;
 import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.annotation.Executor;
 import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.common.TimeTool;
 
@@ -72,11 +72,11 @@ public class Jrjt extends EventHandlerExecutor {
         this.JRJT = new ConcurrentHashMap<>();
 
         this.httpClient = new OkHttpClient.Builder()
-                              .callTimeout(2, TimeUnit.SECONDS)
-                              .readTimeout(2, TimeUnit.SECONDS)
-                              .writeTimeout(2, TimeUnit.SECONDS)
-                              .connectTimeout(2, TimeUnit.SECONDS)
-                              .build();
+            .callTimeout(2, TimeUnit.SECONDS)
+            .readTimeout(2, TimeUnit.SECONDS)
+            .writeTimeout(2, TimeUnit.SECONDS)
+            .connectTimeout(2, TimeUnit.SECONDS)
+            .build();
 
         this.request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
 

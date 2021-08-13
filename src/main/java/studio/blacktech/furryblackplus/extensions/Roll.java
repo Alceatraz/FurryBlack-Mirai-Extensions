@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti Commercial & GNU Affero General.
+ * it under the terms of the BTS Anti-Commercial & GNU Affero General.
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * BTS Anti Commercial & GNU Affero General Public License for more details.
+ * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti Commercial & GNU Affero
+ * You should have received a copy of the BTS Anti-Commercial & GNU Affero
  * General Public License along with this program in README or LICENSE.
  */
 
@@ -18,8 +18,8 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.define.annotation.Executor;
 import studio.blacktech.furryblackplus.core.define.Command;
+import studio.blacktech.furryblackplus.core.define.annotation.Executor;
 import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 
 import java.security.SecureRandom;
@@ -43,13 +43,13 @@ public class Roll extends EventHandlerExecutor {
 
 
     @Override
-    public void init() { }
+    public void init() {}
 
     @Override
-    public void boot() { }
+    public void boot() {}
 
     @Override
-    public void shut() { }
+    public void shut() {}
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
