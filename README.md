@@ -38,6 +38,11 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 2.0.4
+
+- 适配FurryBlack-Core-1.0.1
+- 优化部分写法
+
 ### 2.0.3-R
 
 - 撤销 2.0.3

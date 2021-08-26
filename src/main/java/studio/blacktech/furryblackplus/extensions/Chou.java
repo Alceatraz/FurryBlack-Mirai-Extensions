@@ -68,28 +68,22 @@ public class Chou extends EventHandlerExecutor {
 
         for (String line : this.readFile(FILE_EXCLUDE)) {
 
-            if (!line.matches("^[0-9]{5,12}:[0-9]{5,12}$")) {
+            int indexOfColon = line.indexOf(":");
+
+            if (indexOfColon < 0) {
                 this.logger.warning("配置无效 " + line);
                 continue;
             }
 
-            String[] temp = line.split(":");
+            String group = line.substring(0, indexOfColon);
+            String users = line.substring(indexOfColon + 1).trim();
 
-            long group = Long.parseLong(temp[0].trim());
-            long member = Long.parseLong(temp[1].trim());
+            long groupId = Long.parseLong(group);
+            long usersId = Long.parseLong(users);
 
-            List<Long> tempList;
-
-            if (this.EXCLUDE.containsKey(group)) {
-                tempList = this.EXCLUDE.get(group);
-            } else {
-                tempList = new ArrayList<>();
-                this.EXCLUDE.put(group, tempList);
-            }
-
-            tempList.add(member);
-
-            this.logger.seek("排除成员 " + group + "-" + member);
+            List<Long> tempList = this.EXCLUDE.computeIfAbsent(groupId, k -> new ArrayList<>());
+            tempList.add(usersId);
+            this.logger.seek("排除成员 " + group + "-" + usersId);
         }
     }
 

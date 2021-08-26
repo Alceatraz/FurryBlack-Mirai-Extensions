@@ -24,6 +24,7 @@ import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.utilties.logger.LoggerX;
 
 import java.io.File;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -61,21 +62,37 @@ public class Time extends EventHandlerExecutor {
         this.initConfFolder();
 
         this.TIME_ZONE = new LinkedHashMap<>();
+
         File FILE_TIMEZONE = this.initConfFile("timezone.txt");
+
         for (String line : this.readFile(FILE_TIMEZONE)) {
-            if (!line.contains(":")) {
+
+            int indexOfColon = line.indexOf(":");
+
+            if (indexOfColon < 0) {
                 this.logger.warning("配置无效 " + line);
                 continue;
             }
-            String[] temp = line.split(":");
-            if (temp.length != 2) {
-                this.logger.warning("配置无效 " + line);
+
+            String name = line.substring(0, indexOfColon);
+            String zone = line.substring(indexOfColon + 1).trim();
+
+            ZoneId timeZone;
+
+            try {
+                timeZone = ZoneId.of(zone);
+            } catch (DateTimeException exception) {
+                this.logger.error("配置无效 TimeZone无法加载 -> " + zone, exception);
                 continue;
             }
-            ZoneId timeZone = ZoneId.of(temp[1]);
-            if (!temp[1].equals("GMT") && timeZone.getId().equals("GMT")) this.logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
-            this.TIME_ZONE.put(temp[0], timeZone);
-            this.logger.seek("添加时区 " + temp[0] + " -> " + timeZone.getId());
+
+            if (!zone.equals("GMT") && timeZone.getId().equals("GMT")) {
+                this.logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
+            }
+
+            this.TIME_ZONE.put(name, timeZone);
+
+            this.logger.seek("添加时区 " + name + " -> " + timeZone.getId());
         }
     }
 
