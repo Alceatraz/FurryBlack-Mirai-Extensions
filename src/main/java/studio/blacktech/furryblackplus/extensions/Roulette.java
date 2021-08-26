@@ -126,7 +126,7 @@ public class Roulette extends EventHandlerExecutor {
                         .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
                         .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
                         .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + Driver.getFormattedNickName(loserID) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + Driver.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
                 );
 
             } else {
@@ -139,7 +139,7 @@ public class Roulette extends EventHandlerExecutor {
 
                 for (int i = 0; i < 6; i++) {
                     RouletteRound.PlayerJetton temp = round.gamblers.get(i);
-                    message = message.plus(ICON[i] + " " + Driver.getFormattedNickName(temp.member.getId()) + " ");
+                    message = message.plus(ICON[i] + " " + Driver.getMemberMappedNickName(temp.member) + " ");
                     message = message.plus(new Face(Face.手枪));
                     if (i == round.getLoser()) {
                         message = message.plus("\uD83D\uDCA5\r\n"); // 💥

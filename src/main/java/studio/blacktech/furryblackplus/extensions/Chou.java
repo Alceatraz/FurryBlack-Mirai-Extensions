@@ -126,7 +126,7 @@ public class Chou extends EventHandlerExecutor {
                     builder.append("\r\n");
                 }
                 builder.append("抽中了: ");
-                builder.append(Driver.getFormattedNickName(member));
+                builder.append(Driver.getMemberMappedNickName(member));
                 Driver.sendAtMessage(event, builder.toString());
             }
         }
