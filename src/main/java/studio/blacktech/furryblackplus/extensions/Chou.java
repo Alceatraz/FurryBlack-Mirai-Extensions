@@ -76,7 +76,7 @@ public class Chou extends EventHandlerExecutor {
             }
 
             String group = line.substring(0, indexOfColon);
-            String users = line.substring(indexOfColon + 1).trim();
+            String users = line.substring(indexOfColon + 1);
 
             long groupId = Long.parseLong(group);
             long usersId = Long.parseLong(users);

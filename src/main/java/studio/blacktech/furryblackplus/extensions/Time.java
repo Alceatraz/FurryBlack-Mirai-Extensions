@@ -75,7 +75,7 @@ public class Time extends EventHandlerExecutor {
             }
 
             String name = line.substring(0, indexOfColon);
-            String zone = line.substring(indexOfColon + 1).trim();
+            String zone = line.substring(indexOfColon + 1);
 
             ZoneId timeZone;
 
