@@ -205,7 +205,6 @@ public class Roulette extends EventHandlerExecutor {
         private boolean hint = true;
         private int loser = 6;
 
-
         public boolean join(GroupMessageEvent event, Command command) {
             if (this.gamblers.size() > 6) return false;
             if (this.hint && this.gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
@@ -216,26 +215,21 @@ public class Roulette extends EventHandlerExecutor {
             return this.gamblers.size() == 6;
         }
 
-
         public int roll() {
             this.loser = ThreadLocalRandom.current().nextInt(6);
             return this.loser;
         }
-
 
         public int getLoser() {
             return this.loser;
         }
 
         public boolean isSinglePlayer() {
-            long id = this.gamblers.get(0).getMember().getId();
-            for (int i = 1; i < 6; i++) {
-                long current = this.gamblers.get(i).getMember().getId();
-                if (id != current) return false;
-            }
-            return true;
+            return this.gamblers.stream()
+                .map(item -> item.getMember().getId())
+                .collect(Collectors.toUnmodifiableSet())
+                .size() == 1;
         }
-
 
         public String getAllJetton(long id) {
             List<PlayerJetton> jettons = this.gamblers.stream()

@@ -49,6 +49,8 @@ public class Time extends EventHandlerExecutor {
     private static final ZoneId zone_00 = ZoneId.of("UTC");
     private static final ZoneId zone_CN = ZoneId.of("Asia/Shanghai");
 
+    private static final ZoneOffset zoneOffset = ZoneOffset.of("+8");
+
     private Integer hour;
     private String cache;
 
@@ -137,23 +139,22 @@ public class Time extends EventHandlerExecutor {
         LocalDateTime local = LocalDateTime.now(zone);
         LocalDateTime china = LocalDateTime.now(zone_CN);
         StringBuilder builder = new StringBuilder();
-        if (zone.getRules().isDaylightSavings(local.toInstant(ZoneOffset.of("+8")))) {
+        if (zone.getRules().isDaylightSavings(local.toInstant(zoneOffset))) {
             builder.append(" 夏令时");
         }
         int localDay = local.getDayOfYear();
         int chinaDay = china.getDayOfYear();
-        //noinspection ConstantConditions
-        do {
-            if (chinaDay - localDay > 0) {
-                builder.append(" 昨天,");
-            } else if (chinaDay - localDay < 0) {
-                builder.append(" 明天,");
-            } else {
-                break;
-            }
-            builder.append(localDay);
-            builder.append("日");
-        } while (false);
+        int bias = chinaDay - localDay;
+        if (bias == 0) {
+            return builder;
+        }
+        if (bias > 0) {
+            builder.append(" 昨天,");
+        } else {
+            builder.append(" 明天,");
+        }
+        builder.append(localDay);
+        builder.append("日");
         return builder;
     }
 

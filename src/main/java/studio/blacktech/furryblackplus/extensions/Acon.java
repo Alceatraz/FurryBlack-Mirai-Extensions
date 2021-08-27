@@ -90,15 +90,13 @@ public class Acon extends EventHandlerExecutor {
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        long group = event.getGroup().getId();
-        AirCondition airCondition;
-        if (this.AIR_CONDITIONS.containsKey(group)) {
-            airCondition = this.AIR_CONDITIONS.get(group);
-        } else {
-            airCondition = new AirCondition();
-            this.AIR_CONDITIONS.put(group, airCondition);
-        }
+
+        long groupId = event.getGroup().getId();
+
+        AirCondition airCondition = this.AIR_CONDITIONS.computeIfAbsent(groupId, k -> new AirCondition());
+
         if (command.hasCommandBody()) {
+
             switch (command.getParameterSegment(0)) {
 
                 case "off":
@@ -210,7 +208,6 @@ public class Acon extends EventHandlerExecutor {
                     Driver.sendAtMessage(event, "父王之怒 -273.16°");
                     airCondition.changeMode(73500000000L);
                     break;
-
 
                 default:
                     Driver.sendMessage(event, airCondition.cost());

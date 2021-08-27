@@ -19,6 +19,9 @@
 import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TimeTest {
 
@@ -27,5 +30,20 @@ public class TimeTest {
         for (String availableZoneId : ZoneId.getAvailableZoneIds()) {
             System.out.println(availableZoneId);
         }
+    }
+
+
+    @Test
+    public void setTest() {
+
+        String[] i = {"1", "1", "1", "1", "1", "1"};
+
+        Set<Integer> collect = Arrays.stream(i)
+            .map(Integer::parseInt)
+            .collect(Collectors.toUnmodifiableSet());
+
+
+        System.out.println(collect);
+
     }
 }

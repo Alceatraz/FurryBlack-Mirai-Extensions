@@ -38,6 +38,12 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 2.0.6
+
+- 优化Acon
+- 优化Roulette
+- 优化Time
+
 ### 2.0.5
 
 - 适配FurryBlack-Core-1.0.4
