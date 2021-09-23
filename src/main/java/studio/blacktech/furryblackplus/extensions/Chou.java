@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Executor(
@@ -112,7 +111,7 @@ public class Chou extends EventHandlerExecutor {
                 List<Long> list = this.EXCLUDE.get(groupID);
                 if (!list.isEmpty()) range = range.filter(item -> !list.contains(item));
             }
-            List<Long> list = range.collect(Collectors.toUnmodifiableList());
+            List<Long> list = range.toList();
             int size = list.size();
             if (size < 2) {
                 Driver.sendAtMessage(event, "可用成员人数不足，无法使用此功能。");

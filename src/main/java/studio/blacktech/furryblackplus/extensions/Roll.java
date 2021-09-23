@@ -70,13 +70,12 @@ public class Roll extends EventHandlerExecutor {
 
             // ============================================================
 
-            case 0:
-                res = random.nextBoolean() ? " 1️⃣" : " 0️⃣";
-                break;
+            case 0 -> res = random.nextBoolean() ? " 1️⃣" : " 0️⃣";
+
 
             // ============================================================
 
-            case 1:
+            case 1 -> {
                 int range;
                 try {
                     range = Integer.parseInt(command.getParameterSegment(0));
@@ -84,11 +83,11 @@ public class Roll extends EventHandlerExecutor {
                 } catch (Exception ignored) {
                     res = command.getCommandBody(200) + " 是 " + (random.nextBoolean() ? " 1️⃣" : " 0️⃣");
                 }
-                break;
+            }
 
             // ============================================================
 
-            case 2:
+            case 2 -> {
                 int min;
                 int max;
                 try {
@@ -99,10 +98,8 @@ public class Roll extends EventHandlerExecutor {
                 }
                 int temp = random.nextInt(max - min);
                 res = Integer.toString(temp + min);
-                break;
-
-            default:
-                res = command.getCommandBody(200) + " 是 " + (random.nextBoolean() ? " 1️⃣" : " 0️⃣");
+            }
+            default -> res = command.getCommandBody(200) + " 是 " + (random.nextBoolean() ? " 1️⃣" : " 0️⃣");
         }
 
         return res;

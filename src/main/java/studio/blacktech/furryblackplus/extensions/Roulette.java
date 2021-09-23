@@ -253,15 +253,7 @@ public class Roulette extends EventHandlerExecutor {
         }
 
 
-        private static class PlayerJetton {
-
-            private final Member member;
-            private final String jetton;
-
-            public PlayerJetton(Member member, String jetton) {
-                this.member = member;
-                this.jetton = jetton;
-            }
+        private record PlayerJetton(Member member, String jetton) {
 
             public Member getMember() {
                 return this.member;

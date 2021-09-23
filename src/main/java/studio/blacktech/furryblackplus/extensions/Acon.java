@@ -98,120 +98,95 @@ public class Acon extends EventHandlerExecutor {
         if (command.hasCommandBody()) {
 
             switch (command.getParameterSegment(0)) {
-
-                case "off":
+                case "off" -> {
                     Driver.sendAtMessage(event, "空调已关闭");
                     airCondition.changeMode(1L);
-                    break;
-
-                case "dry":
+                }
+                case "dry" -> {
                     Driver.sendAtMessage(event, "切换至除湿模式");
                     airCondition.changeMode(5880L);
-                    break;
-
-                case "wet":
+                }
+                case "wet" -> {
                     Driver.sendAtMessage(event, "切换至加湿模式");
                     airCondition.changeMode(5880L);
-                    break;
-
-                case "cold":
+                }
+                case "cold" -> {
                     Driver.sendAtMessage(event, "切换至制冰模式 -20°");
                     airCondition.changeMode(14700L);
-                    break;
-
-                case "cool":
+                }
+                case "cool" -> {
                     Driver.sendAtMessage(event, "切换至制冷模式 26.5°");
                     airCondition.changeMode(7350L);
-                    break;
-
-                case "warm":
+                }
+                case "warm" -> {
                     Driver.sendAtMessage(event, "切换至制热模式 25.5°");
                     airCondition.changeMode(7350L);
-                    break;
-
-                case "bake":
+                }
+                case "bake" -> {
                     Driver.sendAtMessage(event, "切换至烘烤模式 285°");
                     airCondition.changeMode(14700L);
-                    break;
-
-                case "burn":
+                }
+                case "burn" -> {
                     Driver.sendAtMessage(event, "切换至烧烤模式 960°");
                     airCondition.changeMode(22050L);
-                    break;
-
-                case "fire":
+                }
+                case "fire" -> {
                     Driver.sendAtMessage(event, "切换至焚化模式 1,200°");
                     airCondition.changeMode(29400L);
-                    break;
-
-                case "c2h2":
+                }
+                case "c2h2" -> {
                     Driver.sendAtMessage(event, "切换至乙炔炬模式 3,300°");
                     airCondition.changeMode(33075L);
-                    break;
-
-                case "argon":
+                }
+                case "argon" -> {
                     Driver.sendAtMessage(event, "切换至氩气弧模式 7,550°");
                     airCondition.changeMode(36750L);
-                    break;
-
-                case "plasma":
+                }
+                case "plasma" -> {
                     Driver.sendAtMessage(event, "切换至等离子模式 23,500°");
                     airCondition.changeMode(44100L);
-                    break;
-
-                case "nova":
+                }
+                case "nova" -> {
                     Driver.sendAtMessage(event, "切换至新星模式 1,000,000°");
                     airCondition.changeMode(7350000L);
-                    break;
-
-                case "cfnuke":
+                }
+                case "cfnuke" -> {
                     Driver.sendAtMessage(event, "切换至冷核模式 100,000,000°");
                     airCondition.changeMode(29400000L);
-                    break;
-
-                case "trnuke":
+                }
+                case "trnuke" -> {
                     Driver.sendAtMessage(event, "切换至热核模式 120,000,000°");
                     airCondition.changeMode(33075000L);
-                    break;
-
-                case "tfnuke":
+                }
+                case "tfnuke" -> {
                     Driver.sendAtMessage(event, "切换至三相热核模式 150,000,000°");
                     airCondition.changeMode(44100000L);
-                    break;
-
-                case "ianova":
+                }
+                case "ianova" -> {
                     Driver.sendAtMessage(event, "切换至Ia星爆发模式 800,000,000°");
                     airCondition.changeMode(294000000L);
-                    break;
-
-                case "ibnova":
+                }
+                case "ibnova" -> {
                     Driver.sendAtMessage(event, "切换至Ib新星爆发模式 2,600,000,000°");
                     airCondition.changeMode(330750000L);
-                    break;
-
-                case "icnova":
+                }
+                case "icnova" -> {
                     Driver.sendAtMessage(event, "切换至Ic新星爆发模式 2,800,000,000°");
                     airCondition.changeMode(441000000L);
-                    break;
-
-                case "iinova":
+                }
+                case "iinova" -> {
                     Driver.sendAtMessage(event, "切换至II新星爆发模式 3,000,000,000°");
                     airCondition.changeMode(514500000L);
-                    break;
-
-                case "samrage":
+                }
+                case "samrage" -> {
                     Driver.sendAtMessage(event, "父王之怒 10,000,000,000,000,000,000,000,000,000°");
                     airCondition.changeMode(73500000000L);
-                    break;
-
-                case "samrape":
+                }
+                case "samrape" -> {
                     Driver.sendAtMessage(event, "父王之怒 -273.16°");
                     airCondition.changeMode(73500000000L);
-                    break;
-
-                default:
-                    Driver.sendMessage(event, airCondition.cost());
-
+                }
+                default -> Driver.sendMessage(event, airCondition.cost());
             }
             return;
         }

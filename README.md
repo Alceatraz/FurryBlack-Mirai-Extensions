@@ -38,6 +38,11 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 2.0.7
+
+- 升级Java17
+- 更新内核(回退版本号)
+
 ### 2.0.6
 
 - 优化Acon
