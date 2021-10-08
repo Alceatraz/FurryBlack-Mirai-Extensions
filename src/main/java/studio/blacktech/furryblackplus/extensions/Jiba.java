@@ -60,23 +60,34 @@ public class Jiba extends EventHandlerExecutor {
     @Override
     protected void handleUsersMessage(UserMessageEvent event, Command command) {
         String generate = generate(command);
-        if (generate == null) return;
         FurryBlack.sendMessage(event, generate);
     }
 
     @Override
     protected void handleGroupMessage(GroupMessageEvent event, Command command) {
         String generate = generate(command);
-        if (generate == null) return;
         FurryBlack.sendAtMessage(event, generate);
     }
 
     private static String generate(Command command) {
-        return switch (command.getParameterLength()) {
-            case 1 -> generate(command.getParameterSegment(0));
-            case 2 -> generate(command.getParameterSegment(0), command.getParameterSegment(1));
-            default -> null;
-        };
+        switch (command.getParameterLength()) {
+            case 1:
+                if (command.getParameterSegment(0).length() != 1) {
+                    return "必须是一个字";
+                } else {
+                    return generate(command.getParameterSegment(0));
+                }
+            case 2:
+                if (command.getParameterSegment(0).length() != 1) {
+                    return "第一个参数必须是一个字";
+                }
+                if (command.getParameterSegment(1).length() != 2) {
+                    return "第二个参数必须是两个字";
+                }
+                return generate(command.getParameterSegment(0), command.getParameterSegment(1));
+            default:
+                return "命令用法错误";
+        }
     }
 
     private static String generate(String x) {

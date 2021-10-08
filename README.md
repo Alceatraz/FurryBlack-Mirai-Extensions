@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.1
+
+- 添加对jiba的长度验证
+
 ### 3.0.0
 
 - 框架版本回退不意味着扩展模块的回退
