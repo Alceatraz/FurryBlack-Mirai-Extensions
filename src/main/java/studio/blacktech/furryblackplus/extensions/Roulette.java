@@ -23,11 +23,11 @@ import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.Face;
 import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.PlainText;
-import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.define.Command;
-import studio.blacktech.furryblackplus.core.define.annotation.Executor;
-import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.logger.LoggerX;
+import studio.blacktech.furryblackplus.FurryBlack;
+import studio.blacktech.furryblackplus.core.common.time.TimeTool;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -71,13 +71,13 @@ public class Roulette extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, "好的，没有问题，成全你");
-        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        Driver.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        FurryBlack.sendMessage(event, "好的，没有问题，成全你");
+        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
     }
 
 
@@ -87,7 +87,7 @@ public class Roulette extends EventHandlerExecutor {
         Group group = event.getGroup();
 
         if (!command.hasCommandBody()) {
-            Driver.sendMessage(event, "你必须下注");
+            FurryBlack.sendMessage(event, "你必须下注");
             return;
         }
 
@@ -118,7 +118,7 @@ public class Roulette extends EventHandlerExecutor {
             if (round.isSinglePlayer()) {
                 RouletteRound.PlayerJetton loser = round.gamblers.get(0);
                 long loserID = loser.member.getId();
-                Driver.sendAtMessage(event,
+                FurryBlack.sendAtMessage(event,
                     new PlainText("好的，没有问题，成全你\r\n")
                         .plus(new At(loserID))
                         .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
@@ -126,7 +126,7 @@ public class Roulette extends EventHandlerExecutor {
                         .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
                         .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
                         .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + Driver.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
+                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
                 );
 
             } else {
@@ -139,7 +139,7 @@ public class Roulette extends EventHandlerExecutor {
 
                 for (int i = 0; i < 6; i++) {
                     RouletteRound.PlayerJetton temp = round.gamblers.get(i);
-                    message = message.plus(ICON[i] + " " + Driver.getMemberMappedNickName(temp.member) + " ");
+                    message = message.plus(ICON[i] + " " + FurryBlack.getMemberMappedNickName(temp.member) + " ");
                     message = message.plus(new Face(Face.手枪));
                     if (i == round.getLoser()) {
                         message = message.plus("\uD83D\uDCA5\r\n"); // 💥
@@ -150,7 +150,7 @@ public class Roulette extends EventHandlerExecutor {
                 message = message.plus("\r\n目标已被击毙: ");
                 message = message.plus(new At(loserID));
                 message = message.plus("\r\n掉落了以下物品: " + round.getAllJetton(loserID));
-                Driver.sendMessage(event, message);
+                FurryBlack.sendMessage(event, message);
             }
 
             this.rounds.remove(group.getId());
@@ -188,9 +188,9 @@ public class Roulette extends EventHandlerExecutor {
             }
 
             builder.append("剩余时间 - ");
-            builder.append(LoggerX.format("mm:ss", round.getExpireTime().toEpochMilli() - current));
+            builder.append(TimeTool.format("mm:ss", round.getExpireTime().toEpochMilli() - current));
 
-            Driver.sendMessage(event, new Face(Face.手枪).plus(builder.toString()));
+            FurryBlack.sendMessage(event, new Face(Face.手枪).plus(builder.toString()));
 
         }
 
@@ -208,7 +208,7 @@ public class Roulette extends EventHandlerExecutor {
         public boolean join(GroupMessageEvent event, Command command) {
             if (this.gamblers.size() > 6) return false;
             if (this.hint && this.gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
-                Driver.sendAtMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
+                FurryBlack.sendAtMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
                 this.hint = false;
             }
             this.gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));

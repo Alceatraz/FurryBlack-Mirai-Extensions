@@ -17,11 +17,11 @@ package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.define.Command;
-import studio.blacktech.furryblackplus.core.define.annotation.Executor;
-import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.logger.LoggerX;
+import studio.blacktech.furryblackplus.FurryBlack;
+import studio.blacktech.furryblackplus.core.common.time.TimeTool;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 
 import java.io.File;
 import java.time.DateTimeException;
@@ -106,12 +106,12 @@ public class Time extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, this.getTime());
+        FurryBlack.sendMessage(event, this.getTime());
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, "\r\n" + this.getTime());
+        FurryBlack.sendAtMessage(event, "\r\n" + this.getTime());
     }
 
     private String getTime() {
@@ -119,16 +119,16 @@ public class Time extends EventHandlerExecutor {
         if (this.hour == null || this.hour != currentHour) {
             this.hour = currentHour;
             StringBuilder builder = new StringBuilder();
-            builder.append("世界协调时(UTC) ").append(LoggerX.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
+            builder.append("世界协调时(UTC) ").append(TimeTool.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
             for (Map.Entry<String, ZoneId> entry : this.TIME_ZONE.entrySet()) {
                 ZoneId value = entry.getValue();
                 builder.append(entry.getKey());
                 builder.append(" ");
-                builder.append(LoggerX.format("HH:mm", value));
+                builder.append(TimeTool.format("HH:mm", value));
                 builder.append(suffix(value));
                 builder.append("\r\n");
             }
-            builder.append("亚洲中国(UTC+8) ").append(LoggerX.format("HH:mm", zone_CN));
+            builder.append("亚洲中国(UTC+8) ").append(TimeTool.format("HH:mm", zone_CN));
             this.cache = builder.toString();
         }
         return this.cache;

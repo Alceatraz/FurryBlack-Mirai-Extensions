@@ -19,11 +19,11 @@ import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.define.Command;
-import studio.blacktech.furryblackplus.core.define.annotation.Executor;
-import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.utilties.common.TimeTool;
+import studio.blacktech.furryblackplus.FurryBlack;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
+import studio.blacktech.furryblackplus.core.common.time.TimeTool;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -100,7 +100,7 @@ public class Jrjt extends EventHandlerExecutor {
 
     @Override
     public void boot() {
-        Driver.scheduleAtNextDayFixedRate(this.thread, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
+        FurryBlack.scheduleAtNextDayFixedRate(this.thread, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class Jrjt extends EventHandlerExecutor {
             this.thread.join();
         } catch (InterruptedException exception) {
             this.logger.error("等待计划任务结束失败", exception);
-            if (Driver.isShutModeDrop()) Thread.currentThread().interrupt();
+            if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
         }
         try (FileWriter fileWriter = new FileWriter(this.JRJT_FILE, false)) {
             for (Map.Entry<Long, String> entry : this.JRJT.entrySet()) {
@@ -130,12 +130,12 @@ public class Jrjt extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, this.generate(event.getSender().getId()));
+        FurryBlack.sendMessage(event, this.generate(event.getSender().getId()));
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, this.generate(event.getSender().getId()));
+        FurryBlack.sendAtMessage(event, this.generate(event.getSender().getId()));
     }
 
     private String generate(long user) {

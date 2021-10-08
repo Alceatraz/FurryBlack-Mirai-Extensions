@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.0
+
+- 框架版本回退不意味着扩展模块的回退
+
 ### 2.0.7
 
 - 升级Java17

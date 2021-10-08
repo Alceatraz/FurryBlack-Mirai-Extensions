@@ -17,10 +17,10 @@ package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.Driver;
-import studio.blacktech.furryblackplus.core.define.Command;
-import studio.blacktech.furryblackplus.core.define.annotation.Executor;
-import studio.blacktech.furryblackplus.core.define.moduel.EventHandlerExecutor;
+import studio.blacktech.furryblackplus.FurryBlack;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -53,12 +53,12 @@ public class Dice extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        Driver.sendMessage(event, this.dice());
+        FurryBlack.sendMessage(event, this.dice());
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        Driver.sendAtMessage(event, this.dice());
+        FurryBlack.sendAtMessage(event, this.dice());
     }
 
     private String dice() {
