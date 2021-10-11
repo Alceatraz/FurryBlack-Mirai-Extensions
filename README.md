@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.2
+
+- 修复Time的BUG
+
 ### 3.0.1
 
 - 添加对jiba的长度验证
