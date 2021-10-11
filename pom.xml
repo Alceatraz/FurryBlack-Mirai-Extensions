@@ -59,7 +59,7 @@
 
     <build>
 
-        <finalName>furryblack-extensions-official</finalName>
+        <finalName>furryblack-extension-official</finalName>
 
         <plugins>
 
