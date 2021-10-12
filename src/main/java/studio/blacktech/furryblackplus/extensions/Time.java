@@ -49,10 +49,10 @@ public class Time extends EventHandlerExecutor {
     private static final ZoneId zone_00 = ZoneId.of("UTC");
     private static final ZoneId zone_CN = ZoneId.of("Asia/Shanghai");
 
-    private static final ZoneOffset zoneOffset = ZoneOffset.of("+8");
 
-    private Integer hour;
     private String cache;
+    private long cacheTime;
+
 
     private Map<String, ZoneId> TIME_ZONE;
 
@@ -96,6 +96,7 @@ public class Time extends EventHandlerExecutor {
 
             this.logger.seek("添加时区 " + name + " -> " + timeZone.getId());
         }
+
     }
 
     @Override
@@ -103,6 +104,7 @@ public class Time extends EventHandlerExecutor {
 
     @Override
     public void shut() {}
+
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
@@ -114,10 +116,18 @@ public class Time extends EventHandlerExecutor {
         FurryBlack.sendAtMessage(event, "\r\n" + this.getTime());
     }
 
+
+    private boolean isCacheExpire() {
+        long current = System.currentTimeMillis();
+        if (current > this.cacheTime) {
+            this.cacheTime = LocalDateTime.now(zone_CN).withSecond(0).plusMinutes(1).toInstant(ZoneOffset.UTC).toEpochMilli();
+            return true;
+        }
+        return false;
+    }
+
     private String getTime() {
-        int currentHour = LocalDateTime.now().getHour();
-        if (this.hour == null || this.hour != currentHour) {
-            this.hour = currentHour;
+        if (this.isCacheExpire()) {
             StringBuilder builder = new StringBuilder();
             builder.append("世界协调时(UTC) ").append(TimeTool.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
             for (Map.Entry<String, ZoneId> entry : this.TIME_ZONE.entrySet()) {
@@ -139,7 +149,7 @@ public class Time extends EventHandlerExecutor {
         LocalDateTime local = LocalDateTime.now(zone);
         LocalDateTime china = LocalDateTime.now(zone_CN);
         StringBuilder builder = new StringBuilder();
-        if (zone.getRules().isDaylightSavings(local.toInstant(zoneOffset))) {
+        if (zone.getRules().isDaylightSavings(local.toInstant(FurryBlack.SYSTEM_OFFSET))) {
             builder.append(" 夏令时");
         }
         int localDay = local.getDayOfYear();
@@ -157,5 +167,6 @@ public class Time extends EventHandlerExecutor {
         builder.append("日");
         return builder;
     }
+
 
 }

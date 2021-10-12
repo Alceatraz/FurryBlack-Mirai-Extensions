@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.4
+
+- 修复Time的缓存BUG
+
 ### 3.0.3
 
 - 修改pom.xml中的finalName
