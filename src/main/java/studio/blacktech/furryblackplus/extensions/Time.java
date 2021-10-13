@@ -58,6 +58,8 @@ public class Time extends EventHandlerExecutor {
     private static final DateTimeFormatter FORMATTER_RPC = DateTimeFormatter.ofPattern("HH:mm").withZone(zone_CN);
     private static final DateTimeFormatter FORMATTER_NOR = DateTimeFormatter.ofPattern("HH:mm");
 
+    private static final byte[] WRAP_LINE = "\r\n".getBytes(StandardCharsets.UTF_8);
+
     private String cache;
     private Instant cacheTime;
 
@@ -73,7 +75,7 @@ public class Time extends EventHandlerExecutor {
 
         // =====================================================================
 
-        File AVAILABLE_TIMEZONE = this.initFile("available-timezone.txt");
+        File AVAILABLE_TIMEZONE = this.initModuleFile("available-timezone.txt");
 
         LinkedList<String> availableTimezone = new LinkedList<>(ZoneId.getAvailableZoneIds());
         availableTimezone.sort(CharSequence::compare);
@@ -81,6 +83,7 @@ public class Time extends EventHandlerExecutor {
         try (FileOutputStream fileOutputStream = new FileOutputStream(AVAILABLE_TIMEZONE)) {
             for (String line : availableTimezone) {
                 fileOutputStream.write(line.getBytes(StandardCharsets.UTF_8));
+                fileOutputStream.write(WRAP_LINE);
             }
         } catch (IOException exception) {
             throw new BootException("写入可用时区失败", exception);
