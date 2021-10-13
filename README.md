@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.7
+
+- 完善Jiba
+
 ### 3.0.6
 
 - 修复Time的BUG
