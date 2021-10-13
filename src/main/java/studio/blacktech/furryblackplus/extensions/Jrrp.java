@@ -45,13 +45,11 @@ import java.util.concurrent.TimeUnit;
 )
 public class Jrrp extends EventHandlerExecutor {
 
-
     private Thread thread;
 
     private Map<Long, Integer> JRRP;
 
     private File JRRP_FILE;
-
 
     @Override
     public void init() {

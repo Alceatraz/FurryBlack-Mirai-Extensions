@@ -18,17 +18,23 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.common.time.TimeTool;
+import studio.blacktech.furryblackplus.core.common.exception.moduels.boot.BootException;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.zone.ZoneRules;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 @Executor(
@@ -45,13 +51,15 @@ import java.util.Map;
 )
 public class Time extends EventHandlerExecutor {
 
-
     private static final ZoneId zone_00 = ZoneId.of("UTC");
     private static final ZoneId zone_CN = ZoneId.of("Asia/Shanghai");
 
+    private static final DateTimeFormatter FORMATTER_UTC = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(zone_00);
+    private static final DateTimeFormatter FORMATTER_RPC = DateTimeFormatter.ofPattern("HH:mm").withZone(zone_CN);
+    private static final DateTimeFormatter FORMATTER_NOR = DateTimeFormatter.ofPattern("HH:mm");
 
     private String cache;
-    private long cacheTime;
+    private Instant cacheTime;
 
 
     private Map<String, ZoneId> TIME_ZONE;
@@ -62,6 +70,23 @@ public class Time extends EventHandlerExecutor {
 
         this.initRootFolder();
         this.initConfFolder();
+
+        // =====================================================================
+
+        File AVAILABLE_TIMEZONE = this.initFile("available-timezone.txt");
+
+        LinkedList<String> availableTimezone = new LinkedList<>(ZoneId.getAvailableZoneIds());
+        availableTimezone.sort(CharSequence::compare);
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(AVAILABLE_TIMEZONE)) {
+            for (String line : availableTimezone) {
+                fileOutputStream.write(line.getBytes(StandardCharsets.UTF_8));
+            }
+        } catch (IOException exception) {
+            throw new BootException("写入可用时区失败", exception);
+        }
+
+        // =====================================================================
 
         this.TIME_ZONE = new LinkedHashMap<>();
 
@@ -108,64 +133,115 @@ public class Time extends EventHandlerExecutor {
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
-        FurryBlack.sendMessage(event, this.getTime());
+        FurryBlack.sendMessage(event, this.getWithCache());
     }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        FurryBlack.sendAtMessage(event, "\r\n" + this.getTime());
+        FurryBlack.sendAtMessage(event, "环球时间\r\n" + this.getWithCache());
     }
 
 
-    private boolean isCacheExpire() {
-        long current = System.currentTimeMillis();
-        if (current > this.cacheTime) {
-            this.cacheTime = LocalDateTime.now(zone_CN).withSecond(0).plusMinutes(1).toInstant(ZoneOffset.UTC).toEpochMilli();
-            return true;
-        }
-        return false;
-    }
-
-    private String getTime() {
-        if (this.isCacheExpire()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("世界协调时(UTC) ").append(TimeTool.format("yyyy-MM-dd HH:mm", zone_00)).append("\r\n");
-            for (Map.Entry<String, ZoneId> entry : this.TIME_ZONE.entrySet()) {
-                ZoneId value = entry.getValue();
-                builder.append(entry.getKey());
-                builder.append(" ");
-                builder.append(TimeTool.format("HH:mm", value));
-                builder.append(suffix(value));
-                builder.append("\r\n");
-            }
-            builder.append("亚洲中国(UTC+8) ").append(TimeTool.format("HH:mm", zone_CN));
-            this.cache = builder.toString();
+    private String getWithCache() {
+        Instant now = Instant.now();
+        if (this.cacheTime == null || now.isAfter(this.cacheTime)) {
+            this.cache = this.build(now);
+            ZonedDateTime expireTime = now.atZone(zone_00)
+                .withNano(0)
+                .withSecond(0)
+                .plusMinutes(1);
+            this.cacheTime = expireTime.toInstant();
         }
         return this.cache;
     }
 
 
-    public static StringBuilder suffix(ZoneId zone) {
-        LocalDateTime local = LocalDateTime.now(zone);
-        LocalDateTime china = LocalDateTime.now(zone_CN);
+    private String build(Instant instant) {
+
+        ZonedDateTime china = Instant.from(instant).atZone(zone_CN);
+
+        int chinaYear = china.getYear();
+        int chinaDate = china.getDayOfYear();
+
         StringBuilder builder = new StringBuilder();
-        if (zone.getRules().isDaylightSavings(local.toInstant(FurryBlack.SYSTEM_OFFSET))) {
-            builder.append(" 夏令时");
+
+        builder.append("世界协调时(UTC) ");
+        builder.append(FORMATTER_UTC.format(instant));
+        builder.append("\r\n");
+
+        for (Map.Entry<String, ZoneId> entry : this.TIME_ZONE.entrySet()) {
+
+            var k = entry.getKey();
+            var v = entry.getValue();
+
+            builder.append(k);
+            builder.append(" ");
+
+            // =================================================================
+
+            DateTimeFormatter withZone = FORMATTER_NOR.withZone(v);
+
+            String format = withZone.format(instant);
+
+            builder.append(format);
+
+            // =================================================================
+
+            ZonedDateTime local = Instant.from(instant).atZone(v);
+
+            int localYear = local.getYear();
+            int localDate = local.getDayOfYear();
+
+            ZoneRules localRules = v.getRules();
+
+            if (localRules.isDaylightSavings(instant)) {
+                builder.append(" 夏令时");
+            }
+
+            // =================================================================
+
+            int yearBias = chinaYear - localYear;
+            int dateBias = chinaDate - localDate;
+
+            if (yearBias == 0) {
+
+                if (dateBias < 0) {
+                    builder.append(" 明天");
+                    builder.append(",");
+                    builder.append(local.getDayOfMonth());
+                    builder.append("日");
+                } else if (dateBias > 0) {
+                    builder.append(" 昨天");
+                    builder.append(",");
+                    builder.append(local.getDayOfMonth());
+                    builder.append("日");
+                } else {
+                    builder.append(" 今天");
+                }
+
+            } else if (yearBias > 0) {
+                builder.append(" 昨天");
+                builder.append(",");
+                builder.append(localYear);
+                builder.append("年");
+                builder.append(local.getDayOfMonth());
+                builder.append("日");
+            } else {
+                builder.append(" 明天");
+                builder.append(",");
+                builder.append(localYear);
+                builder.append("年");
+                builder.append(local.getDayOfMonth());
+                builder.append("日");
+            }
+
+            builder.append("\r\n");
         }
-        int localDay = local.getDayOfYear();
-        int chinaDay = china.getDayOfYear();
-        int bias = chinaDay - localDay;
-        if (bias == 0) {
-            return builder;
-        }
-        if (bias > 0) {
-            builder.append(" 昨天,");
-        } else {
-            builder.append(" 明天,");
-        }
-        builder.append(local.getDayOfMonth());
-        builder.append("日");
-        return builder;
+
+        builder.append("亚洲中国(UTC+8) ");
+        builder.append(FORMATTER_RPC.format(instant));
+
+        return builder.toString();
     }
 
 

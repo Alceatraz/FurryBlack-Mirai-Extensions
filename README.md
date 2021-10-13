@@ -38,6 +38,11 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.5
+
+- 重写Chou
+- 重写Time 这玩意出过多少次BUG我都记不清了
+
 ### 3.0.4
 
 - 修复Time的缓存BUG

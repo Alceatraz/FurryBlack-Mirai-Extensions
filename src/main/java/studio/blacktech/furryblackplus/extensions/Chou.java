@@ -22,9 +22,9 @@ import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -97,37 +97,55 @@ public class Chou extends EventHandlerExecutor {
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
+
         Group group = event.getGroup();
         Member sender = event.getSender();
+
         ContactList<NormalMember> members = group.getMembers();
+
         if (members.size() < 4) {
-            FurryBlack.sendAtMessage(event, "可用成员人数不足，无法使用此功能");
-        } else {
-            long botID = FurryBlack.getBotID();
-            long userID = sender.getId();
-            long groupID = group.getId();
-            Stream<Long> range = members.stream().map(Member::getId).filter(item -> item != botID && item != userID);
-            if (this.EXCLUDE.containsKey(groupID)) {
-                List<Long> list = this.EXCLUDE.get(groupID);
-                if (!list.isEmpty()) range = range.filter(item -> !list.contains(item));
-            }
-            List<Long> list = range.toList();
-            int size = list.size();
-            if (size < 2) {
-                FurryBlack.sendAtMessage(event, "可用成员人数不足，无法使用此功能。");
-            } else {
-                Long memberID = list.get(ThreadLocalRandom.current().nextInt(size));
-                Member member = FurryBlack.getMemberOrFail(groupID, memberID);
-                StringBuilder builder = new StringBuilder();
-                if (command.getParameterLength() > 0) {
-                    builder.append("因为: ");
-                    builder.append(command.getCommandBody(200));
-                    builder.append("\r\n");
-                }
-                builder.append("抽中了: ");
-                builder.append(FurryBlack.getMemberMappedNickName(member));
-                FurryBlack.sendAtMessage(event, builder.toString());
-            }
+            return;
         }
+
+        long botID = FurryBlack.getBotID();
+        long userID = sender.getId();
+        long groupID = group.getId();
+
+
+        Stream<NormalMember> stream = members.stream()
+            .filter(item -> item.getId() != botID)
+            .filter(item -> item.getId() != userID);
+
+        List<NormalMember> memberList;
+
+        List<Long> excludeList = this.EXCLUDE.get(groupID);
+
+        if (excludeList == null) {
+            memberList = stream.toList();
+        } else {
+            memberList = stream.filter(item -> !excludeList.contains(item.getId())).toList();
+        }
+
+        int size = memberList.size();
+
+        if (size < 2) {
+            return;
+        }
+
+        int index = ThreadLocalRandom.current().nextInt(size);
+
+        NormalMember chosen = memberList.get(index);
+
+        StringBuilder builder = new StringBuilder();
+        if (command.getParameterLength() > 0) {
+            builder.append("因为: ");
+            builder.append(command.getCommandBody(200));
+            builder.append("\r\n");
+        }
+        builder.append("抽中了: ");
+        builder.append(FurryBlack.getMemberMappedNickName(chosen));
+        FurryBlack.sendAtMessage(event, builder.toString());
+
+
     }
 }
