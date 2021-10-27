@@ -111,10 +111,8 @@ public class Chou extends EventHandlerExecutor {
         long userID = sender.getId();
         long groupID = group.getId();
 
-
         Stream<NormalMember> stream = members.stream()
-            .filter(item -> item.getId() != botID)
-            .filter(item -> item.getId() != userID);
+            .filter(item -> item.getId() != botID && item.getId() != userID);
 
         List<NormalMember> memberList;
 

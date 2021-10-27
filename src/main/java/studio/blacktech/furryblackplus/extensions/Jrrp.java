@@ -74,6 +74,7 @@ public class Jrrp extends EventHandlerExecutor {
         }
 
         this.thread = new Thread(this::schedule);
+        this.thread.setName("executor-jrrp-task");
     }
 
 

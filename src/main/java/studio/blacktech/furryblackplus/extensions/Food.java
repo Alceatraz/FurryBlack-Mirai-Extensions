@@ -18,9 +18,9 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -208,6 +208,5 @@ public class Food extends EventHandlerExecutor {
         public int getTypeSize() {
             return this.typeSize;
         }
-
     }
 }
