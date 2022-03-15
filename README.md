@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.9
+
+- 更新内核2.1.x
+
 ### 3.0.8
 
 - 给线程添加名字
