@@ -36,23 +36,11 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-@Executor(
-    value = "Executor-Roulette",
-    outline = "俄罗斯轮盘赌",
-    description = "提供赌注以参与一局俄罗斯轮盘赌",
-    command = "roulette",
-    usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率",
-    privacy = {
-        "获取命令发送人",
-        "缓存群-成员-回合的数据 并在回合结束后丢弃"
-    }
-)
+@Executor(value = "Executor-Roulette", outline = "俄罗斯轮盘赌", description = "提供赌注以参与一局俄罗斯轮盘赌", command = "roulette", usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率", privacy = {"获取命令发送人", "缓存群-成员-回合的数据 并在回合结束后丢弃"})
 public class Roulette extends EventHandlerExecutor {
 
 
-    private static final String[] ICON = {
-        "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"
-    };
+    private static final String[] ICON = {"1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
 
 
     private HashMap<Long, RouletteRound> rounds;
@@ -118,15 +106,11 @@ public class Roulette extends EventHandlerExecutor {
             if (round.isSinglePlayer()) {
                 RouletteRound.PlayerJetton loser = round.gamblers.get(0);
                 long loserID = loser.member.getId();
-                FurryBlack.sendAtMessage(event,
-                    new PlainText("好的，没有问题，成全你\r\n")
-                        .plus(new At(loserID))
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n")
-                        .plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
+                FurryBlack.sendAtMessage(
+                    event,
+                    new PlainText("好的，没有问题，成全你\r\n").plus(new At(loserID)).plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus(
+                        "\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(
+                        loserID))
                 );
 
             } else {
@@ -225,16 +209,11 @@ public class Roulette extends EventHandlerExecutor {
         }
 
         public boolean isSinglePlayer() {
-            return this.gamblers.stream()
-                .map(item -> item.getMember().getId())
-                .collect(Collectors.toUnmodifiableSet())
-                .size() == 1;
+            return this.gamblers.stream().map(item -> item.getMember().getId()).collect(Collectors.toUnmodifiableSet()).size() == 1;
         }
 
         public String getAllJetton(long id) {
-            List<PlayerJetton> jettons = this.gamblers.stream()
-                .filter(item -> item.getMember().getId() == id)
-                .collect(Collectors.toList());
+            List<PlayerJetton> jettons = this.gamblers.stream().filter(item -> item.getMember().getId() == id).toList();
             StringBuilder builder = new StringBuilder();
             for (RouletteRound.PlayerJetton jetton : jettons) {
                 builder.append("\r\n");
