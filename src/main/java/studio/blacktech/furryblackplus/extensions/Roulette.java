@@ -36,7 +36,17 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-@Executor(value = "Executor-Roulette", outline = "俄罗斯轮盘赌", description = "提供赌注以参与一局俄罗斯轮盘赌", command = "roulette", usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率", privacy = {"获取命令发送人", "缓存群-成员-回合的数据 并在回合结束后丢弃"})
+@Executor(
+    value = "Executor-Roulette",
+    outline = "俄罗斯轮盘赌",
+    description = "提供赌注以参与一局俄罗斯轮盘赌",
+    command = "roulette",
+    usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率", 
+    privacy = {
+        "获取命令发送人",
+        "缓存群-成员-回合的数据 并在回合结束后丢弃"
+        }
+)
 public class Roulette extends EventHandlerExecutor {
 
 
