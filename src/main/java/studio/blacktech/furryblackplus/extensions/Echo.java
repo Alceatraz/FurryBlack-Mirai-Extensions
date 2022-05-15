@@ -18,9 +18,9 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 
 @Executor(
@@ -40,13 +40,16 @@ public class Echo extends EventHandlerExecutor {
 
 
     @Override
-    public void init() {}
+    public void init() {
+    }
 
     @Override
-    public void boot() {}
+    public void boot() {
+    }
 
     @Override
-    public void shut() {}
+    public void shut() {
+    }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {

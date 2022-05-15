@@ -25,9 +25,9 @@ import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.PlainText;
 import studio.blacktech.furryblackplus.FurryBlack;
 import studio.blacktech.furryblackplus.core.common.time.TimeTool;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
+import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
+import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -41,11 +41,11 @@ import java.util.stream.Collectors;
     outline = "俄罗斯轮盘赌",
     description = "提供赌注以参与一局俄罗斯轮盘赌",
     command = "roulette",
-    usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率", 
+    usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率",
     privacy = {
         "获取命令发送人",
         "缓存群-成员-回合的数据 并在回合结束后丢弃"
-        }
+    }
 )
 public class Roulette extends EventHandlerExecutor {
 
@@ -62,10 +62,12 @@ public class Roulette extends EventHandlerExecutor {
     }
 
     @Override
-    public void boot() {}
+    public void boot() {
+    }
 
     @Override
-    public void shut() {}
+    public void shut() {
+    }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {
@@ -118,9 +120,21 @@ public class Roulette extends EventHandlerExecutor {
                 long loserID = loser.member.getId();
                 FurryBlack.sendAtMessage(
                     event,
-                    new PlainText("好的，没有问题，成全你\r\n").plus(new At(loserID)).plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus(
-                        "\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n").plus(new Face(Face.手枪)).plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(
-                        loserID))
+                    new PlainText("好的，没有问题，成全你\r\n").plus(new At(loserID))
+                                                    .plus(new Face(Face.手枪))
+                                                    .plus("\uD83D\uDCA5\r\n")
+                                                    .plus(new Face(Face.手枪))
+                                                    .plus("\uD83D\uDCA5\r\n")
+                                                    .plus(new Face(Face.手枪))
+                                                    .plus("\uD83D\uDCA5\r\n")
+                                                    .plus(new Face(Face.手枪))
+                                                    .plus(
+                                                        "\uD83D\uDCA5\r\n")
+                                                    .plus(new Face(Face.手枪))
+                                                    .plus("\uD83D\uDCA5\r\n")
+                                                    .plus(new Face(Face.手枪))
+                                                    .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(
+                                                        loserID))
                 );
 
             } else {

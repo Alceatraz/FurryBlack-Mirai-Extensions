@@ -17,8 +17,10 @@ package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import studio.blacktech.furryblackplus.FurryBlack;
 import studio.blacktech.furryblackplus.core.common.time.TimeTool;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
@@ -72,11 +74,11 @@ public class Jrjt extends EventHandlerExecutor {
         this.JRJT = new ConcurrentHashMap<>();
 
         this.httpClient = new OkHttpClient.Builder()
-            .callTimeout(2, TimeUnit.SECONDS)
-            .readTimeout(2, TimeUnit.SECONDS)
-            .writeTimeout(2, TimeUnit.SECONDS)
-            .connectTimeout(2, TimeUnit.SECONDS)
-            .build();
+                              .callTimeout(2, TimeUnit.SECONDS)
+                              .readTimeout(2, TimeUnit.SECONDS)
+                              .writeTimeout(2, TimeUnit.SECONDS)
+                              .connectTimeout(2, TimeUnit.SECONDS)
+                              .build();
 
         this.request = new Request.Builder().url("https://du.shadiao.app/api.php").get().build();
 
@@ -145,8 +147,9 @@ public class Jrjt extends EventHandlerExecutor {
         if (this.JRJT.containsKey(user)) {
             message = this.JRJT.get(user);
         } else {
-            try {
-                message = Objects.requireNonNull(this.httpClient.newCall(this.request).execute().body()).string();
+            Call newCall = this.httpClient.newCall(this.request);
+            try (Response response = newCall.execute()) {
+                message = Objects.requireNonNull(response.body()).string();
                 this.JRJT.put(user, message);
             } catch (IOException exception) {
                 this.logger.error("沙雕服务器连接失败", exception);

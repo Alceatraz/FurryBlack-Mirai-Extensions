@@ -128,10 +128,12 @@ public class Time extends EventHandlerExecutor {
     }
 
     @Override
-    public void boot() {}
+    public void boot() {
+    }
 
     @Override
-    public void shut() {}
+    public void shut() {
+    }
 
 
     @Override
@@ -150,9 +152,9 @@ public class Time extends EventHandlerExecutor {
         if (this.cacheTime == null || now.isAfter(this.cacheTime)) {
             this.cache = this.build(now);
             ZonedDateTime expireTime = now.atZone(zone_00)
-                .withNano(0)
-                .withSecond(0)
-                .plusMinutes(1);
+                                          .withNano(0)
+                                          .withSecond(0)
+                                          .plusMinutes(1);
             this.cacheTime = expireTime.toInstant();
         }
         return this.cache;

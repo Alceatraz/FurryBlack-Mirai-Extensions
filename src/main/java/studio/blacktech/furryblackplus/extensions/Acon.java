@@ -80,13 +80,16 @@ public class Acon extends EventHandlerExecutor {
     }
 
     @Override
-    public void boot() {}
+    public void boot() {
+    }
 
     @Override
-    public void shut() {}
+    public void shut() {
+    }
 
     @Override
-    public void handleUsersMessage(UserMessageEvent event, Command command) {}
+    public void handleUsersMessage(UserMessageEvent event, Command command) {
+    }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {

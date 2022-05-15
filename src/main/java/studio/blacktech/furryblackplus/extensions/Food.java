@@ -98,10 +98,12 @@ public class Food extends EventHandlerExecutor {
 
 
     @Override
-    public void boot() {}
+    public void boot() {
+    }
 
     @Override
-    public void shut() {}
+    public void shut() {
+    }
 
     @Override
     public void handleUsersMessage(UserMessageEvent event, Command command) {

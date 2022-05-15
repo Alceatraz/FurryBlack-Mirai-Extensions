@@ -87,13 +87,16 @@ public class Chou extends EventHandlerExecutor {
     }
 
     @Override
-    public void boot() {}
+    public void boot() {
+    }
 
     @Override
-    public void shut() {}
+    public void shut() {
+    }
 
     @Override
-    public void handleUsersMessage(UserMessageEvent event, Command command) {}
+    public void handleUsersMessage(UserMessageEvent event, Command command) {
+    }
 
     @Override
     public void handleGroupMessage(GroupMessageEvent event, Command command) {
@@ -112,7 +115,7 @@ public class Chou extends EventHandlerExecutor {
         long groupID = group.getId();
 
         Stream<NormalMember> stream = members.stream()
-            .filter(item -> item.getId() != botID && item.getId() != userID);
+                                             .filter(item -> item.getId() != botID && item.getId() != userID);
 
         List<NormalMember> memberList;
 

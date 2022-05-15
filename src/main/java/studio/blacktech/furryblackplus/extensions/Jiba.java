@@ -48,13 +48,16 @@ public class Jiba extends EventHandlerExecutor {
 
 
     @Override
-    protected void init() throws BootException {}
+    protected void init() throws BootException {
+    }
 
     @Override
-    protected void boot() throws BotException {}
+    protected void boot() throws BotException {
+    }
 
     @Override
-    protected void shut() throws BotException {}
+    protected void shut() throws BotException {
+    }
 
 
     @Override

@@ -38,6 +38,11 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.10
+
+- 更新maven-compiler-plugin
+- 更新maven-jar-plugin
+
 ### 3.0.9
 
 - 更新内核2.1.x
