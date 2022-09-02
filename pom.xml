@@ -121,9 +121,6 @@
                             <overWriteIfNewer>true</overWriteIfNewer>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
-                            <includeArtifactIds>
-                                okhttp,
-                            </includeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
