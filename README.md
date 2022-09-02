@@ -38,6 +38,11 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.12
+
+- 退回 2.12.2
+- 移除 OkHttp
+
 ### 3.0.11
 
 - 更新Mirai 2.13.0-M1
