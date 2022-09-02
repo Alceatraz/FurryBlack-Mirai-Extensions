@@ -38,6 +38,12 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.11
+
+- 更新Mirai 2.13.0-M1
+- 更新 junit
+- 引入 OkHttp
+
 ### 3.0.10
 
 - 更新maven-compiler-plugin
