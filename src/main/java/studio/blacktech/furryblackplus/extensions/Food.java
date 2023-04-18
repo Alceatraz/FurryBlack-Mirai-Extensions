@@ -31,184 +31,184 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 @Executor(
-    value = "Executor-Food",
-    outline = "挑选外卖",
-    description = "从预设文本随机挑选今天中午吃什么 欢迎投稿",
-    command = "food",
-    usage = {
-        "/food - 全范围抽取",
-        "/food XXX - 某类别抽取",
-        "/food list - 列出所有分类",
-    },
-    privacy = {
-        "获取命令发送人"
-    }
+  value = "Executor-Food",
+  outline = "挑选外卖",
+  description = "从预设文本随机挑选今天中午吃什么 欢迎投稿",
+  command = "food",
+  usage = {
+    "/food - 全范围抽取",
+    "/food XXX - 某类别抽取",
+    "/food list - 列出所有分类",
+  },
+  privacy = {
+    "获取命令发送人"
+  }
 )
 public class Food extends EventHandlerExecutor {
 
 
-    private FoodStorage FOOD;
+  private FoodStorage FOOD;
 
 
-    @Override
-    public void init() {
+  @Override
+  public void init() {
 
-        this.initRootFolder();
-        this.initConfFolder();
+    this.initRootFolder();
+    this.initConfFolder();
 
-        this.FOOD = new FoodStorage();
+    this.FOOD = new FoodStorage();
 
-        File FILE_TAKEOUT = this.initConfFile("food-storage.txt");
+    File FILE_TAKEOUT = this.initConfFile("food-storage.txt");
 
 
-        int i = 0;
+    int i = 0;
 
-        for (String line : this.readFile(FILE_TAKEOUT)) {
+    for (String line : this.readFile(FILE_TAKEOUT)) {
 
-            if (!line.contains(":")) {
-                this.logger.warning("配置无效 " + line);
-                continue;
-            }
+      if (!line.contains(":")) {
+        this.logger.warning("配置无效 " + line);
+        continue;
+      }
 
-            String[] temp1 = line.split(":");
+      String[] temp1 = line.split(":");
 
-            if (temp1.length != 2) {
-                this.logger.warning("配置无效 " + line);
-                continue;
-            }
+      if (temp1.length != 2) {
+        this.logger.warning("配置无效 " + line);
+        continue;
+      }
 
-            if (temp1[1].contains(",")) {
-                String[] temp2 = temp1[1].split(",");
-                for (String temp3 : temp2) {
-                    String trim = temp3.trim();
-                    this.FOOD.add(temp1[0], trim);
-                    i++;
-                }
-            } else {
-                this.FOOD.add(temp1[0], temp1[1]);
-                i++;
-            }
+      if (temp1[1].contains(",")) {
+        String[] temp2 = temp1[1].split(",");
+        for (String temp3 : temp2) {
+          String trim = temp3.trim();
+          this.FOOD.add(temp1[0], trim);
+          i++;
         }
-
-        this.FOOD.update();
-
-        this.logger.seek("共计添加了" + i + "种" + this.FOOD.getTypeSize() + "个类别");
-
+      } else {
+        this.FOOD.add(temp1[0], temp1[1]);
+        i++;
+      }
     }
 
+    this.FOOD.update();
 
-    @Override
-    public void boot() {
+    this.logger.seek("共计添加了" + i + "种" + this.FOOD.getTypeSize() + "个类别");
+
+  }
+
+
+  @Override
+  public void boot() {
+  }
+
+  @Override
+  public void shut() {
+  }
+
+  @Override
+  public void handleUsersMessage(UserMessageEvent event, Command command) {
+    FurryBlack.sendMessage(event, this.generate(command));
+  }
+
+  @Override
+  public void handleGroupMessage(GroupMessageEvent event, Command command) {
+    FurryBlack.sendAtMessage(event, this.generate(command));
+  }
+
+  public String generate(Command command) {
+    if (command.hasCommandBody()) {
+      switch (command.getParameterSegment(0)) {
+
+        case "dark":
+          return "请使用/dark以获取极致美食体验";
+
+        case "list":
+          return this.FOOD.getList();
+
+        default:
+          try {
+            int type = Integer.parseInt(command.getParameterSegment(0));
+            return this.FOOD.random(type - 1);
+          } catch (Exception exception) {
+            return "有这个类别 你在想Peach";
+          }
+      }
+
+    } else {
+      return this.FOOD.random();
+    }
+  }
+
+  public static class FoodStorage {
+
+    private int typeSize;
+    private String list;
+    private final List<String> TYPE; // 存储所有分类
+    private final Map<Integer, Integer> SIZE; // 存储分类的尺寸
+    private final Map<Integer, List<String>> ITEM; // 存储实际内容
+
+    public FoodStorage() {
+      this.TYPE = new LinkedList<>();
+      this.SIZE = new LinkedHashMap<>();
+      this.ITEM = new LinkedHashMap<>();
     }
 
-    @Override
-    public void shut() {
+    public void add(String type, String name) {
+      List<String> temp;
+      if (this.TYPE.contains(type)) {
+        int index = this.TYPE.indexOf(type);
+        temp = this.ITEM.get(index);
+      } else {
+        int size = this.TYPE.size();
+        this.TYPE.add(type);
+        temp = new LinkedList<>();
+        this.ITEM.put(size, temp);
+      }
+      temp.add(name);
     }
 
-    @Override
-    public void handleUsersMessage(UserMessageEvent event, Command command) {
-        FurryBlack.sendMessage(event, this.generate(command));
+    public void update() {
+      this.typeSize = this.TYPE.size();
+      for (int i = 0; i < this.typeSize; i++) {
+        List<String> temp = this.ITEM.get(i);
+        this.SIZE.put(i, temp.size());
+      }
+      int i = 0;
+      StringBuilder builder = new StringBuilder();
+      builder.append("可用的类别: \r\n");
+      for (String name : this.TYPE) {
+        builder.append(i + 1);
+        builder.append(" - ");
+        builder.append(name);
+        builder.append("(");
+        builder.append(this.SIZE.get(i));
+        builder.append(")");
+        builder.append("\r\n");
+        i++;
+      }
+      builder.setLength(builder.length() - 2);
+      this.list = builder.toString();
     }
 
-    @Override
-    public void handleGroupMessage(GroupMessageEvent event, Command command) {
-        FurryBlack.sendAtMessage(event, this.generate(command));
+    public String random() {
+      ThreadLocalRandom random = ThreadLocalRandom.current();
+      return this.random(random.nextInt(this.typeSize));
     }
 
-    public String generate(Command command) {
-        if (command.hasCommandBody()) {
-            switch (command.getParameterSegment(0)) {
-
-                case "dark":
-                    return "请使用/dark以获取极致美食体验";
-
-                case "list":
-                    return this.FOOD.getList();
-
-                default:
-                    try {
-                        int type = Integer.parseInt(command.getParameterSegment(0));
-                        return this.FOOD.random(type - 1);
-                    } catch (Exception exception) {
-                        return "有这个类别 你在想Peach";
-                    }
-            }
-
-        } else {
-            return this.FOOD.random();
-        }
+    public String random(int type) {
+      if (!this.SIZE.containsKey(type)) throw new IllegalArgumentException();
+      ThreadLocalRandom random = ThreadLocalRandom.current();
+      int length = this.SIZE.get(type);
+      List<String> temp = this.ITEM.get(type);
+      return temp.get(random.nextInt(length));
     }
 
-    public static class FoodStorage {
-
-        private int typeSize;
-        private String list;
-        private final List<String> TYPE; // 存储所有分类
-        private final Map<Integer, Integer> SIZE; // 存储分类的尺寸
-        private final Map<Integer, List<String>> ITEM; // 存储实际内容
-
-        public FoodStorage() {
-            this.TYPE = new LinkedList<>();
-            this.SIZE = new LinkedHashMap<>();
-            this.ITEM = new LinkedHashMap<>();
-        }
-
-        public void add(String type, String name) {
-            List<String> temp;
-            if (this.TYPE.contains(type)) {
-                int index = this.TYPE.indexOf(type);
-                temp = this.ITEM.get(index);
-            } else {
-                int size = this.TYPE.size();
-                this.TYPE.add(type);
-                temp = new LinkedList<>();
-                this.ITEM.put(size, temp);
-            }
-            temp.add(name);
-        }
-
-        public void update() {
-            this.typeSize = this.TYPE.size();
-            for (int i = 0; i < this.typeSize; i++) {
-                List<String> temp = this.ITEM.get(i);
-                this.SIZE.put(i, temp.size());
-            }
-            int i = 0;
-            StringBuilder builder = new StringBuilder();
-            builder.append("可用的类别: \r\n");
-            for (String name : this.TYPE) {
-                builder.append(i + 1);
-                builder.append(" - ");
-                builder.append(name);
-                builder.append("(");
-                builder.append(this.SIZE.get(i));
-                builder.append(")");
-                builder.append("\r\n");
-                i++;
-            }
-            builder.setLength(builder.length() - 2);
-            this.list = builder.toString();
-        }
-
-        public String random() {
-            ThreadLocalRandom random = ThreadLocalRandom.current();
-            return this.random(random.nextInt(this.typeSize));
-        }
-
-        public String random(int type) {
-            if (!this.SIZE.containsKey(type)) throw new IllegalArgumentException();
-            ThreadLocalRandom random = ThreadLocalRandom.current();
-            int length = this.SIZE.get(type);
-            List<String> temp = this.ITEM.get(type);
-            return temp.get(random.nextInt(length));
-        }
-
-        public String getList() {
-            return this.list;
-        }
-
-        public int getTypeSize() {
-            return this.typeSize;
-        }
+    public String getList() {
+      return this.list;
     }
+
+    public int getTypeSize() {
+      return this.typeSize;
+    }
+  }
 }

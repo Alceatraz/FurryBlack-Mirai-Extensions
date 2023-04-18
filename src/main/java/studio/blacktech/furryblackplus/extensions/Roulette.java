@@ -37,235 +37,235 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Executor(
-    value = "Executor-Roulette",
-    outline = "俄罗斯轮盘赌",
-    description = "提供赌注以参与一局俄罗斯轮盘赌",
-    command = "roulette",
-    usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率",
-    privacy = {
-        "获取命令发送人",
-        "缓存群-成员-回合的数据 并在回合结束后丢弃"
-    }
+  value = "Executor-Roulette",
+  outline = "俄罗斯轮盘赌",
+  description = "提供赌注以参与一局俄罗斯轮盘赌",
+  command = "roulette",
+  usage = "/roulette 筹码 - 加入或者发起一局俄罗斯轮盘赌 重复下注可增加被枪毙的几率",
+  privacy = {
+    "获取命令发送人",
+    "缓存群-成员-回合的数据 并在回合结束后丢弃"
+  }
 )
 public class Roulette extends EventHandlerExecutor {
 
 
-    private static final String[] ICON = {"1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
+  private static final String[] ICON = {"1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
 
 
-    private HashMap<Long, RouletteRound> rounds;
+  private HashMap<Long, RouletteRound> rounds;
 
 
-    @Override
-    public void init() {
-        this.rounds = new HashMap<>();
+  @Override
+  public void init() {
+    this.rounds = new HashMap<>();
+  }
+
+  @Override
+  public void boot() {
+  }
+
+  @Override
+  public void shut() {
+  }
+
+  @Override
+  public void handleUsersMessage(UserMessageEvent event, Command command) {
+    FurryBlack.sendMessage(event, "好的，没有问题，成全你");
+    FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+    FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+    FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+    FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+    FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+    FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
+  }
+
+
+  @Override
+  public synchronized void handleGroupMessage(GroupMessageEvent event, Command command) {
+
+    Group group = event.getGroup();
+
+    if (!command.hasCommandBody()) {
+      FurryBlack.sendMessage(event, "你必须下注");
+      return;
     }
 
-    @Override
-    public void boot() {
+    //
+
+    RouletteRound round;
+
+    //
+
+    long current = System.currentTimeMillis();
+
+    if (this.rounds.containsKey(group.getId())) {
+      round = this.rounds.get(group.getId());
+      if (round.getExpireTime().toEpochMilli() - current < 0) {
+        this.rounds.remove(group.getId());
+        round = new RouletteRound();
+        this.rounds.put(group.getId(), round);
+      }
+    } else {
+      round = new RouletteRound();
+      this.rounds.put(group.getId(), round);
     }
 
-    @Override
-    public void shut() {
-    }
+    //
 
-    @Override
-    public void handleUsersMessage(UserMessageEvent event, Command command) {
-        FurryBlack.sendMessage(event, "好的，没有问题，成全你");
-        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-        FurryBlack.sendMessage(event, new Face(Face.手枪).plus("\uD83D\uDCA5"));
-    }
+    if (round.join(event, command)) {
 
+      if (round.isSinglePlayer()) {
+        RouletteRound.PlayerJetton loser = round.gamblers.get(0);
+        long loserID = loser.member.getId();
+        FurryBlack.sendAtMessage(
+          event,
+          new PlainText("好的，没有问题，成全你\r\n").plus(new At(loserID))
+                                                   .plus(new Face(Face.手枪))
+                                                   .plus("\uD83D\uDCA5\r\n")
+                                                   .plus(new Face(Face.手枪))
+                                                   .plus("\uD83D\uDCA5\r\n")
+                                                   .plus(new Face(Face.手枪))
+                                                   .plus("\uD83D\uDCA5\r\n")
+                                                   .plus(new Face(Face.手枪))
+                                                   .plus(
+                                                     "\uD83D\uDCA5\r\n")
+                                                   .plus(new Face(Face.手枪))
+                                                   .plus("\uD83D\uDCA5\r\n")
+                                                   .plus(new Face(Face.手枪))
+                                                   .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(
+                                                     loserID))
+        );
 
-    @Override
-    public synchronized void handleGroupMessage(GroupMessageEvent event, Command command) {
+      } else {
 
-        Group group = event.getGroup();
+        int bullet = round.roll();
+        RouletteRound.PlayerJetton loser = round.gamblers.get(bullet);
+        long loserID = loser.member.getId();
 
-        if (!command.hasCommandBody()) {
-            FurryBlack.sendMessage(event, "你必须下注");
-            return;
+        Message message = new PlainText("名单已凑齐 装填子弹中\r\n");
+
+        for (int i = 0; i < 6; i++) {
+          RouletteRound.PlayerJetton temp = round.gamblers.get(i);
+          message = message.plus(ICON[i] + " " + FurryBlack.getMemberMappedNickName(temp.member) + " ");
+          message = message.plus(new Face(Face.手枪));
+          if (i == round.getLoser()) {
+            message = message.plus("\uD83D\uDCA5\r\n"); // 💥
+          } else {
+            message = message.plus("\r\n");
+          }
         }
+        message = message.plus("\r\n目标已被击毙: ");
+        message = message.plus(new At(loserID));
+        message = message.plus("\r\n掉落了以下物品: " + round.getAllJetton(loserID));
+        FurryBlack.sendMessage(event, message);
+      }
 
-        //
+      this.rounds.remove(group.getId());
 
-        RouletteRound round;
+    } else {
 
-        //
+      StringBuilder builder = new StringBuilder();
 
-        long current = System.currentTimeMillis();
+      builder.append(" 俄罗斯轮盘 - 当前人数 (");
+      builder.append(round.getGamblers().size());
+      builder.append("/6)\r\n");
 
-        if (this.rounds.containsKey(group.getId())) {
-            round = this.rounds.get(group.getId());
-            if (round.getExpireTime().toEpochMilli() - current < 0) {
-                this.rounds.remove(group.getId());
-                round = new RouletteRound();
-                this.rounds.put(group.getId(), round);
-            }
+      int i = 0;
+
+      int size = round.getGamblers().size();
+
+      for (; i < size; i++) {
+        RouletteRound.PlayerJetton temp = round.getGamblers().get(i);
+        builder.append(ICON[i]);
+        builder.append(" ");
+        builder.append(temp.getMember().getId());
+        builder.append(" - ");
+        String jetton = temp.getJetton();
+        if (jetton.length() > 15) {
+          builder.append(jetton, 0, 12).append("...");
         } else {
-            round = new RouletteRound();
-            this.rounds.put(group.getId(), round);
+          builder.append(jetton);
         }
+        builder.append("\r\n");
+      }
 
-        //
+      for (; i < 6; i++) {
+        builder.append(ICON[i]);
+        builder.append(" - 等待加入\r\n");
+      }
 
-        if (round.join(event, command)) {
+      builder.append("剩余时间 - ");
+      builder.append(TimeTool.format("mm:ss", round.getExpireTime().toEpochMilli() - current));
 
-            if (round.isSinglePlayer()) {
-                RouletteRound.PlayerJetton loser = round.gamblers.get(0);
-                long loserID = loser.member.getId();
-                FurryBlack.sendAtMessage(
-                    event,
-                    new PlainText("好的，没有问题，成全你\r\n").plus(new At(loserID))
-                                                    .plus(new Face(Face.手枪))
-                                                    .plus("\uD83D\uDCA5\r\n")
-                                                    .plus(new Face(Face.手枪))
-                                                    .plus("\uD83D\uDCA5\r\n")
-                                                    .plus(new Face(Face.手枪))
-                                                    .plus("\uD83D\uDCA5\r\n")
-                                                    .plus(new Face(Face.手枪))
-                                                    .plus(
-                                                        "\uD83D\uDCA5\r\n")
-                                                    .plus(new Face(Face.手枪))
-                                                    .plus("\uD83D\uDCA5\r\n")
-                                                    .plus(new Face(Face.手枪))
-                                                    .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(
-                                                        loserID))
-                );
-
-            } else {
-
-                int bullet = round.roll();
-                RouletteRound.PlayerJetton loser = round.gamblers.get(bullet);
-                long loserID = loser.member.getId();
-
-                Message message = new PlainText("名单已凑齐 装填子弹中\r\n");
-
-                for (int i = 0; i < 6; i++) {
-                    RouletteRound.PlayerJetton temp = round.gamblers.get(i);
-                    message = message.plus(ICON[i] + " " + FurryBlack.getMemberMappedNickName(temp.member) + " ");
-                    message = message.plus(new Face(Face.手枪));
-                    if (i == round.getLoser()) {
-                        message = message.plus("\uD83D\uDCA5\r\n"); // 💥
-                    } else {
-                        message = message.plus("\r\n");
-                    }
-                }
-                message = message.plus("\r\n目标已被击毙: ");
-                message = message.plus(new At(loserID));
-                message = message.plus("\r\n掉落了以下物品: " + round.getAllJetton(loserID));
-                FurryBlack.sendMessage(event, message);
-            }
-
-            this.rounds.remove(group.getId());
-
-        } else {
-
-            StringBuilder builder = new StringBuilder();
-
-            builder.append(" 俄罗斯轮盘 - 当前人数 (");
-            builder.append(round.getGamblers().size());
-            builder.append("/6)\r\n");
-
-            int i = 0;
-
-            int size = round.getGamblers().size();
-
-            for (; i < size; i++) {
-                RouletteRound.PlayerJetton temp = round.getGamblers().get(i);
-                builder.append(ICON[i]);
-                builder.append(" ");
-                builder.append(temp.getMember().getId());
-                builder.append(" - ");
-                String jetton = temp.getJetton();
-                if (jetton.length() > 15) {
-                    builder.append(jetton, 0, 12).append("...");
-                } else {
-                    builder.append(jetton);
-                }
-                builder.append("\r\n");
-            }
-
-            for (; i < 6; i++) {
-                builder.append(ICON[i]);
-                builder.append(" - 等待加入\r\n");
-            }
-
-            builder.append("剩余时间 - ");
-            builder.append(TimeTool.format("mm:ss", round.getExpireTime().toEpochMilli() - current));
-
-            FurryBlack.sendMessage(event, new Face(Face.手枪).plus(builder.toString()));
-
-        }
+      FurryBlack.sendMessage(event, new Face(Face.手枪).plus(builder.toString()));
 
     }
 
-
-    private static class RouletteRound {
-
-        private final Instant expireTime = Instant.ofEpochMilli(System.currentTimeMillis() + 600000);
-        private final List<PlayerJetton> gamblers = new ArrayList<>(6);
-
-        private boolean hint = true;
-        private int loser = 6;
-
-        public boolean join(GroupMessageEvent event, Command command) {
-            if (this.gamblers.size() > 6) return false;
-            if (this.hint && this.gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
-                FurryBlack.sendAtMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
-                this.hint = false;
-            }
-            this.gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));
-            return this.gamblers.size() == 6;
-        }
-
-        public int roll() {
-            this.loser = ThreadLocalRandom.current().nextInt(6);
-            return this.loser;
-        }
-
-        public int getLoser() {
-            return this.loser;
-        }
-
-        public boolean isSinglePlayer() {
-            return this.gamblers.stream().map(item -> item.getMember().getId()).collect(Collectors.toUnmodifiableSet()).size() == 1;
-        }
-
-        public String getAllJetton(long id) {
-            List<PlayerJetton> jettons = this.gamblers.stream().filter(item -> item.getMember().getId() == id).toList();
-            StringBuilder builder = new StringBuilder();
-            for (RouletteRound.PlayerJetton jetton : jettons) {
-                builder.append("\r\n");
-                builder.append(jetton.getJetton());
-            }
-            return builder.toString();
-        }
+  }
 
 
-        public Instant getExpireTime() {
-            return this.expireTime;
-        }
+  private static class RouletteRound {
 
-        public List<PlayerJetton> getGamblers() {
-            return this.gamblers;
-        }
+    private final Instant expireTime = Instant.ofEpochMilli(System.currentTimeMillis() + 600000);
+    private final List<PlayerJetton> gamblers = new ArrayList<>(6);
 
+    private boolean hint = true;
+    private int loser = 6;
 
-        private record PlayerJetton(Member member, String jetton) {
-
-            public Member getMember() {
-                return this.member;
-            }
-
-            public String getJetton() {
-                return this.jetton;
-            }
-        }
+    public boolean join(GroupMessageEvent event, Command command) {
+      if (this.gamblers.size() > 6) return false;
+      if (this.hint && this.gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
+        FurryBlack.sendAtMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
+        this.hint = false;
+      }
+      this.gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));
+      return this.gamblers.size() == 6;
     }
+
+    public int roll() {
+      this.loser = ThreadLocalRandom.current().nextInt(6);
+      return this.loser;
+    }
+
+    public int getLoser() {
+      return this.loser;
+    }
+
+    public boolean isSinglePlayer() {
+      return this.gamblers.stream().map(item -> item.getMember().getId()).collect(Collectors.toUnmodifiableSet()).size() == 1;
+    }
+
+    public String getAllJetton(long id) {
+      List<PlayerJetton> jettons = this.gamblers.stream().filter(item -> item.getMember().getId() == id).toList();
+      StringBuilder builder = new StringBuilder();
+      for (RouletteRound.PlayerJetton jetton : jettons) {
+        builder.append("\r\n");
+        builder.append(jetton.getJetton());
+      }
+      return builder.toString();
+    }
+
+
+    public Instant getExpireTime() {
+      return this.expireTime;
+    }
+
+    public List<PlayerJetton> getGamblers() {
+      return this.gamblers;
+    }
+
+
+    private record PlayerJetton(Member member, String jetton) {
+
+      public Member getMember() {
+        return this.member;
+      }
+
+      public String getJetton() {
+        return this.jetton;
+      }
+    }
+  }
 }
 
