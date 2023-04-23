@@ -38,30 +38,31 @@ import java.util.concurrent.ThreadLocalRandom;
 )
 public class Dice extends EventHandlerExecutor {
 
-
   private static final String[] DICES = {"0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
-
 
   @Override
   public void init() {
+
   }
 
   @Override
   public void boot() {
+
   }
 
   @Override
   public void shut() {
+
   }
 
   @Override
   public void handleUsersMessage(UserMessageEvent event, Command command) {
-    FurryBlack.sendMessage(event, this.dice());
+    FurryBlack.sendMessage(event, dice());
   }
 
   @Override
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
-    FurryBlack.sendAtMessage(event, this.dice());
+    FurryBlack.sendAtMessage(event, dice());
   }
 
   private String dice() {

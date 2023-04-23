@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
- * This program is free software: you can redistribute it and/or modify
+ * program is free software: you can redistribute it and/or modify
  * it under the terms of the BTS Anti-Commercial & GNU Affero General.
 
- * This program is distributed in the hope that it will be useful,
+ * program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
  * You should have received a copy of the BTS Anti-Commercial & GNU Affero
- * General Public License along with this program in README or LICENSE.
+ * General Public License along with program in README or LICENSE.
  */
 
 package studio.blacktech.furryblackplus.extensions;
@@ -51,26 +51,24 @@ import java.util.stream.Stream;
 )
 public class Chou extends EventHandlerExecutor {
 
-
   private Map<Long, List<Long>> EXCLUDE;
-
 
   @Override
   public void init() {
 
-    this.initRootFolder();
-    this.initConfFolder();
+    initRootFolder();
+    initConfFolder();
 
-    this.EXCLUDE = new HashMap<>();
+    EXCLUDE = new HashMap<>();
 
-    File FILE_EXCLUDE = this.initConfFile("exclude.txt");
+    File FILE_EXCLUDE = initConfFile("exclude.txt");
 
-    for (String line : this.readFile(FILE_EXCLUDE)) {
+    for (String line : readFile(FILE_EXCLUDE)) {
 
       int indexOfColon = line.indexOf(":");
 
       if (indexOfColon < 0) {
-        this.logger.warning("配置无效 " + line);
+        logger.warning("配置无效 " + line);
         continue;
       }
 
@@ -80,9 +78,9 @@ public class Chou extends EventHandlerExecutor {
       long groupId = Long.parseLong(group);
       long usersId = Long.parseLong(users);
 
-      List<Long> tempList = this.EXCLUDE.computeIfAbsent(groupId, k -> new ArrayList<>());
+      List<Long> tempList = EXCLUDE.computeIfAbsent(groupId, k -> new ArrayList<>());
       tempList.add(usersId);
-      this.logger.seek("排除成员 " + group + "-" + usersId);
+      logger.seek("排除成员 " + group + "-" + usersId);
     }
   }
 
@@ -119,7 +117,7 @@ public class Chou extends EventHandlerExecutor {
 
     List<NormalMember> memberList;
 
-    List<Long> excludeList = this.EXCLUDE.get(groupID);
+    List<Long> excludeList = EXCLUDE.get(groupID);
 
     if (excludeList == null) {
       memberList = stream.toList();
@@ -146,7 +144,6 @@ public class Chou extends EventHandlerExecutor {
     builder.append("抽中了: ");
     builder.append(FurryBlack.getMemberMappedNickName(chosen));
     FurryBlack.sendAtMessage(event, builder.toString());
-
 
   }
 }

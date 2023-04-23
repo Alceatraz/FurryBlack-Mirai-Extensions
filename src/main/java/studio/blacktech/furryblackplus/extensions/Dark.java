@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
- * This program is free software: you can redistribute it and/or modify
+ * program is free software: you can redistribute it and/or modify
  * it under the terms of the BTS Anti-Commercial & GNU Affero General.
 
- * This program is distributed in the hope that it will be useful,
+ * program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
  * You should have received a copy of the BTS Anti-Commercial & GNU Affero
- * General Public License along with this program in README or LICENSE.
+ * General Public License along with program in README or LICENSE.
  */
 
 package studio.blacktech.furryblackplus.extensions;
@@ -42,84 +42,84 @@ import java.util.concurrent.ThreadLocalRandom;
 )
 public class Dark extends EventHandlerExecutor {
 
-
   private int sizeCookMethod;
   private int sizeIngredient;
 
   private List<String> COOK_METHOD;
   private List<String> INGREDIENTS;
 
-
   @Override
   public void init() {
 
-    this.initRootFolder();
-    this.initConfFolder();
+    initRootFolder();
+    initConfFolder();
 
-    this.COOK_METHOD = new ArrayList<>();
-    this.INGREDIENTS = new ArrayList<>();
+    COOK_METHOD = new ArrayList<>();
+    INGREDIENTS = new ArrayList<>();
 
-    File FILE_COOK_METHOD = this.initConfFile("dark-verb.txt");
-    File FILE_INGREDIENTS = this.initConfFile("dark-item.txt");
+    File FILE_COOK_METHOD = initConfFile("dark-verb.txt");
+    File FILE_INGREDIENTS = initConfFile("dark-item.txt");
 
     int i = 0;
 
-    for (String line : this.readFile(FILE_COOK_METHOD)) {
+    for (String line : readFile(FILE_COOK_METHOD)) {
       i++;
-      this.COOK_METHOD.add(line);
+      COOK_METHOD.add(line);
     }
 
     int j = 0;
 
-    for (String line : this.readFile(FILE_INGREDIENTS)) {
+    for (String line : readFile(FILE_INGREDIENTS)) {
 
       if (!line.contains(":")) {
-        this.logger.warning("配置无效 " + line);
+        logger.warning("配置无效 " + line);
         continue;
       }
 
       String[] temp1 = line.split(":");
 
       if (temp1.length != 2) {
-        this.logger.warning("配置无效 " + line);
+        logger.warning("配置无效 " + line);
         continue;
       }
 
       if (temp1[1].contains(",")) {
         for (String temp : temp1[1].split(",")) {
           String trim = temp.trim();
-          this.INGREDIENTS.add(trim);
+          INGREDIENTS.add(trim);
           j++;
         }
       } else {
-        this.INGREDIENTS.add(temp1[1]);
+        INGREDIENTS.add(temp1[1]);
         j++;
       }
     }
 
-    this.sizeCookMethod = this.COOK_METHOD.size();
-    this.sizeIngredient = this.INGREDIENTS.size();
+    sizeCookMethod = COOK_METHOD.size();
+    sizeIngredient = INGREDIENTS.size();
 
-    this.logger.seek("共添加了" + i + "种方式" + j + "种材料");
+    logger.seek("共添加了" + i + "种方式" + j + "种材料");
 
   }
 
   @Override
   public void boot() {
+
   }
 
   @Override
   public void shut() {
+
   }
 
   @Override
   public void handleUsersMessage(UserMessageEvent event, Command command) {
-    FurryBlack.sendMessage(event, this.generate(command));
+    FurryBlack.sendMessage(event, generate(command));
   }
 
   @Override
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
-    FurryBlack.sendAtMessage(event, this.generate(command));
+    FurryBlack.sendAtMessage(event, generate(command));
   }
 
   private String generate(Command command) {
@@ -130,15 +130,15 @@ public class Dark extends EventHandlerExecutor {
         size = Integer.parseInt(command.getParameterSegment(0));
       } catch (Exception exception) {
         builder.append("无效 我觉得你在想peach 成全你\r\n");
-        size = this.sizeCookMethod;
+        size = sizeCookMethod;
       }
-      if (size == 0) size = this.sizeCookMethod;
-      if (size > this.sizeCookMethod) size = this.sizeCookMethod;
+      if (size == 0) size = sizeCookMethod;
+      if (size > sizeCookMethod) size = sizeCookMethod;
     } else {
       ThreadLocalRandom random = ThreadLocalRandom.current();
       size = random.nextInt(4) + 2;
     }
-    builder.append(this.generate(size));
+    builder.append(generate(size));
     return builder.toString();
   }
 
@@ -149,14 +149,14 @@ public class Dark extends EventHandlerExecutor {
     for (int i = 1; i < size; i++) {
       String temp;
       do {
-        temp = this.COOK_METHOD.get(random.nextInt(this.sizeCookMethod));
+        temp = COOK_METHOD.get(random.nextInt(sizeCookMethod));
       } while (USED_COOK_METHOD.contains(temp));
       USED_COOK_METHOD.add(temp);
     }
     for (int i = 0; i < size; i++) {
       String temp;
       do {
-        temp = this.INGREDIENTS.get(random.nextInt(this.sizeIngredient));
+        temp = INGREDIENTS.get(random.nextInt(sizeIngredient));
       } while (USED_INGREDIENTS.contains(temp));
       USED_INGREDIENTS.add(temp);
     }

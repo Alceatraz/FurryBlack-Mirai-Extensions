@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
- * This program is free software: you can redistribute it and/or modify
+ * program is free software: you can redistribute it and/or modify
  * it under the terms of the BTS Anti-Commercial & GNU Affero General.
 
- * This program is distributed in the hope that it will be useful,
+ * program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
  * You should have received a copy of the BTS Anti-Commercial & GNU Affero
- * General Public License along with this program in README or LICENSE.
+ * General Public License along with program in README or LICENSE.
  */
 
 package studio.blacktech.furryblackplus.extensions;
@@ -65,18 +65,15 @@ import java.util.concurrent.ConcurrentHashMap;
 )
 public class Acon extends EventHandlerExecutor {
 
-
   private static final BigInteger $1000 = BigInteger.valueOf(1000);
   private static final BigInteger $HOUR = BigInteger.valueOf(3600000);
   private static final BigInteger $FACT = BigInteger.valueOf(1980000);
 
-
   private Map<Long, AirCondition> AIR_CONDITIONS;
-
 
   @Override
   public void init() {
-    this.AIR_CONDITIONS = new ConcurrentHashMap<>();
+    AIR_CONDITIONS = new ConcurrentHashMap<>();
   }
 
   @Override
@@ -96,7 +93,7 @@ public class Acon extends EventHandlerExecutor {
 
     long groupId = event.getGroup().getId();
 
-    AirCondition airCondition = this.AIR_CONDITIONS.computeIfAbsent(groupId, k -> new AirCondition());
+    AirCondition airCondition = AIR_CONDITIONS.computeIfAbsent(groupId, k -> new AirCondition());
 
     if (command.hasCommandBody()) {
 
@@ -196,7 +193,6 @@ public class Acon extends EventHandlerExecutor {
     FurryBlack.sendAtMessage(event, airCondition.cost());
   }
 
-
   public static class AirCondition {
 
     private long mode;
@@ -208,13 +204,13 @@ public class Acon extends EventHandlerExecutor {
      */
     private void updateCost() {
       long current = System.currentTimeMillis();
-      long duration = current - this.time;
+      long duration = current - time;
       duration = duration / 1000;
       BigInteger a = BigInteger.valueOf(duration);
-      BigInteger b = BigInteger.valueOf(this.mode);
+      BigInteger b = BigInteger.valueOf(mode);
       BigInteger c = a.multiply(b);
-      this.cost = this.cost.add(c);
-      this.time = current;
+      cost = cost.add(c);
+      time = current;
     }
 
     /**
@@ -223,7 +219,7 @@ public class Acon extends EventHandlerExecutor {
      * @param mode 新的模式
      */
     public void changeMode(long mode) {
-      this.updateCost();
+      updateCost();
       this.mode = mode;
     }
 
@@ -233,8 +229,8 @@ public class Acon extends EventHandlerExecutor {
      * @return 消息
      */
     public String cost() {
-      this.updateCost();
-      return "累计共耗电：" + this.cost.divide($1000) + "kW(" + this.cost.divide($HOUR) + ")度\r\n群主须支付：" + this.cost.divide($FACT) + "元";
+      updateCost();
+      return "累计共耗电：" + cost.divide($1000) + "kW(" + cost.divide($HOUR) + ")度\r\n群主须支付：" + cost.divide($FACT) + "元";
     }
 
   }

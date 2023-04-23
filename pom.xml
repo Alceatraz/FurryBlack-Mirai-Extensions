@@ -27,7 +27,7 @@
 
   <name>FurryBlack-Mirai-Extensions-Official</name>
 
-  <version>3.0.13</version>
+  <version>3.0.14</version>
 
   <packaging>jar</packaging>
 
@@ -38,39 +38,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
-  <dependencies>
-
-    <dependency>
-      <groupId>studio.blacktech.furryblackplus</groupId>
-      <artifactId>core</artifactId>
-      <version>[2.0.0,2.3.0)</version>
-      <scope>provided</scope>
-    </dependency>
-
-
-    <dependency>
-      <groupId>com.squareup.okhttp3</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>4.10.0</version>
-    </dependency>
-
-
-    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>5.9.2</version>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
-
   <build>
 
     <finalName>furryblack-extension-official</finalName>
 
     <plugins>
-
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -81,7 +53,6 @@
           <target>17</target>
         </configuration>
       </plugin>
-
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -104,9 +75,40 @@
         </configuration>
       </plugin>
 
-
     </plugins>
 
   </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>studio.blacktech.furryblackplus</groupId>
+      <artifactId>core</artifactId>
+      <version>[2.0.0,2.3.0)</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>4.10.0</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.dslplatform/dsl-json-java8 -->
+    <dependency>
+      <groupId>com.dslplatform</groupId>
+      <artifactId>dsl-json-java8</artifactId>
+      <version>1.10.0</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.9.2</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
 
 </project>

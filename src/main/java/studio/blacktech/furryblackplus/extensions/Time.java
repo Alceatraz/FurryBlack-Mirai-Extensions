@@ -63,19 +63,17 @@ public class Time extends EventHandlerExecutor {
   private String cache;
   private Instant cacheTime;
 
-
   private Map<String, ZoneId> TIME_ZONE;
-
 
   @Override
   public void init() {
 
-    this.initRootFolder();
-    this.initConfFolder();
+    initRootFolder();
+    initConfFolder();
 
-    // =====================================================================
+    //= ==================================================================================================================
 
-    File AVAILABLE_TIMEZONE = this.initModuleFile("available-timezone.txt");
+    File AVAILABLE_TIMEZONE = initModuleFile("available-timezone.txt");
 
     LinkedList<String> availableTimezone = new LinkedList<>(ZoneId.getAvailableZoneIds());
     availableTimezone.sort(CharSequence::compare);
@@ -89,18 +87,18 @@ public class Time extends EventHandlerExecutor {
       throw new BootException("写入可用时区失败", exception);
     }
 
-    // =====================================================================
+    //= ==================================================================================================================
 
-    this.TIME_ZONE = new LinkedHashMap<>();
+    TIME_ZONE = new LinkedHashMap<>();
 
-    File FILE_TIMEZONE = this.initConfFile("timezone.txt");
+    File FILE_TIMEZONE = initConfFile("timezone.txt");
 
-    for (String line : this.readFile(FILE_TIMEZONE)) {
+    for (String line : readFile(FILE_TIMEZONE)) {
 
       int indexOfColon = line.indexOf(":");
 
       if (indexOfColon < 0) {
-        this.logger.warning("配置无效 " + line);
+        logger.warning("配置无效 " + line);
         continue;
       }
 
@@ -112,17 +110,17 @@ public class Time extends EventHandlerExecutor {
       try {
         timeZone = ZoneId.of(zone);
       } catch (DateTimeException exception) {
-        this.logger.error("配置无效 TimeZone无法加载 -> " + zone, exception);
+        logger.error("配置无效 TimeZone无法加载 -> " + zone, exception);
         continue;
       }
 
       if (!zone.equals("GMT") && timeZone.getId().equals("GMT")) {
-        this.logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
+        logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
       }
 
-      this.TIME_ZONE.put(name, timeZone);
+      TIME_ZONE.put(name, timeZone);
 
-      this.logger.seek("添加时区 " + name + " -> " + timeZone.getId());
+      logger.seek("添加时区 " + name + " -> " + timeZone.getId());
     }
 
   }
@@ -135,31 +133,28 @@ public class Time extends EventHandlerExecutor {
   public void shut() {
   }
 
-
   @Override
   public void handleUsersMessage(UserMessageEvent event, Command command) {
-    FurryBlack.sendMessage(event, this.getWithCache());
+    FurryBlack.sendMessage(event, getWithCache());
   }
 
   @Override
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
-    FurryBlack.sendAtMessage(event, "环球时间\r\n" + this.getWithCache());
+    FurryBlack.sendAtMessage(event, "环球时间\r\n" + getWithCache());
   }
-
 
   private String getWithCache() {
     Instant now = Instant.now();
-    if (this.cacheTime == null || now.isAfter(this.cacheTime)) {
-      this.cache = this.build(now);
+    if (cacheTime == null || now.isAfter(cacheTime)) {
+      cache = build(now);
       ZonedDateTime expireTime = now.atZone(zone_00)
                                     .withNano(0)
                                     .withSecond(0)
                                     .plusMinutes(1);
-      this.cacheTime = expireTime.toInstant();
+      cacheTime = expireTime.toInstant();
     }
-    return this.cache;
+    return cache;
   }
-
 
   private String build(Instant instant) {
 
@@ -174,7 +169,7 @@ public class Time extends EventHandlerExecutor {
     builder.append(FORMATTER_UTC.format(instant));
     builder.append("\r\n");
 
-    for (Map.Entry<String, ZoneId> entry : this.TIME_ZONE.entrySet()) {
+    for (Map.Entry<String, ZoneId> entry : TIME_ZONE.entrySet()) {
 
       var k = entry.getKey();
       var v = entry.getValue();
@@ -182,7 +177,7 @@ public class Time extends EventHandlerExecutor {
       builder.append(k);
       builder.append(" ");
 
-      // =================================================================
+      //= ==================================================================================================================
 
       DateTimeFormatter withZone = FORMATTER_NOR.withZone(v);
 
@@ -190,7 +185,7 @@ public class Time extends EventHandlerExecutor {
 
       builder.append(format);
 
-      // =================================================================
+      //= ==================================================================================================================
 
       ZonedDateTime local = Instant.from(instant).atZone(v);
 
@@ -203,7 +198,7 @@ public class Time extends EventHandlerExecutor {
         builder.append(" 夏令时");
       }
 
-      // =================================================================
+      //= ==================================================================================================================
 
       int yearBias = chinaYear - localYear;
       int dateBias = chinaDate - localDate;
@@ -248,6 +243,5 @@ public class Time extends EventHandlerExecutor {
 
     return builder.toString();
   }
-
 
 }

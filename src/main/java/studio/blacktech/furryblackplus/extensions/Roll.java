@@ -24,7 +24,6 @@ import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 import java.security.SecureRandom;
 
-
 @Executor(
   value = "Executor-Roll",
   outline = "随机抽数",
@@ -40,7 +39,6 @@ import java.security.SecureRandom;
   }
 )
 public class Roll extends EventHandlerExecutor {
-
 
   @Override
   public void init() {
@@ -71,12 +69,11 @@ public class Roll extends EventHandlerExecutor {
 
     switch (command.getParameterLength()) {
 
-      // ============================================================
+      //= ==================================================================================================================
 
       case 0 -> res = random.nextBoolean() ? " 1️⃣" : " 0️⃣";
 
-
-      // ============================================================
+      //= ==================================================================================================================
 
       case 1 -> {
         int range;
@@ -88,7 +85,7 @@ public class Roll extends EventHandlerExecutor {
         }
       }
 
-      // ============================================================
+      //= ==================================================================================================================
 
       case 2 -> {
         int min;

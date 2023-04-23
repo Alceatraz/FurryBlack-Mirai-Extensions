@@ -22,7 +22,6 @@ import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
-
 @Executor(
   value = "Executor-Echo",
   outline = "回显测试",
@@ -37,7 +36,6 @@ import studio.blacktech.furryblackplus.core.handler.common.Command;
   }
 )
 public class Echo extends EventHandlerExecutor {
-
 
   @Override
   public void init() {
@@ -60,6 +58,5 @@ public class Echo extends EventHandlerExecutor {
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
     FurryBlack.sendAtMessage(event, command.hasCommandBody() ? command.getCommandBody() : "Pang!");
   }
-
 
 }

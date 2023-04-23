@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.0.14
+
+- 沙雕app使用JSON，引入DSL-Json
+
 ### 3.0.13
 
 - 更新 Mirai 2.13.2
