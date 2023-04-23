@@ -92,6 +92,7 @@
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
               <includeArtifactIds>
+                dsl-json,
                 dsl-json-java8,
               </includeArtifactIds>
             </configuration>
