@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti-Commercial & GNU Affero General.
+ * it under the terms from the BTS Anti-Commercial & GNU Affero General.
 
  * program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty from
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti-Commercial & GNU Affero
+ * You should have received a copy from the BTS Anti-Commercial & GNU Affero
  * General Public License along with program in README or LICENSE.
  */
 
@@ -22,7 +22,7 @@ import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -51,25 +51,25 @@ public class Dark extends EventHandlerExecutor {
   @Override
   public void init() {
 
-    initRootFolder();
-    initConfFolder();
+    ensureRootFolder();
+    ensureConfFolder();
 
     COOK_METHOD = new ArrayList<>();
     INGREDIENTS = new ArrayList<>();
 
-    File FILE_COOK_METHOD = initConfFile("dark-verb.txt");
-    File FILE_INGREDIENTS = initConfFile("dark-item.txt");
+    Path FILE_COOK_METHOD = ensureConfFile("dark-verb.txt");
+    Path FILE_INGREDIENTS = ensureConfFile("dark-item.txt");
 
     int i = 0;
 
-    for (String line : readFile(FILE_COOK_METHOD)) {
+    for (String line : readLine(FILE_COOK_METHOD)) {
       i++;
       COOK_METHOD.add(line);
     }
 
     int j = 0;
 
-    for (String line : readFile(FILE_INGREDIENTS)) {
+    for (String line : readLine(FILE_INGREDIENTS)) {
 
       if (!line.contains(":")) {
         logger.warning("配置无效 " + line);
@@ -103,14 +103,10 @@ public class Dark extends EventHandlerExecutor {
   }
 
   @Override
-  public void boot() {
-
-  }
+  public void boot() {}
 
   @Override
-  public void shut() {
-
-  }
+  public void shut() {}
 
   @Override
   public void handleUsersMessage(UserMessageEvent event, Command command) {

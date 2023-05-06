@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti-Commercial & GNU Affero General.
+ * it under the terms from the BTS Anti-Commercial & GNU Affero General.
 
  * program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty from
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti-Commercial & GNU Affero
+ * You should have received a copy from the BTS Anti-Commercial & GNU Affero
  * General Public License along with program in README or LICENSE.
  */
 
@@ -26,7 +26,7 @@ import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,14 +56,14 @@ public class Chou extends EventHandlerExecutor {
   @Override
   public void init() {
 
-    initRootFolder();
-    initConfFolder();
+    ensureRootFolder();
+    ensureConfFolder();
 
     EXCLUDE = new HashMap<>();
 
-    File FILE_EXCLUDE = initConfFile("exclude.txt");
+    Path FILE_EXCLUDE = ensureConfFile("exclude.txt");
 
-    for (String line : readFile(FILE_EXCLUDE)) {
+    for (String line : readLine(FILE_EXCLUDE)) {
 
       int indexOfColon = line.indexOf(":");
 
@@ -85,16 +85,13 @@ public class Chou extends EventHandlerExecutor {
   }
 
   @Override
-  public void boot() {
-  }
+  public void boot() {}
 
   @Override
-  public void shut() {
-  }
+  public void shut() {}
 
   @Override
-  public void handleUsersMessage(UserMessageEvent event, Command command) {
-  }
+  public void handleUsersMessage(UserMessageEvent event, Command command) {}
 
   @Override
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
@@ -113,7 +110,7 @@ public class Chou extends EventHandlerExecutor {
     long groupID = group.getId();
 
     Stream<NormalMember> stream = members.stream()
-                                         .filter(item -> item.getId() != botID && item.getId() != userID);
+      .filter(item -> item.getId() != botID && item.getId() != userID);
 
     List<NormalMember> memberList;
 

@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti-Commercial & GNU Affero General.
+ * it under the terms from the BTS Anti-Commercial & GNU Affero General.
 
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty from
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti-Commercial & GNU Affero
+ * You should have received a copy from the BTS Anti-Commercial & GNU Affero
  * General Public License along with this program in README or LICENSE.
  */
 
@@ -18,16 +18,17 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.FurryBlack;
+import studio.blacktech.furryblackplus.core.common.enhance.FileEnhance;
+import studio.blacktech.furryblackplus.core.exception.moduels.InitException;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,20 +51,22 @@ public class Jrrp extends EventHandlerExecutor {
 
   private Map<Long, Integer> JRRP;
 
-  private File JRRP_FILE;
+  private Path JRRP_FILE;
 
   @Override
-  public void init() {
+  public void init() throws InitException {
 
-    initRootFolder();
-    initDataFolder();
+    ensureRootFolder();
+    ensureDataFolder();
 
-    JRRP_FILE = initDataFile("jrrp.txt");
+    JRRP_FILE = ensureDataFile("jrrp.txt");
 
     JRRP = new ConcurrentHashMap<>();
 
-    if (isToday(JRRP_FILE.lastModified())) {
-      for (String line : readFile(JRRP_FILE)) {
+    long lastModifyEpoch = FileEnhance.lastModifyEpoch(JRRP_FILE);
+
+    if (isToday(lastModifyEpoch)) {
+      for (String line : readLine(JRRP_FILE)) {
         String[] temp = line.split(":");
         Long user = Long.parseLong(temp[0].trim());
         Integer jrrp = Integer.parseInt(temp[1].trim());
@@ -92,19 +95,16 @@ public class Jrrp extends EventHandlerExecutor {
       logger.error("等待计划任务结束失败", exception);
       if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
     }
-    try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
-      for (Map.Entry<Long, Integer> entry : JRRP.entrySet()) {
-        var k = entry.getKey();
-        var v = entry.getValue();
-        fileWriter.write(String.valueOf(k));
-        fileWriter.write(":");
-        fileWriter.write(String.valueOf(v));
-        fileWriter.write("\n");
-      }
-      fileWriter.flush();
-    } catch (IOException exception) {
-      logger.warning("保存数据失败", exception);
-    }
+
+    List<String> strings = JRRP.entrySet().stream()
+      .map(it -> {
+        var k = it.getKey();
+        var v = it.getValue();
+        return k + ":" + v;
+      })
+      .toList();
+    write(JRRP_FILE, strings);
+
   }
 
   @Override
@@ -136,12 +136,7 @@ public class Jrrp extends EventHandlerExecutor {
 
   private void schedule() {
     JRRP.clear();
-    try (FileWriter fileWriter = new FileWriter(JRRP_FILE, false)) {
-      fileWriter.write("");
-      fileWriter.flush();
-    } catch (IOException exception) {
-      logger.warning("清空数据失败", exception);
-    }
+    write(JRRP_FILE, "");
   }
 
   private boolean isToday(long time) {

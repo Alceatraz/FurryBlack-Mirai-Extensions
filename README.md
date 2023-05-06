@@ -38,6 +38,10 @@ as commercial usage. You is banned if you do it.
 
 ## CHANGELOG
 
+### 3.1.0
+
+- 升级 FurryBlack 至 3.0.0
+
 ### 3.0.14
 
 - 沙雕app使用JSON，引入DSL-Json

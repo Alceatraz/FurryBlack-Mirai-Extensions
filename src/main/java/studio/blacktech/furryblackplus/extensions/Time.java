@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti-Commercial & GNU Affero General.
+ * it under the terms from the BTS Anti-Commercial & GNU Affero General.
 
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty from
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti-Commercial & GNU Affero
+ * You should have received a copy from the BTS Anti-Commercial & GNU Affero
  * General Public License along with this program in README or LICENSE.
  */
 
@@ -18,15 +18,12 @@ package studio.blacktech.furryblackplus.extensions;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.common.exception.moduels.boot.BootException;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -68,32 +65,24 @@ public class Time extends EventHandlerExecutor {
   @Override
   public void init() {
 
-    initRootFolder();
-    initConfFolder();
+    ensureRootFolder();
+    ensureConfFolder();
+    ensureDataFolder();
 
     //= ==================================================================================================================
-
-    File AVAILABLE_TIMEZONE = initModuleFile("available-timezone.txt");
 
     LinkedList<String> availableTimezone = new LinkedList<>(ZoneId.getAvailableZoneIds());
     availableTimezone.sort(CharSequence::compare);
 
-    try (FileOutputStream fileOutputStream = new FileOutputStream(AVAILABLE_TIMEZONE)) {
-      for (String line : availableTimezone) {
-        fileOutputStream.write(line.getBytes(StandardCharsets.UTF_8));
-        fileOutputStream.write(WRAP_LINE);
-      }
-    } catch (IOException exception) {
-      throw new BootException("写入可用时区失败", exception);
-    }
+    writeData("available-timezone.txt", availableTimezone);
 
     //= ==================================================================================================================
 
     TIME_ZONE = new LinkedHashMap<>();
 
-    File FILE_TIMEZONE = initConfFile("timezone.txt");
+    Path FILE_TIMEZONE = ensureConfFile("timezone.txt");
 
-    for (String line : readFile(FILE_TIMEZONE)) {
+    for (String line : readLine(FILE_TIMEZONE)) {
 
       int indexOfColon = line.indexOf(":");
 
@@ -148,9 +137,9 @@ public class Time extends EventHandlerExecutor {
     if (cacheTime == null || now.isAfter(cacheTime)) {
       cache = build(now);
       ZonedDateTime expireTime = now.atZone(zone_00)
-                                    .withNano(0)
-                                    .withSecond(0)
-                                    .plusMinutes(1);
+        .withNano(0)
+        .withSecond(0)
+        .plusMinutes(1);
       cacheTime = expireTime.toInstant();
     }
     return cache;

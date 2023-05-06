@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti-Commercial & GNU Affero General.
+ * it under the terms from the BTS Anti-Commercial & GNU Affero General.
 
  * program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty from
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti-Commercial & GNU Affero
+ * You should have received a copy from the BTS Anti-Commercial & GNU Affero
  * General Public License along with program in README or LICENSE.
  */
 
@@ -22,7 +22,7 @@ import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,16 +50,16 @@ public class Food extends EventHandlerExecutor {
   @Override
   public void init() {
 
-    initRootFolder();
-    initConfFolder();
+    ensureRootFolder();
+    ensureConfFolder();
 
     FOOD = new FoodStorage();
 
-    File FILE_TAKEOUT = initConfFile("food-storage.txt");
+    Path FILE_TAKEOUT = ensureConfFile("food-storage.txt");
 
     int i = 0;
 
-    for (String line : readFile(FILE_TAKEOUT)) {
+    for (String line : readLine(FILE_TAKEOUT)) {
 
       if (!line.contains(":")) {
         logger.warning("配置无效 " + line);
@@ -93,14 +93,10 @@ public class Food extends EventHandlerExecutor {
   }
 
   @Override
-  public void boot() {
-
-  }
+  public void boot() {}
 
   @Override
-  public void shut() {
-
-  }
+  public void shut() {}
 
   @Override
   public void handleUsersMessage(UserMessageEvent event, Command command) {

@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti-Commercial & GNU Affero General.
+ * it under the terms from the BTS Anti-Commercial & GNU Affero General.
 
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty from
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti-Commercial & GNU Affero
+ * You should have received a copy from the BTS Anti-Commercial & GNU Affero
  * General Public License along with this program in README or LICENSE.
  */
 
@@ -25,18 +25,19 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import studio.blacktech.furryblackplus.FurryBlack;
+import studio.blacktech.furryblackplus.core.common.enhance.FileEnhance;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,15 +72,15 @@ public class Jrjt extends EventHandlerExecutor {
   private Request request;
   private OkHttpClient httpClient;
 
-  private File JRJT_FILE;
+  private Path JRJT_FILE;
 
   @Override
   public void init() {
 
-    initRootFolder();
-    initDataFolder();
+    ensureRootFolder();
+    ensureDataFolder();
 
-    JRJT_FILE = initDataFile("jrjt.txt");
+    JRJT_FILE = ensureDataFile("jrjt.txt");
 
     JRJT = new ConcurrentHashMap<>();
 
@@ -92,9 +93,11 @@ public class Jrjt extends EventHandlerExecutor {
 
     request = new Request.Builder().url("https://api.shadiao.pro/du").get().build();
 
-    if (isToday(JRJT_FILE.lastModified())) {
+    long lastModifyEpoch = FileEnhance.lastModifyEpoch(JRJT_FILE);
+
+    if (isToday(lastModifyEpoch)) {
       Base64.Decoder decoder = Base64.getDecoder();
-      for (String line : readFile(JRJT_FILE)) {
+      for (String line : readLine(JRJT_FILE)) {
         String[] temp = line.split(":");
         Long user = Long.parseLong(temp[0].trim());
         byte[] decode = decoder.decode(temp[1]);
@@ -125,19 +128,16 @@ public class Jrjt extends EventHandlerExecutor {
       logger.error("等待计划任务结束失败", exception);
       if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
     }
-    try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
-      for (Map.Entry<Long, String> entry : JRJT.entrySet()) {
-        var k = entry.getKey();
-        var v = entry.getValue();
-        fileWriter.write(String.valueOf(k));
-        fileWriter.write(":");
-        fileWriter.write(Base64.getEncoder().encodeToString(v.getBytes(StandardCharsets.UTF_8)));
-        fileWriter.write("\n");
-      }
-      fileWriter.flush();
-    } catch (IOException exception) {
-      logger.warning("保存数据失败", exception);
-    }
+    Base64.Encoder encoder = Base64.getEncoder();
+    List<String> strings = JRJT.entrySet().stream()
+      .map(it -> {
+        var k = it.getKey();
+        var v = it.getValue();
+        var t = encoder.encodeToString(v.getBytes(StandardCharsets.UTF_8));
+        return k + ":" + t;
+      })
+      .toList();
+    write(JRJT_FILE, strings);
   }
 
   @Override
@@ -171,12 +171,7 @@ public class Jrjt extends EventHandlerExecutor {
 
   private void schedule() {
     JRJT.clear();
-    try (FileWriter fileWriter = new FileWriter(JRJT_FILE, false)) {
-      fileWriter.write("");
-      fileWriter.flush();
-    } catch (IOException exception) {
-      logger.warning("清空数据失败", exception);
-    }
+    write(JRJT_FILE, "");
   }
 
   private boolean isToday(long epoch) {

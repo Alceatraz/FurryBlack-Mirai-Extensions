@@ -2,14 +2,14 @@
  * Copyright (C) 2021 Alceatraz @ BlackTechStudio
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the BTS Anti-Commercial & GNU Affero General.
+ * it under the terms from the BTS Anti-Commercial & GNU Affero General.
 
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the implied warranty from
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * BTS Anti-Commercial & GNU Affero General Public License for more details.
  *
- * You should have received a copy of the BTS Anti-Commercial & GNU Affero
+ * You should have received a copy from the BTS Anti-Commercial & GNU Affero
  * General Public License along with this program in README or LICENSE.
  */
 
@@ -30,9 +30,9 @@ import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -51,20 +51,18 @@ public class Roulette extends EventHandlerExecutor {
 
   private static final String[] ICON = {"1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
 
-  private HashMap<Long, RouletteRound> rounds;
+  private ConcurrentHashMap<Long, RouletteRound> rounds;
 
   @Override
   public void init() {
-    this.rounds = new HashMap<>();
+    this.rounds = new ConcurrentHashMap<>();
   }
 
   @Override
-  public void boot() {
-  }
+  public void boot() {}
 
   @Override
-  public void shut() {
-  }
+  public void shut() {}
 
   @Override
   public void handleUsersMessage(UserMessageEvent event, Command command) {
@@ -111,20 +109,20 @@ public class Roulette extends EventHandlerExecutor {
         RouletteRound.PlayerJetton loser = round.gamblers.get(0);
         long loserID = loser.member.getId();
         FurryBlack.sendAtMessage(event, new PlainText("好的，没有问题，成全你。📞俊·马尔福先生，有事麻烦您一下\r\n")
-          .plus(new At(loserID))
-          .plus(new Face(Face.SHOU_QIANG))
-          .plus("\uD83D\uDCA5\r\n")
-          .plus(new Face(Face.SHOU_QIANG))
-          .plus("\uD83D\uDCA5\r\n")
-          .plus(new Face(Face.SHOU_QIANG))
-          .plus("\uD83D\uDCA5\r\n")
-          .plus(new Face(Face.SHOU_QIANG))
-          .plus("\uD83D\uDCA5\r\n")
-          .plus(new Face(Face.SHOU_QIANG))
-          .plus("\uD83D\uDCA5\r\n")
-          .plus(new Face(Face.SHOU_QIANG))
-          .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
-        );
+            .plus(new At(loserID))
+            .plus(new Face(Face.SHOU_QIANG))
+            .plus("\uD83D\uDCA5\r\n")
+            .plus(new Face(Face.SHOU_QIANG))
+            .plus("\uD83D\uDCA5\r\n")
+            .plus(new Face(Face.SHOU_QIANG))
+            .plus("\uD83D\uDCA5\r\n")
+            .plus(new Face(Face.SHOU_QIANG))
+            .plus("\uD83D\uDCA5\r\n")
+            .plus(new Face(Face.SHOU_QIANG))
+            .plus("\uD83D\uDCA5\r\n")
+            .plus(new Face(Face.SHOU_QIANG))
+            .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
+                                );
 
       } else {
 
@@ -196,7 +194,7 @@ public class Roulette extends EventHandlerExecutor {
   private static class RouletteRound {
 
     private final Instant expireTime = Instant.ofEpochMilli(System.currentTimeMillis() + 600000);
-    private final List<PlayerJetton> gamblers = new ArrayList<>(6);
+    private final CopyOnWriteArrayList<PlayerJetton> gamblers = new CopyOnWriteArrayList<>();
 
     private boolean hint = true;
     private int loser = 6;
