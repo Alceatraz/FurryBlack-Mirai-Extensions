@@ -26,6 +26,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import studio.blacktech.furryblackplus.FurryBlack;
 import studio.blacktech.furryblackplus.core.common.enhance.FileEnhance;
+import studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
@@ -116,7 +117,7 @@ public class Jrjt extends EventHandlerExecutor {
 
   @Override
   public void boot() {
-    FurryBlack.scheduleAtNextDayFixedRate(thread, 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
+    FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
   }
 
   @Override

@@ -23,13 +23,14 @@ import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.Face;
 import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.PlainText;
-import studio.blacktech.furryblack.core.enhance.TimeTool;
 import studio.blacktech.furryblackplus.FurryBlack;
+import studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -50,6 +51,8 @@ import java.util.stream.Collectors;
 public class Roulette extends EventHandlerExecutor {
 
   private static final String[] ICON = {"1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"};
+
+  private static final DateTimeFormatter FORMATTER = TimeEnhance.pattern("mm:ss");
 
   private ConcurrentHashMap<Long, RouletteRound> rounds;
 
@@ -109,20 +112,20 @@ public class Roulette extends EventHandlerExecutor {
         RouletteRound.PlayerJetton loser = round.gamblers.get(0);
         long loserID = loser.member.getId();
         FurryBlack.sendAtMessage(event, new PlainText("好的，没有问题，成全你。📞俊·马尔福先生，有事麻烦您一下\r\n")
-            .plus(new At(loserID))
-            .plus(new Face(Face.SHOU_QIANG))
-            .plus("\uD83D\uDCA5\r\n")
-            .plus(new Face(Face.SHOU_QIANG))
-            .plus("\uD83D\uDCA5\r\n")
-            .plus(new Face(Face.SHOU_QIANG))
-            .plus("\uD83D\uDCA5\r\n")
-            .plus(new Face(Face.SHOU_QIANG))
-            .plus("\uD83D\uDCA5\r\n")
-            .plus(new Face(Face.SHOU_QIANG))
-            .plus("\uD83D\uDCA5\r\n")
-            .plus(new Face(Face.SHOU_QIANG))
-            .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
-                                );
+          .plus(new At(loserID))
+          .plus(new Face(Face.SHOU_QIANG))
+          .plus("\uD83D\uDCA5\r\n")
+          .plus(new Face(Face.SHOU_QIANG))
+          .plus("\uD83D\uDCA5\r\n")
+          .plus(new Face(Face.SHOU_QIANG))
+          .plus("\uD83D\uDCA5\r\n")
+          .plus(new Face(Face.SHOU_QIANG))
+          .plus("\uD83D\uDCA5\r\n")
+          .plus(new Face(Face.SHOU_QIANG))
+          .plus("\uD83D\uDCA5\r\n")
+          .plus(new Face(Face.SHOU_QIANG))
+          .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
+        );
 
       } else {
 
@@ -182,8 +185,10 @@ public class Roulette extends EventHandlerExecutor {
         builder.append(" - 等待加入\r\n");
       }
 
+      Instant instant = Instant.ofEpochMilli(round.getExpireTime().toEpochMilli() - current);
+
       builder.append("剩余时间 - ");
-      builder.append(TimeTool.format("mm:ss", round.getExpireTime().toEpochMilli() - current));
+      builder.append(FORMATTER.format(instant));
 
       FurryBlack.sendMessage(event, new Face(Face.SHOU_QIANG).plus(builder.toString()));
 
