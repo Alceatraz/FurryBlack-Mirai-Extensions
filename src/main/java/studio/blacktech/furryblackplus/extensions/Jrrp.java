@@ -142,7 +142,7 @@ public class Jrrp extends EventHandlerExecutor {
 
   private boolean isToday(long time) {
     LocalDate now = LocalDate.now();
-    LocalDateTime that = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), FurryBlack.SYSTEM_OFFSET);
+    LocalDateTime that = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), TimeEnhance.SYSTEM_OFFSET);
     return now.getYear() == that.getYear() && now.getDayOfYear() == that.getDayOfYear();
   }
 

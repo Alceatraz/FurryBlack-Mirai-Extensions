@@ -178,7 +178,7 @@ public class Jrjt extends EventHandlerExecutor {
 
   private boolean isToday(long epoch) {
     LocalDate now = LocalDate.now();
-    LocalDate date = LocalDate.ofInstant(Instant.ofEpochMilli(epoch), FurryBlack.SYSTEM_OFFSET);
+    LocalDate date = LocalDate.ofInstant(Instant.ofEpochMilli(epoch), TimeEnhance.SYSTEM_OFFSET);
     return now.getYear() == date.getYear() && now.getDayOfYear() == date.getDayOfYear();
   }
 
