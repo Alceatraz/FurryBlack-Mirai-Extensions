@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 @Executor(
   value = "Executor-Jrrp",
@@ -84,7 +83,7 @@ public class Jrrp extends EventHandlerExecutor {
 
   @Override
   public void boot() {
-    FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
+    FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), TimeEnhance.DURATION_DAY);
   }
 
   @Override
@@ -138,6 +137,7 @@ public class Jrrp extends EventHandlerExecutor {
   private void schedule() {
     JRRP.clear();
     write(JRRP_FILE, "");
+    logger.info("定时任务 -> 清空每日数据");
   }
 
   private boolean isToday(long time) {

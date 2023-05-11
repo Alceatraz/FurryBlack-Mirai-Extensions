@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 @Executor(
   value = "Executor-Jrjt",
   outline = "今日鸡汤",
-  description = "对随机毒鸡汤API的封装 不做任何内容处理 所有语料来自于https://du.shadiao.app",
+  description = "对随机毒鸡汤API的封装 不做任何内容处理 所有语料来自于 https://api.shadiao.pro/du",
   command = "jrjt",
   usage = {
     "/jrjt - 每天送你一碗热气腾腾的翔"
@@ -117,7 +117,7 @@ public class Jrjt extends EventHandlerExecutor {
 
   @Override
   public void boot() {
-    FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), 1000 * 3600 * 24, TimeUnit.MILLISECONDS);
+    FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), TimeEnhance.DURATION_DAY);
   }
 
   @Override
@@ -173,6 +173,7 @@ public class Jrjt extends EventHandlerExecutor {
   private void schedule() {
     JRJT.clear();
     write(JRJT_FILE, "");
+    logger.info("定时任务 -> 清空每日数据");
   }
 
   private boolean isToday(long epoch) {
