@@ -79,11 +79,13 @@ public class Jrrp extends EventHandlerExecutor {
 
     thread = new Thread(this::schedule);
     thread.setName("executor-jrrp-task");
+    logger.debug("线程已启动");
   }
 
   @Override
   public void boot() {
     FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), TimeEnhance.DURATION_DAY);
+    logger.debug("线程已注册");
   }
 
   @Override
@@ -95,7 +97,7 @@ public class Jrrp extends EventHandlerExecutor {
       logger.error("等待计划任务结束失败", exception);
       if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
     }
-
+    logger.debug("线程已退出");
     List<String> strings = JRRP.entrySet().stream()
       .map(it -> {
         var k = it.getKey();
@@ -104,7 +106,7 @@ public class Jrrp extends EventHandlerExecutor {
       })
       .toList();
     write(JRRP_FILE, strings);
-
+    logger.debug("文件已保存");
   }
 
   @Override

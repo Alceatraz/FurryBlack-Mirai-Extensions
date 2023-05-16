@@ -112,7 +112,7 @@ public class Jrjt extends EventHandlerExecutor {
 
     thread = new Thread(this::schedule);
     thread.setName("executor-jrjt-task");
-
+    logger.debug("线程已启动");
   }
 
   @Override
@@ -129,6 +129,7 @@ public class Jrjt extends EventHandlerExecutor {
       logger.error("等待计划任务结束失败", exception);
       if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
     }
+    logger.debug("线程已退出");
     Base64.Encoder encoder = Base64.getEncoder();
     List<String> strings = JRJT.entrySet().stream()
       .map(it -> {
@@ -139,6 +140,7 @@ public class Jrjt extends EventHandlerExecutor {
       })
       .toList();
     write(JRJT_FILE, strings);
+    logger.debug("文件已保存");
   }
 
   @Override
