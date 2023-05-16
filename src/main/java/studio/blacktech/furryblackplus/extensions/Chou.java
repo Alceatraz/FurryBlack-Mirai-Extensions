@@ -68,7 +68,7 @@ public class Chou extends EventHandlerExecutor {
       int indexOfColon = line.indexOf(":");
 
       if (indexOfColon < 0) {
-        logger.warning("配置无效 " + line);
+        logger.warn("配置无效 " + line);
         continue;
       }
 

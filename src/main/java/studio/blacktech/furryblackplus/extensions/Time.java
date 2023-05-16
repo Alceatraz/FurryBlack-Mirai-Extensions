@@ -87,7 +87,7 @@ public class Time extends EventHandlerExecutor {
       int indexOfColon = line.indexOf(":");
 
       if (indexOfColon < 0) {
-        logger.warning("配置无效 " + line);
+        logger.warn("配置无效 " + line);
         continue;
       }
 
@@ -104,7 +104,7 @@ public class Time extends EventHandlerExecutor {
       }
 
       if (!zone.equals("GMT") && timeZone.getId().equals("GMT")) {
-        logger.warning("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
+        logger.warn("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
       }
 
       TIME_ZONE.put(name, timeZone);

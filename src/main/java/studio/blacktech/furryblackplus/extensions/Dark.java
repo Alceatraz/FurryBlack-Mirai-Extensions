@@ -72,14 +72,14 @@ public class Dark extends EventHandlerExecutor {
     for (String line : readLine(FILE_INGREDIENTS)) {
 
       if (!line.contains(":")) {
-        logger.warning("配置无效 " + line);
+        logger.warn("配置无效 " + line);
         continue;
       }
 
       String[] temp1 = line.split(":");
 
       if (temp1.length != 2) {
-        logger.warning("配置无效 " + line);
+        logger.warn("配置无效 " + line);
         continue;
       }
 
