@@ -112,6 +112,7 @@ public class Jrjt extends EventHandlerExecutor {
 
     thread = new Thread(this::schedule);
     thread.setName("executor-jrjt-task");
+
     logger.debug("线程已启动");
   }
 
