@@ -54,7 +54,7 @@ import java.util.concurrent.TimeUnit;
   },
   privacy = {
     "获取命令发送人",
-    "按命令发送人缓存每日语料 - 每日UTC+8 00:00 清空"
+    "按命令发送人缓存每日语料 - 每日00:00清空"
   }
 )
 public class Jrjt extends EventHandlerExecutor {

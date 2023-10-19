@@ -135,12 +135,17 @@ public class Chou extends EventHandlerExecutor {
     StringBuilder builder = new StringBuilder();
     if (command.getParameterLength() > 0) {
       builder.append("因为: ");
-      builder.append(command.getCommandBody(200));
+      builder.append(command.getCommandBody());
       builder.append("\r\n");
     }
     builder.append("抽中了: ");
     builder.append(FurryBlack.getMemberMappedNickName(chosen));
-    FurryBlack.sendAtMessage(event, builder.toString());
+
+    String string = builder.toString();
+
+    logger.debug(groupID + ":" + userID + " -> " + chosen + " " + command.getCommandBody());
+
+    FurryBlack.sendAtMessage(event, string);
 
   }
 }

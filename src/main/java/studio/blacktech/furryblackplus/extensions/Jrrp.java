@@ -25,12 +25,16 @@ import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -42,16 +46,14 @@ import java.util.concurrent.ThreadLocalRandom;
   usage = "/jrrp - 查看今日运气",
   privacy = {
     "获取命令发送人",
-    "存储用户与运气对应表 - 每日UTC+8 00:00 清空"
+    "存储用户与运气对应表 - 每日00:00清空"
   }
 )
 public class Jrrp extends EventHandlerExecutor {
 
   private Thread thread;
 
-  private Map<Long, Integer> JRRP;
-
-  private Path JRRP_FILE;
+  private Schema schema;
 
   @Override
   public void init() throws InitException {
@@ -59,32 +61,30 @@ public class Jrrp extends EventHandlerExecutor {
     ensureRootFolder();
     ensureDataFolder();
 
-    JRRP_FILE = ensureDataFile("jrrp.txt");
-
-    JRRP = new ConcurrentHashMap<>();
-
-    long lastModifyEpoch = FileEnhance.lastModifyEpoch(JRRP_FILE);
-
-    if (isToday(lastModifyEpoch)) {
-      for (String line : readLine(JRRP_FILE)) {
-        String[] temp = line.split(":");
-        Long user = Long.parseLong(temp[0].trim());
-        Integer jrrp = Integer.parseInt(temp[1].trim());
-        JRRP.put(user, jrrp);
-      }
-      logger.seek("从持久化文件中读取了" + JRRP.size() + "条数据");
-    } else {
-      logger.seek("持久化文件已过期");
-    }
-
-    thread = new Thread(this::schedule);
-    thread.setName("executor-jrrp-task");
-    logger.debug("线程已启动");
+    Path storage = ensureDataFile("storage.properties");
+    schema = new Schema(storage);
+    schema.load();
   }
 
   @Override
   public void boot() {
-    FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), TimeEnhance.DURATION_DAY);
+
+    thread = Thread.ofVirtual().name("jrrp-worker").start(() -> {
+      //noinspection InfiniteLoopStatement
+      while (true) {
+        long nextDay = TimeEnhance.toNextDay();
+        logger.debug("休眠 " + nextDay);
+        try {
+          //noinspection BusyWait
+          Thread.sleep(nextDay);
+        } catch (InterruptedException exception) {
+          throw new RuntimeException(exception);
+        }
+        schema.clear();
+        logger.debug("缓存已清除");
+      }
+    });
+
     logger.debug("线程已注册");
   }
 
@@ -97,16 +97,8 @@ public class Jrrp extends EventHandlerExecutor {
       logger.error("等待计划任务结束失败", exception);
       if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
     }
+    schema.save();
     logger.debug("线程已退出");
-    List<String> strings = JRRP.entrySet().stream()
-      .map(it -> {
-        var k = it.getKey();
-        var v = it.getValue();
-        return k + ":" + v;
-      })
-      .toList();
-    write(JRRP_FILE, strings);
-    logger.debug("文件已保存");
   }
 
   @Override
@@ -120,13 +112,8 @@ public class Jrrp extends EventHandlerExecutor {
   }
 
   private String generate(long userid) {
-    int luck;
-    if (JRRP.containsKey(userid)) {
-      luck = JRRP.get(userid);
-    } else {
-      luck = ThreadLocalRandom.current().nextInt(101);
-      JRRP.put(userid, luck);
-    }
+    int luck = schema.get(userid);
+    logger.debug(userid + " -> " + luck + "%");
     if (luck == 0) {
       return "今天没有运气!!!";
     } else if (luck == 100) {
@@ -136,16 +123,92 @@ public class Jrrp extends EventHandlerExecutor {
     }
   }
 
-  private void schedule() {
-    JRRP.clear();
-    write(JRRP_FILE, "");
-    logger.info("定时任务 -> 清空每日数据");
-  }
-
   private boolean isToday(long time) {
     LocalDate now = LocalDate.now();
     LocalDateTime that = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), TimeEnhance.SYSTEM_OFFSET);
     return now.getYear() == that.getYear() && now.getDayOfYear() == that.getDayOfYear();
+  }
+
+  private class Schema {
+
+    private final Path storage;
+    private final Map<Long, Integer> cache;
+
+    private Schema(Path storage) {
+      this.storage = storage;
+      this.cache = new ConcurrentHashMap<>();
+    }
+
+    private void load() {
+
+      if (!Files.exists(storage)) {
+        logger.seek("持久化文件不存在");
+        return;
+      }
+
+      long lastModifyEpoch = FileEnhance.lastModifyEpoch(storage);
+
+      if (isToday(lastModifyEpoch)) {
+        Properties properties = new Properties();
+        try {
+          InputStream inputStream = Files.newInputStream(storage);
+          properties.load(inputStream);
+        } catch (IOException exception) {
+          throw new RuntimeException(exception);
+        }
+        properties.forEach((k, v) -> cache.put(Long.valueOf(String.valueOf(k)), Integer.valueOf(String.valueOf(v))));
+        logger.seek("从持久化文件中读取了" + cache.size() + "条数据");
+      } else {
+        try {
+          Files.delete(storage);
+        } catch (IOException exception) {
+          throw new RuntimeException(exception);
+        }
+        logger.seek("持久化文件已过期");
+      }
+
+    }
+
+    private void save() {
+      Properties properties = new Properties();
+      cache.forEach((k, v) -> properties.setProperty(k.toString(), v.toString()));
+      try {
+        Files.deleteIfExists(storage);
+        Files.createFile(storage);
+      } catch (IOException exception) {
+        throw new RuntimeException(exception);
+      }
+      try (OutputStream outputStream = Files.newOutputStream(storage)) {
+        properties.store(outputStream, "SAVED " + System.currentTimeMillis());
+      } catch (IOException exception) {
+        throw new RuntimeException(exception);
+      }
+    }
+
+    private int get(long key) {
+      Integer i = cache.get(key);
+      if (i == null) {
+        int nextInt = ThreadLocalRandom.current().nextInt(101);
+        put(key, nextInt);
+        return nextInt;
+      } else {
+        return i;
+      }
+    }
+
+    private void put(Long key, Integer value) {
+      cache.put(key, value);
+      save();
+    }
+
+    public void clear() {
+      cache.clear();
+      try {
+        Files.deleteIfExists(storage);
+      } catch (IOException exception) {
+        throw new RuntimeException(exception);
+      }
+    }
   }
 
 }

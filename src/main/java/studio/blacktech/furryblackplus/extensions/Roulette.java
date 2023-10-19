@@ -58,7 +58,7 @@ public class Roulette extends EventHandlerExecutor {
 
   @Override
   public void init() {
-    this.rounds = new ConcurrentHashMap<>();
+    rounds = new ConcurrentHashMap<>();
   }
 
   @Override
@@ -88,20 +88,29 @@ public class Roulette extends EventHandlerExecutor {
       return;
     }
 
-    RouletteRound round;
-
     long current = System.currentTimeMillis();
 
-    if (this.rounds.containsKey(group.getId())) {
-      round = this.rounds.get(group.getId());
+    RouletteRound round;
+
+    if (rounds.containsKey(group.getId())) {
+
+      round = rounds.get(group.getId());
+
       if (round.getExpireTime().toEpochMilli() - current < 0) {
-        this.rounds.remove(group.getId());
+        rounds.remove(group.getId());
         round = new RouletteRound();
-        this.rounds.put(group.getId(), round);
+        rounds.put(group.getId(), round);
+
+        logger.debug(group.getId() + " -> 已超时");
       }
+
     } else {
+
       round = new RouletteRound();
-      this.rounds.put(group.getId(), round);
+      rounds.put(group.getId(), round);
+
+      logger.debug(group.getId() + " -> 新对局");
+
     }
 
     //
@@ -109,8 +118,13 @@ public class Roulette extends EventHandlerExecutor {
     if (round.join(event, command)) {
 
       if (round.isSinglePlayer()) {
+
         RouletteRound.PlayerJetton loser = round.gamblers.get(0);
+
         long loserID = loser.member.getId();
+
+        String jetton = round.getAllJetton(loserID);
+
         FurryBlack.sendAtMessage(event, new PlainText("好的，没有问题，成全你。📞俊·马尔福先生，有事麻烦您一下\r\n")
           .plus(new At(loserID))
           .plus(new Face(Face.SHOU_QIANG))
@@ -124,14 +138,20 @@ public class Roulette extends EventHandlerExecutor {
           .plus(new Face(Face.SHOU_QIANG))
           .plus("\uD83D\uDCA5\r\n")
           .plus(new Face(Face.SHOU_QIANG))
-          .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + round.getAllJetton(loserID))
+          .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + jetton)
         );
+
+        logger.debug(event.getGroup().getId() + ":" + event.getSender().getId() + " -> 单人 " + jetton);
 
       } else {
 
         int bullet = round.roll();
+
         RouletteRound.PlayerJetton loser = round.gamblers.get(bullet);
+
         long loserID = loser.member.getId();
+
+        String jetton = round.getAllJetton(loserID);
 
         Message message = new PlainText("名单已凑齐 装填子弹中\r\n");
 
@@ -147,11 +167,14 @@ public class Roulette extends EventHandlerExecutor {
         }
         message = message.plus("\r\n目标已被击毙: ");
         message = message.plus(new At(loserID));
-        message = message.plus("\r\n掉落了以下物品: " + round.getAllJetton(loserID));
+        message = message.plus("\r\n掉落了以下物品: " + jetton);
         FurryBlack.sendMessage(event, message);
+
+        logger.debug(group.getId() + "  -> " + loserID + " : " + jetton);
+
       }
 
-      this.rounds.remove(group.getId());
+      rounds.remove(group.getId());
 
     } else {
 
@@ -192,6 +215,8 @@ public class Roulette extends EventHandlerExecutor {
 
       FurryBlack.sendMessage(event, new Face(Face.SHOU_QIANG).plus(builder.toString()));
 
+      logger.debug(group.getId() + "  -> 加入 " + event.getSender().getId() + " : " + command.getCommandBody());
+
     }
 
   }
@@ -205,30 +230,30 @@ public class Roulette extends EventHandlerExecutor {
     private int loser = 6;
 
     public boolean join(GroupMessageEvent event, Command command) {
-      if (this.gamblers.size() > 6) return false;
-      if (this.hint && this.gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
+      if (gamblers.size() > 6) return false;
+      if (hint && gamblers.stream().anyMatch(item -> item.getMember().getId() == event.getSender().getId())) {
         FurryBlack.sendAtMessage(event, "✔️ 经科学证实重复下注可有效增加被枪毙的机率");
-        this.hint = false;
+        hint = false;
       }
-      this.gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));
-      return this.gamblers.size() == 6;
+      gamblers.add(new PlayerJetton(event.getSender(), command.getCommandBody(200)));
+      return gamblers.size() == 6;
     }
 
     public int roll() {
-      this.loser = ThreadLocalRandom.current().nextInt(6);
-      return this.loser;
+      loser = ThreadLocalRandom.current().nextInt(6);
+      return loser;
     }
 
     public int getLoser() {
-      return this.loser;
+      return loser;
     }
 
     public boolean isSinglePlayer() {
-      return this.gamblers.stream().map(item -> item.getMember().getId()).collect(Collectors.toUnmodifiableSet()).size() == 1;
+      return gamblers.stream().map(item -> item.getMember().getId()).collect(Collectors.toUnmodifiableSet()).size() == 1;
     }
 
     public String getAllJetton(long id) {
-      List<PlayerJetton> jettons = this.gamblers.stream().filter(item -> item.getMember().getId() == id).toList();
+      List<PlayerJetton> jettons = gamblers.stream().filter(item -> item.getMember().getId() == id).toList();
       StringBuilder builder = new StringBuilder();
       for (RouletteRound.PlayerJetton jetton : jettons) {
         builder.append("\r\n");
@@ -238,21 +263,21 @@ public class Roulette extends EventHandlerExecutor {
     }
 
     public Instant getExpireTime() {
-      return this.expireTime;
+      return expireTime;
     }
 
     public List<PlayerJetton> getGamblers() {
-      return this.gamblers;
+      return gamblers;
     }
 
     private record PlayerJetton(Member member, String jetton) {
 
       public Member getMember() {
-        return this.member;
+        return member;
       }
 
       public String getJetton() {
-        return this.jetton;
+        return jetton;
       }
     }
   }

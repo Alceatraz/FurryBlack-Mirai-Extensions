@@ -97,21 +97,36 @@ public class Zhan extends EventHandlerExecutor {
 
   @Override
   public void handleUsersMessage(UserMessageEvent event, Command command) {
-    FurryBlack.sendMessage(event, chooseCard(command));
+    if (command.getParameterLength() == 0) {
+      FurryBlack.sendMessage(event, "你不能占卜空气");
+      return;
+    }
+    if (command.getCommandBody().length() > 100) {
+      FurryBlack.sendMessage(event, "你占卜的太长了");
+      return;
+    }
+    int i = random44();
+    FurryBlack.sendMessage(event, "你因为 " + command.getCommandBody() + "\r\n抽到了 " + CARD[i]);
+    logger.debug(event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
   }
 
   @Override
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
-    FurryBlack.sendAtMessage(event, chooseCard(command));
+    if (command.getParameterLength() == 0) {
+      FurryBlack.sendAtMessage(event, "你不能占卜空气");
+      return;
+    }
+    if (command.getCommandBody().length() > 100) {
+      FurryBlack.sendAtMessage(event, "你占卜的太长了");
+      return;
+    }
+    int i = random44();
+    FurryBlack.sendAtMessage(event, "你因为 " + command.getCommandBody() + "\r\n抽到了 " + CARD[i]);
+    logger.debug(event.getGroup().getId() + ":" + event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
   }
 
-  private String chooseCard(Command command) {
-    if (command.getParameterLength() == 0) {
-      return "你不能占卜空气";
-    } else if (command.getCommandBody().length() > 100) {
-      return "你占卜的太长了";
-    } else {
-      return "你因为 " + command.getCommandBody() + "\r\n抽到了 " + CARD[ThreadLocalRandom.current().nextInt(44)];
-    }
+  private int random44() {
+    return ThreadLocalRandom.current().nextInt(44);
   }
+
 }
