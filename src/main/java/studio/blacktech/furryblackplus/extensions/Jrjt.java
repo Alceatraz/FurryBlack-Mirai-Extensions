@@ -131,7 +131,7 @@ public class Jrjt extends EventHandlerExecutor {
     private void load() {
 
       if (!Files.exists(storage)) {
-        logger.seek("持久化文件不存在");
+        logger.info("持久化文件不存在");
         return;
       }
 

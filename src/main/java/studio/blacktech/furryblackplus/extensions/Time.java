@@ -109,7 +109,7 @@ public class Time extends EventHandlerExecutor {
 
       TIME_ZONE.put(name, timeZone);
 
-      logger.seek("添加时区 " + name + " -> " + timeZone.getId());
+      logger.info("添加时区 " + name + " -> " + timeZone.getId());
     }
 
   }

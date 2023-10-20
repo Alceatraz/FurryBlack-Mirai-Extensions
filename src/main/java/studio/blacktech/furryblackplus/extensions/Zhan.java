@@ -107,7 +107,7 @@ public class Zhan extends EventHandlerExecutor {
     }
     int i = random44();
     FurryBlack.sendMessage(event, "你因为 " + command.getCommandBody() + "\r\n抽到了 " + CARD[i]);
-    logger.debug(event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
+    logger.info(event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
   }
 
   @Override
@@ -122,7 +122,7 @@ public class Zhan extends EventHandlerExecutor {
     }
     int i = random44();
     FurryBlack.sendAtMessage(event, "你因为 " + command.getCommandBody() + "\r\n抽到了 " + CARD[i]);
-    logger.debug(event.getGroup().getId() + ":" + event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
+    logger.info(event.getGroup().getId() + ":" + event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
   }
 
   private int random44() {

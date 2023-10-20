@@ -65,7 +65,7 @@ public class Chou extends EventHandlerExecutor {
 
       List<Long> tempList = EXCLUDE.computeIfAbsent(groupId, k -> new ArrayList<>());
       tempList.add(usersId);
-      logger.seek("排除成员 " + group + "-" + usersId);
+      logger.info("排除成员 " + group + "-" + usersId);
     }
   }
 
