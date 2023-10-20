@@ -166,7 +166,7 @@ public class Jrjt extends EventHandlerExecutor {
 
     private void save() {
       Properties properties = new Properties();
-      cache.forEach((k, v) -> properties.setProperty(k.toString(), v));
+      cache.forEach((k, v) -> properties.setProperty(k.toString(), Common.encode(v)));
       try {
         Files.deleteIfExists(storage);
         Files.createFile(storage);
