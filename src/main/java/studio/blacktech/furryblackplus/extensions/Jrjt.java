@@ -80,7 +80,6 @@ public class Jrjt extends EventHandlerExecutor {
   @Override
   public void boot() {
     thread = Thread.ofVirtual().name("jrjt-worker").start(() -> {
-      //noinspection InfiniteLoopStatement
       while (true) {
         long nextDay = TimeEnhance.toNextDay();
         long sleep = nextDay - Instant.now().toEpochMilli();
@@ -101,7 +100,14 @@ public class Jrjt extends EventHandlerExecutor {
 
   @Override
   public void shut() {
-
+    thread.interrupt();
+    try {
+      thread.join();
+    } catch (InterruptedException exception) {
+      throw new RuntimeException("等待计划任务结束失败", exception);
+    }
+    schema.save();
+    logger.debug("数据缓存已保存 -> {} 条", schema.cache.size());
   }
 
   @Override
