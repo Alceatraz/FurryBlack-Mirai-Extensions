@@ -78,7 +78,7 @@ public class Jrrp extends EventHandlerExecutor {
       throw new RuntimeException("等待计划任务结束失败", exception);
     }
     schema.save();
-    logger.debug("数据缓存已保存 -> {} 条", schema.cache.size());
+    logger.info("数据缓存已保存 -> {} 条", schema.cache.size());
   }
 
   @Override
@@ -163,10 +163,10 @@ public class Jrrp extends EventHandlerExecutor {
       if (i == null) {
         int nextInt = ThreadLocalRandom.current().nextInt(101);
         put(key, nextInt);
-        logger.debug(key + " -> 新 " + nextInt + "%");
+        logger.info(key + " -> 新 " + nextInt + "%");
         return nextInt;
       } else {
-        logger.debug(key + " -> 旧 " + i + "%");
+        logger.info(key + " -> 旧 " + i + "%");
         return i;
       }
     }

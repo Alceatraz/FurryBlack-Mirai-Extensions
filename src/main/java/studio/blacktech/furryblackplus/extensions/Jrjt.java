@@ -107,7 +107,7 @@ public class Jrjt extends EventHandlerExecutor {
       throw new RuntimeException("等待计划任务结束失败", exception);
     }
     schema.save();
-    logger.debug("数据缓存已保存 -> {} 条", schema.cache.size());
+    logger.info("数据缓存已保存 -> {} 条", schema.cache.size());
   }
 
   @Override
@@ -185,9 +185,9 @@ public class Jrjt extends EventHandlerExecutor {
       if (i == null || "沙雕App的服务器炸了".equals(i)) {
         i = call();
         put(key, i);
-        logger.debug(key + " -> 新 " + i);
+        logger.info(key + " -> 新 " + i);
       } else {
-        logger.debug(key + " -> 旧 " + i);
+        logger.info(key + " -> 旧 " + i);
       }
       return i;
     }
