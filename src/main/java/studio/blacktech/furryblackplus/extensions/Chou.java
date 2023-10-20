@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2021 Alceatraz @ BlackTechStudio
- *
- * program is free software: you can redistribute it and/or modify
- * it under the terms from the BTS Anti-Commercial & GNU Affero General.
-
- * program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty from
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * BTS Anti-Commercial & GNU Affero General Public License for more details.
- *
- * You should have received a copy from the BTS Anti-Commercial & GNU Affero
- * General Public License along with program in README or LICENSE.
- */
-
 package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.contact.ContactList;
@@ -110,7 +95,7 @@ public class Chou extends EventHandlerExecutor {
     long groupID = group.getId();
 
     Stream<NormalMember> stream = members.stream()
-      .filter(item -> item.getId() != botID && item.getId() != userID);
+      .filter(it -> it.getId() != botID && it.getId() != userID);
 
     List<NormalMember> memberList;
 
@@ -143,7 +128,7 @@ public class Chou extends EventHandlerExecutor {
 
     String string = builder.toString();
 
-    logger.debug(groupID + ":" + userID + " -> " + chosen + " " + command.getCommandBody());
+    logger.info(groupID + ":" + userID + " -> " + memberList.size() + "/" + members.size() + " 抽中 " + chosen + " " + command.getCommandBody());
 
     FurryBlack.sendAtMessage(event, string);
 

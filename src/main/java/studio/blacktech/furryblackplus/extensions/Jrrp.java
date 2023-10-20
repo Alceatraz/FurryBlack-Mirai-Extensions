@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2021 Alceatraz @ BlackTechStudio
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms from the BTS Anti-Commercial & GNU Affero General.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty from
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * BTS Anti-Commercial & GNU Affero General Public License for more details.
- *
- * You should have received a copy from the BTS Anti-Commercial & GNU Affero
- * General Public License along with this program in README or LICENSE.
- */
-
 package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -20,10 +5,10 @@ import net.mamoe.mirai.event.events.UserMessageEvent;
 import studio.blacktech.furryblackplus.FurryBlack;
 import studio.blacktech.furryblackplus.core.common.enhance.FileEnhance;
 import studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance;
-import studio.blacktech.furryblackplus.core.exception.moduels.InitException;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
+import studio.blacktech.furryblackplus.extensions.common.Common;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +16,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,12 +34,11 @@ import java.util.concurrent.ThreadLocalRandom;
 )
 public class Jrrp extends EventHandlerExecutor {
 
+  private Schema schema;
   private Thread thread;
 
-  private Schema schema;
-
   @Override
-  public void init() throws InitException {
+  public void init() {
 
     ensureRootFolder();
     ensureDataFolder();
@@ -68,24 +50,23 @@ public class Jrrp extends EventHandlerExecutor {
 
   @Override
   public void boot() {
-
     thread = Thread.ofVirtual().name("jrrp-worker").start(() -> {
       //noinspection InfiniteLoopStatement
       while (true) {
         long nextDay = TimeEnhance.toNextDay();
-        logger.debug("休眠 " + nextDay);
+        long sleep = nextDay - Instant.now().toEpochMilli();
+        logger.info("清理线程计划于 {} -> {} ", nextDay, sleep);
         try {
           //noinspection BusyWait
-          Thread.sleep(nextDay);
+          Thread.sleep(sleep);
         } catch (InterruptedException exception) {
           throw new RuntimeException(exception);
         }
         schema.clear();
-        logger.debug("缓存已清除");
+        logger.info("缓存已清除");
       }
     });
-
-    logger.debug("线程已注册");
+    logger.info("清理线程已启动");
   }
 
   @Override
@@ -94,11 +75,10 @@ public class Jrrp extends EventHandlerExecutor {
     try {
       thread.join();
     } catch (InterruptedException exception) {
-      logger.error("等待计划任务结束失败", exception);
-      if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
+      throw new RuntimeException("等待计划任务结束失败", exception);
     }
     schema.save();
-    logger.debug("线程已退出");
+    logger.debug("数据缓存已保存 -> {} 条", schema.cache.size());
   }
 
   @Override
@@ -113,7 +93,6 @@ public class Jrrp extends EventHandlerExecutor {
 
   private String generate(long userid) {
     int luck = schema.get(userid);
-    logger.debug(userid + " -> " + luck + "%");
     if (luck == 0) {
       return "今天没有运气!!!";
     } else if (luck == 100) {
@@ -121,12 +100,6 @@ public class Jrrp extends EventHandlerExecutor {
     } else {
       return "今天的运气是" + luck + "% !!!";
     }
-  }
-
-  private boolean isToday(long time) {
-    LocalDate now = LocalDate.now();
-    LocalDateTime that = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), TimeEnhance.SYSTEM_OFFSET);
-    return now.getYear() == that.getYear() && now.getDayOfYear() == that.getDayOfYear();
   }
 
   private class Schema {
@@ -148,7 +121,7 @@ public class Jrrp extends EventHandlerExecutor {
 
       long lastModifyEpoch = FileEnhance.lastModifyEpoch(storage);
 
-      if (isToday(lastModifyEpoch)) {
+      if (Common.isToday(lastModifyEpoch)) {
         Properties properties = new Properties();
         try {
           InputStream inputStream = Files.newInputStream(storage);
@@ -157,14 +130,14 @@ public class Jrrp extends EventHandlerExecutor {
           throw new RuntimeException(exception);
         }
         properties.forEach((k, v) -> cache.put(Long.valueOf(String.valueOf(k)), Integer.valueOf(String.valueOf(v))));
-        logger.seek("从持久化文件中读取了" + cache.size() + "条数据");
+        logger.info("从持久化文件中读取了 {} 条数据", cache.size());
       } else {
         try {
           Files.delete(storage);
         } catch (IOException exception) {
           throw new RuntimeException(exception);
         }
-        logger.seek("持久化文件已过期");
+        logger.info("持久化文件已过期");
       }
 
     }
@@ -190,8 +163,10 @@ public class Jrrp extends EventHandlerExecutor {
       if (i == null) {
         int nextInt = ThreadLocalRandom.current().nextInt(101);
         put(key, nextInt);
+        logger.debug(key + " -> 新 " + nextInt + "%");
         return nextInt;
       } else {
+        logger.debug(key + " -> 旧 " + i + "%");
         return i;
       }
     }

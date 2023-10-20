@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2021 Alceatraz @ BlackTechStudio
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms from the BTS Anti-Commercial & GNU Affero General.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty from
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * BTS Anti-Commercial & GNU Affero General Public License for more details.
- *
- * You should have received a copy from the BTS Anti-Commercial & GNU Affero
- * General Public License along with this program in README or LICENSE.
- */
-
 package studio.blacktech.furryblackplus.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -53,14 +38,14 @@ public class Dice extends EventHandlerExecutor {
   public void handleUsersMessage(UserMessageEvent event, Command command) {
     int i = dice();
     FurryBlack.sendMessage(event, DICES[i]);
-    logger.debug(event.getSender().getId() + " -> " + i);
+    logger.info(event.getSender().getId() + " -> " + i);
   }
 
   @Override
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
     int i = dice();
     FurryBlack.sendMessage(event, DICES[i]);
-    logger.debug(event.getGroup().getId() + ":" + event.getSender().getId() + " -> " + i);
+    logger.info(event.getGroup().getId() + ":" + event.getSender().getId() + " -> " + i);
   }
 
   private int dice() {

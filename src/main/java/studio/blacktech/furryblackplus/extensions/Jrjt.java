@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2021 Alceatraz @ BlackTechStudio
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms from the BTS Anti-Commercial & GNU Affero General.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty from
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * BTS Anti-Commercial & GNU Affero General Public License for more details.
- *
- * You should have received a copy from the BTS Anti-Commercial & GNU Affero
- * General Public License along with this program in README or LICENSE.
- */
-
 package studio.blacktech.furryblackplus.extensions;
 
 import com.dslplatform.json.CompiledJson;
@@ -30,17 +15,17 @@ import studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
+import studio.blacktech.furryblackplus.extensions.common.Common;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -59,31 +44,21 @@ import java.util.concurrent.TimeUnit;
 )
 public class Jrjt extends EventHandlerExecutor {
 
-  private final static DslJson<ShaDiaoAppResponse> dslJson;
+  private final static DslJson<ShadiaoAppResponse> dslJson;
 
   static {
-    DslJson.Settings<ShaDiaoAppResponse> withRuntime = Settings.withRuntime();
+    DslJson.Settings<ShadiaoAppResponse> withRuntime = Settings.withRuntime();
     dslJson = new DslJson<>(withRuntime.allowArrayFormat(true).includeServiceLoader());
   }
-
-  private Thread thread;
-
-  private Map<Long, String> JRJT;
 
   private Request request;
   private OkHttpClient httpClient;
 
-  private Path JRJT_FILE;
+  private Schema schema;
+  private Thread thread;
 
   @Override
   public void init() {
-
-    ensureRootFolder();
-    ensureDataFolder();
-
-    JRJT_FILE = ensureDataFile("jrjt.txt");
-
-    JRJT = new ConcurrentHashMap<>();
 
     httpClient = new OkHttpClient.Builder()
       .callTimeout(2, TimeUnit.SECONDS)
@@ -94,54 +69,38 @@ public class Jrjt extends EventHandlerExecutor {
 
     request = new Request.Builder().url("https://api.shadiao.pro/du").get().build();
 
-    long lastModifyEpoch = FileEnhance.lastModifyEpoch(JRJT_FILE);
+    ensureRootFolder();
+    ensureDataFolder();
 
-    if (isToday(lastModifyEpoch)) {
-      Base64.Decoder decoder = Base64.getDecoder();
-      for (String line : readLine(JRJT_FILE)) {
-        String[] temp = line.split(":");
-        Long user = Long.parseLong(temp[0].trim());
-        byte[] decode = decoder.decode(temp[1]);
-        String string = new String(decode, StandardCharsets.UTF_8);
-        JRJT.put(user, string);
-      }
-      logger.seek("从持久化文件中读取了" + JRJT.size() + "条数据");
-    } else {
-      logger.seek("持久化文件已过期");
-    }
-
-    thread = new Thread(this::schedule);
-    thread.setName("executor-jrjt-task");
-
-    logger.debug("线程已启动");
+    Path storage = ensureDataFile("storage.properties");
+    schema = new Schema(storage);
+    schema.load();
   }
 
   @Override
   public void boot() {
-    FurryBlack.scheduleAtFixedRate(thread, TimeEnhance.toNextDay(), TimeEnhance.DURATION_DAY);
+    thread = Thread.ofVirtual().name("jrjt-worker").start(() -> {
+      //noinspection InfiniteLoopStatement
+      while (true) {
+        long nextDay = TimeEnhance.toNextDay();
+        long sleep = nextDay - Instant.now().toEpochMilli();
+        logger.info("清理线程计划于 {} -> {} ", nextDay, sleep);
+        try {
+          //noinspection BusyWait
+          Thread.sleep(sleep);
+        } catch (InterruptedException exception) {
+          throw new RuntimeException(exception);
+        }
+        schema.clear();
+        logger.info("缓存已清除");
+      }
+    });
+    logger.info("清理线程已启动");
   }
 
   @Override
   public void shut() {
-    thread.interrupt();
-    try {
-      thread.join();
-    } catch (InterruptedException exception) {
-      logger.error("等待计划任务结束失败", exception);
-      if (FurryBlack.isShutModeDrop()) Thread.currentThread().interrupt();
-    }
-    logger.debug("线程已退出");
-    Base64.Encoder encoder = Base64.getEncoder();
-    List<String> strings = JRJT.entrySet().stream()
-      .map(it -> {
-        var k = it.getKey();
-        var v = it.getValue();
-        var t = encoder.encodeToString(v.getBytes(StandardCharsets.UTF_8));
-        return k + ":" + t;
-      })
-      .toList();
-    write(JRJT_FILE, strings);
-    logger.debug("文件已保存");
+
   }
 
   @Override
@@ -154,39 +113,109 @@ public class Jrjt extends EventHandlerExecutor {
     FurryBlack.sendAtMessage(event, generate(event.getSender().getId()));
   }
 
-  private String generate(long user) {
-    String message;
-    if (JRJT.containsKey(user)) {
-      message = JRJT.get(user);
-    } else {
-      Call newCall = httpClient.newCall(request);
-      try (Response response = newCall.execute()) {
-        InputStream inputStream = Objects.requireNonNull(response.body()).byteStream();
-        ShaDiaoAppResponse deserialize = dslJson.deserialize(ShaDiaoAppResponse.class, inputStream);
-        message = Objects.requireNonNull(deserialize).data.text;
-        JRJT.put(user, message);
+  private String generate(long userid) {
+    return schema.get(userid);
+  }
+
+  private class Schema {
+
+    private final Path storage;
+    private final Map<Long, String> cache;
+
+    private Schema(Path storage) {
+      this.storage = storage;
+      this.cache = new ConcurrentHashMap<>();
+    }
+
+    private void load() {
+
+      if (!Files.exists(storage)) {
+        logger.seek("持久化文件不存在");
+        return;
+      }
+
+      long lastModifyEpoch = FileEnhance.lastModifyEpoch(storage);
+
+      if (Common.isToday(lastModifyEpoch)) {
+        Properties properties = new Properties();
+        try {
+          InputStream inputStream = Files.newInputStream(storage);
+          properties.load(inputStream);
+        } catch (IOException exception) {
+          throw new RuntimeException(exception);
+        }
+        properties.forEach((k, v) -> cache.put(Long.parseLong(String.valueOf(k)), Common.decode(v)));
+        logger.info("从持久化文件中读取了 {} 条数据", cache.size());
+      } else {
+        try {
+          Files.delete(storage);
+        } catch (IOException exception) {
+          throw new RuntimeException(exception);
+        }
+        logger.info("持久化文件已过期");
+      }
+
+    }
+
+    private void save() {
+      Properties properties = new Properties();
+      cache.forEach((k, v) -> properties.setProperty(k.toString(), v));
+      try {
+        Files.deleteIfExists(storage);
+        Files.createFile(storage);
       } catch (IOException exception) {
-        logger.error("沙雕服务器连接失败", exception);
-        message = "沙雕App的服务器炸了";
+        throw new RuntimeException(exception);
+      }
+      try (OutputStream outputStream = Files.newOutputStream(storage)) {
+        properties.store(outputStream, "SAVED " + System.currentTimeMillis());
+      } catch (IOException exception) {
+        throw new RuntimeException(exception);
       }
     }
-    return message;
+
+    private String get(long key) {
+      String i = cache.get(key);
+      if (i == null || "沙雕App的服务器炸了".equals(i)) {
+        i = call();
+        put(key, i);
+        logger.debug(key + " -> 新 " + i);
+      } else {
+        logger.debug(key + " -> 旧 " + i);
+      }
+      return i;
+    }
+
+    private void put(Long key, String value) {
+      cache.put(key, value);
+      save();
+    }
+
+    public void clear() {
+      cache.clear();
+      try {
+        Files.deleteIfExists(storage);
+      } catch (IOException exception) {
+        throw new RuntimeException(exception);
+      }
+    }
   }
 
-  private void schedule() {
-    JRJT.clear();
-    write(JRJT_FILE, "");
-    logger.info("定时任务 -> 清空每日数据");
+  private String call() {
+    Call newCall = httpClient.newCall(request);
+    try (Response response = newCall.execute()) {
+      InputStream inputStream = Objects.requireNonNull(response.body()).byteStream();
+      ShadiaoAppResponse deserialize = dslJson.deserialize(ShadiaoAppResponse.class, inputStream);
+      return Objects.requireNonNull(deserialize).data.text;
+    } catch (IOException exception) {
+      logger.error("沙雕服务器连接失败", exception);
+      return "沙雕App的服务器炸了";
+    }
   }
 
-  private boolean isToday(long epoch) {
-    LocalDate now = LocalDate.now();
-    LocalDate date = LocalDate.ofInstant(Instant.ofEpochMilli(epoch), TimeEnhance.SYSTEM_OFFSET);
-    return now.getYear() == date.getYear() && now.getDayOfYear() == date.getDayOfYear();
-  }
+  @SuppressWarnings("unused")
 
   @CompiledJson
-  public static class ShaDiaoAppResponse {
+  public static class ShadiaoAppResponse {
 
     public Data data;
 
@@ -195,4 +224,5 @@ public class Jrjt extends EventHandlerExecutor {
       public String text;
     }
   }
+
 }
