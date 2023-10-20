@@ -89,11 +89,12 @@ public class Jrjt extends EventHandlerExecutor {
           //noinspection BusyWait
           Thread.sleep(sleep);
         } catch (InterruptedException exception) {
-          throw new RuntimeException(exception);
+          break;
         }
         schema.clear();
         logger.info("缓存已清除");
       }
+      logger.info("清理线程已退出");
     });
     logger.info("清理线程已启动");
   }

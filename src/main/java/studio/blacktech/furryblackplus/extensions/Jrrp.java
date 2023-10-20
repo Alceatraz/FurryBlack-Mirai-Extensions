@@ -51,7 +51,6 @@ public class Jrrp extends EventHandlerExecutor {
   @Override
   public void boot() {
     thread = Thread.ofVirtual().name("jrrp-worker").start(() -> {
-      //noinspection InfiniteLoopStatement
       while (true) {
         long nextDay = TimeEnhance.toNextDay();
         long sleep = nextDay - Instant.now().toEpochMilli();
@@ -60,11 +59,12 @@ public class Jrrp extends EventHandlerExecutor {
           //noinspection BusyWait
           Thread.sleep(sleep);
         } catch (InterruptedException exception) {
-          throw new RuntimeException(exception);
+          break;
         }
         schema.clear();
         logger.info("缓存已清除");
       }
+      logger.info("清理线程已退出");
     });
     logger.info("清理线程已启动");
   }
