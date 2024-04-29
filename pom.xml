@@ -30,7 +30,7 @@
 
   <build>
 
-    <finalName>furryblack</finalName>
+    <finalName>furryblack-extension-official</finalName>
 
     <plugins>
 
@@ -62,35 +62,7 @@
           </archive>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/library</outputDirectory>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <overWriteReleases>true</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-              <excludeArtifactIds>
-                junit-jupiter,
-                junit-jupiter-api,
-                junit-jupiter-engine,
-                junit-jupiter-params,
-                junit-platform-engine,
-                junit-platform-commons,
-              </excludeArtifactIds>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
+    
     </plugins>
 
   </build>
