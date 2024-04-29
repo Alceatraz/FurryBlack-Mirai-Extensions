@@ -8,7 +8,6 @@ import studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance;
 import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
 import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
 import studio.blacktech.furryblackplus.core.handler.common.Command;
-import studio.blacktech.furryblackplus.extensions.common.Common;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +15,13 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance.SYSTEM_OFFSET;
 
 @Executor(
   value = "Executor-Jrrp",
@@ -121,7 +123,7 @@ public class Jrrp extends EventHandlerExecutor {
 
       long lastModifyEpoch = FileEnhance.lastModifyEpoch(storage);
 
-      if (Common.isToday(lastModifyEpoch)) {
+      if (isToday(lastModifyEpoch)) {
         Properties properties = new Properties();
         try {
           InputStream inputStream = Files.newInputStream(storage);
@@ -184,6 +186,12 @@ public class Jrrp extends EventHandlerExecutor {
         throw new RuntimeException(exception);
       }
     }
+  }
+
+  public static boolean isToday(long time) {
+    LocalDate now = LocalDate.now();
+    LocalDate that = LocalDate.ofInstant(Instant.ofEpochMilli(time), SYSTEM_OFFSET);
+    return now.getYear() == that.getYear() && now.getDayOfYear() == that.getDayOfYear();
   }
 
 }

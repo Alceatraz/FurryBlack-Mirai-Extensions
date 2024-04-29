@@ -1,53 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-  ~ Copyright (C) 2021 Alceatraz @ BlackTechStudio
-  ~
-  ~ This program is free software: you can redistribute it and/or modify
-  ~ it under the terms from the GNU Affero General Public License as
-  ~ published by the Free Software Foundation, either version 3 from the
-  ~ License, or (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty from
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU Affero General Public License for more details.
-  ~
-  ~ You should have received a copy from the GNU Affero General Public License
-  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
-  ~
-  -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>studio.blacktech.furryblackplus</groupId>
-  <artifactId>extensions-official</artifactId>
+  <parent>
+    <groupId>studio.blacktech.furryblackplus</groupId>
+    <artifactId>parent</artifactId>
+    <version>2.0.0</version>
+  </parent>
 
-  <name>FurryBlack-Mirai-Extensions-Official</name>
+  <artifactId>furryblack-extension</artifactId>
 
-  <version>3.1.4</version>
+  <version>3.2.0</version>
 
   <packaging>jar</packaging>
 
   <properties>
+    <mirai.version>2.16.0</mirai.version>
+    <kotlin.version>1.92.3</kotlin.version>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.source>21</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.targetEncoding>UTF-8</project.build.targetEncoding>
   </properties>
 
   <build>
 
-    <finalName>furryblack-extension-official</finalName>
+    <finalName>furryblack</finalName>
 
     <plugins>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
         <configuration>
           <source>21</source>
           <target>21</target>
@@ -57,7 +46,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.2</version>
         <configuration>
           <archive>
             <manifestSections>
@@ -78,7 +66,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.2.0</version>
         <executions>
           <execution>
             <id>copy-dependencies</id>
@@ -91,10 +78,14 @@
               <overWriteIfNewer>true</overWriteIfNewer>
               <overWriteReleases>true</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
-              <includeArtifactIds>
-                dsl-json,
-                dsl-json-java8,
-              </includeArtifactIds>
+              <excludeArtifactIds>
+                junit-jupiter,
+                junit-jupiter-api,
+                junit-jupiter-engine,
+                junit-jupiter-params,
+                junit-platform-engine,
+                junit-platform-commons,
+              </excludeArtifactIds>
             </configuration>
           </execution>
         </executions>
@@ -109,29 +100,12 @@
     <dependency>
       <groupId>studio.blacktech.furryblackplus</groupId>
       <artifactId>core</artifactId>
-      <version>[3.1.0,4.0.0)</version>
-      <scope>provided</scope>
+      <version>[3.2.0,4.0.0)</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
-    <dependency>
-      <groupId>com.squareup.okhttp3</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>4.12.0</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/com.dslplatform/dsl-json-java8 -->
-    <dependency>
-      <groupId>com.dslplatform</groupId>
-      <artifactId>dsl-json-java8</artifactId>
-      <version>1.10.0</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.9.2</version>
       <scope>test</scope>
     </dependency>
 
