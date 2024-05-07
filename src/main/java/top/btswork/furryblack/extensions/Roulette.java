@@ -13,7 +13,7 @@
  * General Public License along with this program in README or LICENSE.
  */
 
-package studio.blacktech.furryblackplus.extensions;
+package top.btswork.furryblack.extensions;
 
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.Member;
@@ -23,11 +23,11 @@ import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.Face;
 import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.PlainText;
-import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance;
-import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
+import top.btswork.furryblack.FurryBlack;
+import top.btswork.furryblack.core.common.enhance.TimeEnhance;
+import top.btswork.furryblack.core.handler.EventHandlerExecutor;
+import top.btswork.furryblack.core.handler.annotation.Executor;
+import top.btswork.furryblack.core.handler.common.Command;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -93,24 +93,17 @@ public class Roulette extends EventHandlerExecutor {
     RouletteRound round;
 
     if (rounds.containsKey(group.getId())) {
-
       round = rounds.get(group.getId());
-
       if (round.getExpireTime().toEpochMilli() - current < 0) {
         rounds.remove(group.getId());
         round = new RouletteRound();
         rounds.put(group.getId(), round);
-
-        logger.debug(group.getId() + " -> 已超时");
+        logger.debug("{} -> 已超时", group.getId());
       }
-
     } else {
-
       round = new RouletteRound();
       rounds.put(group.getId(), round);
-
-      logger.debug(group.getId() + " -> 新对局");
-
+      logger.debug("{} -> 新对局", group.getId());
     }
 
     //
@@ -119,7 +112,7 @@ public class Roulette extends EventHandlerExecutor {
 
       if (round.isSinglePlayer()) {
 
-        RouletteRound.PlayerJetton loser = round.gamblers.get(0);
+        RouletteRound.PlayerJetton loser = round.gamblers.getFirst();
 
         long loserID = loser.member.getId();
 
@@ -141,7 +134,7 @@ public class Roulette extends EventHandlerExecutor {
           .plus("\uD83D\uDCA5\r\n目标已被击毙: " + FurryBlack.getMemberMappedNickName(loser.member) + "\r\n掉落了以下物品:" + jetton)
         );
 
-        logger.debug(event.getGroup().getId() + ":" + event.getSender().getId() + " -> 单人 " + jetton);
+        logger.debug("{}:{} -> 单人 {}", event.getGroup().getId(), event.getSender().getId(), jetton);
 
       } else {
 
@@ -170,7 +163,7 @@ public class Roulette extends EventHandlerExecutor {
         message = message.plus("\r\n掉落了以下物品: " + jetton);
         FurryBlack.sendMessage(event, message);
 
-        logger.debug(group.getId() + "  -> " + loserID + " : " + jetton);
+        logger.debug("{}  -> {} : {}", group.getId(), loserID, jetton);
 
       }
 
@@ -215,7 +208,7 @@ public class Roulette extends EventHandlerExecutor {
 
       FurryBlack.sendMessage(event, new Face(Face.SHOU_QIANG).plus(builder.toString()));
 
-      logger.debug(group.getId() + "  -> 加入 " + event.getSender().getId() + " : " + command.getCommandBody());
+      logger.debug("{}  -> 加入 {} : {}", group.getId(), event.getSender().getId(), command.getCommandBody());
 
     }
 

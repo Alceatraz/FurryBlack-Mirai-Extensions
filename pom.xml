@@ -7,21 +7,15 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>studio.blacktech.furryblackplus</groupId>
-    <artifactId>parent</artifactId>
-    <version>2.0.0</version>
-  </parent>
+  <groupId>top.btswork.furryblack</groupId>
+  <artifactId>extension</artifactId>
 
-  <artifactId>furryblack-extension</artifactId>
-
-  <version>3.2.0</version>
+  <version>4.0.0</version>
 
   <packaging>jar</packaging>
 
   <properties>
     <mirai.version>2.16.0</mirai.version>
-    <kotlin.version>1.92.3</kotlin.version>
     <maven.compiler.target>21</maven.compiler.target>
     <maven.compiler.source>21</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,7 +56,7 @@
           </archive>
         </configuration>
       </plugin>
-    
+
     </plugins>
 
   </build>
@@ -70,15 +64,22 @@
   <dependencies>
 
     <dependency>
-      <groupId>studio.blacktech.furryblackplus</groupId>
+      <groupId>top.btswork.furryblack</groupId>
       <artifactId>core</artifactId>
-      <version>[3.2.0,4.0.0)</version>
+      <version>[4.0.0,5.0.0)</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <scope>test</scope>
+      <version>5.10.2</version>
     </dependency>
 
   </dependencies>

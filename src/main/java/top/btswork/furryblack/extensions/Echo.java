@@ -1,11 +1,11 @@
-package studio.blacktech.furryblackplus.extensions;
+package top.btswork.furryblack.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
+import top.btswork.furryblack.FurryBlack;
+import top.btswork.furryblack.core.handler.EventHandlerExecutor;
+import top.btswork.furryblack.core.handler.annotation.Executor;
+import top.btswork.furryblack.core.handler.common.Command;
 
 @Executor(
   value = "Executor-Echo",

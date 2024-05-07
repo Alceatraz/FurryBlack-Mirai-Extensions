@@ -1,13 +1,13 @@
-package studio.blacktech.furryblackplus.extensions;
+package top.btswork.furryblack.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.common.enhance.FileEnhance;
-import studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance;
-import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
+import top.btswork.furryblack.FurryBlack;
+import top.btswork.furryblack.core.common.enhance.FileEnhance;
+import top.btswork.furryblack.core.common.enhance.TimeEnhance;
+import top.btswork.furryblack.core.handler.EventHandlerExecutor;
+import top.btswork.furryblack.core.handler.annotation.Executor;
+import top.btswork.furryblack.core.handler.common.Command;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static studio.blacktech.furryblackplus.core.common.enhance.TimeEnhance.SYSTEM_OFFSET;
+import static top.btswork.furryblack.core.common.enhance.TimeEnhance.SYSTEM_OFFSET;
 
 @Executor(
   value = "Executor-Jrrp",
@@ -165,10 +165,10 @@ public class Jrrp extends EventHandlerExecutor {
       if (i == null) {
         int nextInt = ThreadLocalRandom.current().nextInt(101);
         put(key, nextInt);
-        logger.info(key + " -> 新 " + nextInt + "%");
+        logger.info("{} -> 新 {}%", key, nextInt);
         return nextInt;
       } else {
-        logger.info(key + " -> 旧 " + i + "%");
+        logger.info("{} -> 旧 {}%", key, i);
         return i;
       }
     }

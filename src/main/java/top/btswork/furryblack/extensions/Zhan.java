@@ -13,14 +13,14 @@
  * General Public License along with this program in README or LICENSE.
  */
 
-package studio.blacktech.furryblackplus.extensions;
+package top.btswork.furryblack.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
+import top.btswork.furryblack.FurryBlack;
+import top.btswork.furryblack.core.handler.EventHandlerExecutor;
+import top.btswork.furryblack.core.handler.annotation.Executor;
+import top.btswork.furryblack.core.handler.common.Command;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -84,7 +84,7 @@ public class Zhan extends EventHandlerExecutor {
     "XXI. THE WORLD 世界正位\r\n完美结局 重新开始 生活完美阶段 获得成功 自由 完成 成功 心灵融合 自信十足 重大改变 完满结果",
     "XXI. THE WORLD 世界逆位\r\n不完美 过往的结束 缺乏自尊 难受 悲观 无法挽回 无法继续 残缺",
 
-    };
+  };
 
   @Override
   public void init() {}
@@ -107,7 +107,7 @@ public class Zhan extends EventHandlerExecutor {
     }
     int i = random44();
     FurryBlack.sendMessage(event, "你因为 " + command.getCommandBody() + "\r\n抽到了 " + CARD[i]);
-    logger.info(event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
+    logger.info("{} -> {} {}", event.getSender().getId(), i, command.getCommandBody());
   }
 
   @Override
@@ -122,7 +122,7 @@ public class Zhan extends EventHandlerExecutor {
     }
     int i = random44();
     FurryBlack.sendAtMessage(event, "你因为 " + command.getCommandBody() + "\r\n抽到了 " + CARD[i]);
-    logger.info(event.getGroup().getId() + ":" + event.getSender().getId() + " -> " + i + " " + command.getCommandBody());
+    logger.info("{}:{} -> {} {}", event.getGroup().getId(), event.getSender().getId(), i, command.getCommandBody());
   }
 
   private int random44() {

@@ -1,11 +1,11 @@
-package studio.blacktech.furryblackplus.extensions;
+package top.btswork.furryblack.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
+import top.btswork.furryblack.FurryBlack;
+import top.btswork.furryblack.core.handler.EventHandlerExecutor;
+import top.btswork.furryblack.core.handler.annotation.Executor;
+import top.btswork.furryblack.core.handler.common.Command;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -38,14 +38,14 @@ public class Dice extends EventHandlerExecutor {
   public void handleUsersMessage(UserMessageEvent event, Command command) {
     int i = dice();
     FurryBlack.sendMessage(event, DICES[i]);
-    logger.info(event.getSender().getId() + " -> " + i);
+    logger.info("{} -> {}", event.getSender().getId(), i);
   }
 
   @Override
   public void handleGroupMessage(GroupMessageEvent event, Command command) {
     int i = dice();
     FurryBlack.sendMessage(event, DICES[i]);
-    logger.info(event.getGroup().getId() + ":" + event.getSender().getId() + " -> " + i);
+    logger.info("{}:{} -> {}", event.getGroup().getId(), event.getSender().getId(), i);
   }
 
   private int dice() {

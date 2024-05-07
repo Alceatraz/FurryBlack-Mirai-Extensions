@@ -13,16 +13,15 @@
  * General Public License along with this program in README or LICENSE.
  */
 
-package studio.blacktech.furryblackplus.extensions;
+package top.btswork.furryblack.extensions;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
+import top.btswork.furryblack.FurryBlack;
+import top.btswork.furryblack.core.handler.EventHandlerExecutor;
+import top.btswork.furryblack.core.handler.annotation.Executor;
+import top.btswork.furryblack.core.handler.common.Command;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -55,8 +54,6 @@ public class Time extends EventHandlerExecutor {
   private static final DateTimeFormatter FORMATTER_RPC = DateTimeFormatter.ofPattern("HH:mm").withZone(zone_CN);
   private static final DateTimeFormatter FORMATTER_NOR = DateTimeFormatter.ofPattern("HH:mm");
 
-  private static final byte[] WRAP_LINE = "\r\n".getBytes(StandardCharsets.UTF_8);
-
   private String cache;
   private Instant cacheTime;
 
@@ -87,7 +84,7 @@ public class Time extends EventHandlerExecutor {
       int indexOfColon = line.indexOf(":");
 
       if (indexOfColon < 0) {
-        logger.warn("配置无效 " + line);
+        logger.warn("配置无效 {}", line);
         continue;
       }
 
@@ -99,17 +96,17 @@ public class Time extends EventHandlerExecutor {
       try {
         timeZone = ZoneId.of(zone);
       } catch (DateTimeException exception) {
-        logger.error("配置无效 TimeZone无法加载 -> " + zone, exception);
+        logger.error("配置无效: TimeZone无法加载 -> {}", zone, exception);
         continue;
       }
 
       if (!zone.equals("GMT") && timeZone.getId().equals("GMT")) {
-        logger.warn("配置无效 TimeZone将不可识别的区域转换为GMT " + line);
+        logger.warn("配置无效: TimeZone将不可识别的区域转换为GMT {}", line);
       }
 
       TIME_ZONE.put(name, timeZone);
 
-      logger.info("添加时区 " + name + " -> " + timeZone.getId());
+      logger.info("添加时区 {} -> {}", name, timeZone.getId());
     }
 
   }

@@ -1,4 +1,4 @@
-package studio.blacktech.furryblackplus.extensions;
+package top.btswork.furryblack.extensions;
 
 import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Group;
@@ -6,10 +6,10 @@ import net.mamoe.mirai.contact.Member;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.UserMessageEvent;
-import studio.blacktech.furryblackplus.FurryBlack;
-import studio.blacktech.furryblackplus.core.handler.EventHandlerExecutor;
-import studio.blacktech.furryblackplus.core.handler.annotation.Executor;
-import studio.blacktech.furryblackplus.core.handler.common.Command;
+import top.btswork.furryblack.FurryBlack;
+import top.btswork.furryblack.core.handler.EventHandlerExecutor;
+import top.btswork.furryblack.core.handler.annotation.Executor;
+import top.btswork.furryblack.core.handler.common.Command;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class Chou extends EventHandlerExecutor {
       int indexOfColon = line.indexOf(":");
 
       if (indexOfColon < 0) {
-        logger.warn("配置无效 " + line);
+        logger.warn("配置无效 {}", line);
         continue;
       }
 
@@ -65,7 +65,7 @@ public class Chou extends EventHandlerExecutor {
 
       List<Long> tempList = EXCLUDE.computeIfAbsent(groupId, k -> new ArrayList<>());
       tempList.add(usersId);
-      logger.info("排除成员 " + group + "-" + usersId);
+      logger.info("排除成员 {}-{}", group, usersId);
     }
   }
 
@@ -128,7 +128,15 @@ public class Chou extends EventHandlerExecutor {
 
     String string = builder.toString();
 
-    logger.info(groupID + ":" + userID + " -> " + memberList.size() + "/" + members.size() + " 抽中 " + chosen + " " + command.getCommandBody());
+    logger.info(
+      "{}:{} -> {}/{} 抽中 {} {}",
+      groupID,
+      userID,
+      memberList.size(),
+      members.size(),
+      chosen,
+      command.getCommandBody()
+    );
 
     FurryBlack.sendAtMessage(event, string);
 
